@@ -49,6 +49,7 @@ add_definitions(-DDEBUG=1 -DHAL_KEY=0)
 # 源码文件
 file(GLOB_RECURSE SOURCES 
                 "Startup/*.S" 
+                "RVMSIS/*.c"
                 "StdPeriphDriver/*.c" 
                 "USB_LIB/*.c" 
                 "src/*.c")
