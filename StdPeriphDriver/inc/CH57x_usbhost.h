@@ -1,130 +1,292 @@
-
-
+/********************************** (C) COPYRIGHT *******************************
+ * File Name          : CH57x_usbhost.h
+ * Author             : WCH
+ * Version            : V1.2
+ * Date               : 2021/11/17
+ * Description
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * SPDX-License-Identifier: Apache-2.0
+ *******************************************************************************/
 
 #ifndef __CH57x_USBHOST_H__
 #define __CH57x_USBHOST_H__
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 #if DISK_LIB_ENABLE
-#if DISK_WITHOUT_USB_HUB
-/***************************************** ä¸ä½¿ç”¨Uç›˜æ–‡ä»¶ç³»ç»Ÿåº“æˆ–è€…Uç›˜æŒ‚è½½USBhubä¸‹é¢ï¼Œéœ€è¦å…³é—­ä¸‹é¢å®šä¹‰ */
-#define	FOR_ROOT_UDISK_ONLY
+  #if DISK_WITHOUT_USB_HUB
+        /***************************************** ²»Ê¹ÓÃUÅÌÎÄ¼şÏµÍ³¿â»òÕßUÅÌ¹ÒÔØUSBhubÏÂÃæ£¬ĞèÒª¹Ø±ÕÏÂÃæ¶¨Òå */
+    #define FOR_ROOT_UDISK_ONLY
+  #endif
+    /***************************************** Ê¹ÓÃUÅÌÎÄ¼şÏµÍ³¿â£¬ĞèÒª¿ªÆôÏÂÃæ¶¨Òå, ²»Ê¹ÓÃÇë¹Ø±Õ */
+  #define DISK_BASE_BUF_LEN    512  /* Ä¬ÈÏµÄ´ÅÅÌÊı¾İ»º³åÇø´óĞ¡Îª512×Ö½Ú,½¨ÒéÑ¡ÔñÎª2048ÉõÖÁ4096ÒÔÖ§³ÖÄ³Ğ©´óÉÈÇøµÄUÅÌ,Îª0Ôò½ûÖ¹ÔÚ.HÎÄ¼şÖĞ¶¨Òå»º³åÇø²¢ÓÉÓ¦ÓÃ³ÌĞòÔÚpDISK_BASE_BUFÖĞÖ¸¶¨ */
 #endif
-/***************************************** ä½¿ç”¨Uç›˜æ–‡ä»¶ç³»ç»Ÿåº“ï¼Œéœ€è¦å¼€å¯ä¸‹é¢å®šä¹‰, ä¸ä½¿ç”¨è¯·å…³é—­ */
-#define DISK_BASE_BUF_LEN		512	        /* é»˜è®¤çš„ç£ç›˜æ•°æ®ç¼“å†²åŒºå¤§å°ä¸º512å­—èŠ‚,å»ºè®®é€‰æ‹©ä¸º2048ç”šè‡³4096ä»¥æ”¯æŒæŸäº›å¤§æ‰‡åŒºçš„Uç›˜,ä¸º0åˆ™ç¦æ­¢åœ¨.Hæ–‡ä»¶ä¸­å®šä¹‰ç¼“å†²åŒºå¹¶ç”±åº”ç”¨ç¨‹åºåœ¨pDISK_BASE_BUFä¸­æŒ‡å®š */
-#endif
-     
-     
-// å„å­ç¨‹åºè¿”å›çŠ¶æ€ç 
-#define ERR_SUCCESS         0x00    // æ“ä½œæˆåŠŸ
-#define ERR_USB_CONNECT     0x15    /* æ£€æµ‹åˆ°USBè®¾å¤‡è¿æ¥äº‹ä»¶,å·²ç»è¿æ¥ */
-#define ERR_USB_DISCON      0x16    /* æ£€æµ‹åˆ°USBè®¾å¤‡æ–­å¼€äº‹ä»¶,å·²ç»æ–­å¼€ */
-#define ERR_USB_BUF_OVER    0x17    /* USBä¼ è¾“çš„æ•°æ®æœ‰è¯¯æˆ–è€…æ•°æ®å¤ªå¤šç¼“å†²åŒºæº¢å‡º */
-#define ERR_USB_DISK_ERR    0x1F    /* USBå­˜å‚¨å™¨æ“ä½œå¤±è´¥,åœ¨åˆå§‹åŒ–æ—¶å¯èƒ½æ˜¯USBå­˜å‚¨å™¨ä¸æ”¯æŒ,åœ¨è¯»å†™æ“ä½œä¸­å¯èƒ½æ˜¯ç£ç›˜æŸåæˆ–è€…å·²ç»æ–­å¼€ */
-#define ERR_USB_TRANSFER    0x20    /* NAK/STALLç­‰æ›´å¤šé”™è¯¯ç åœ¨0x20~0x2F */
-#define ERR_USB_UNSUPPORT   0xFB    /*ä¸æ”¯æŒçš„USBè®¾å¤‡*/
-#define ERR_USB_UNKNOWN     0xFE    /*è®¾å¤‡æ“ä½œå‡ºé”™*/ 
-#define ERR_AOA_PROTOCOL    0x41    /*åè®®ç‰ˆæœ¬å‡ºé”™ */ 
 
-/*USBè®¾å¤‡ç›¸å…³ä¿¡æ¯è¡¨,æœ€å¤šæ”¯æŒ1ä¸ªè®¾å¤‡*/
-#define ROOT_DEV_DISCONNECT  0
-#define ROOT_DEV_CONNECTED   1
-#define ROOT_DEV_FAILED      2
-#define ROOT_DEV_SUCCESS     3
-#define DEV_TYPE_KEYBOARD   ( USB_DEV_CLASS_HID | 0x20 )
-#define DEV_TYPE_MOUSE      ( USB_DEV_CLASS_HID | 0x30 )
-#define DEF_AOA_DEVICE       0xF0
-#define DEV_TYPE_UNKNOW 	 0xFF
+// ¸÷×Ó³ÌĞò·µ»Ø×´Ì¬Âë
+#define ERR_SUCCESS            0x00  // ²Ù×÷³É¹¦
+#define ERR_USB_CONNECT        0x15  /* ¼ì²âµ½USBÉè±¸Á¬½ÓÊÂ¼ş,ÒÑ¾­Á¬½Ó */
+#define ERR_USB_DISCON         0x16  /* ¼ì²âµ½USBÉè±¸¶Ï¿ªÊÂ¼ş,ÒÑ¾­¶Ï¿ª */
+#define ERR_USB_BUF_OVER       0x17  /* USB´«ÊäµÄÊı¾İÓĞÎó»òÕßÊı¾İÌ«¶à»º³åÇøÒç³ö */
+#define ERR_USB_DISK_ERR       0x1F  /* USB´æ´¢Æ÷²Ù×÷Ê§°Ü,ÔÚ³õÊ¼»¯Ê±¿ÉÄÜÊÇUSB´æ´¢Æ÷²»Ö§³Ö,ÔÚ¶ÁĞ´²Ù×÷ÖĞ¿ÉÄÜÊÇ´ÅÅÌËğ»µ»òÕßÒÑ¾­¶Ï¿ª */
+#define ERR_USB_TRANSFER       0x20  /* NAK/STALLµÈ¸ü¶à´íÎóÂëÔÚ0x20~0x2F */
+#define ERR_USB_UNSUPPORT      0xFB  /*²»Ö§³ÖµÄUSBÉè±¸*/
+#define ERR_USB_UNKNOWN        0xFE  /*Éè±¸²Ù×÷³ö´í*/
+#define ERR_AOA_PROTOCOL       0x41  /*Ğ­Òé°æ±¾³ö´í */
 
+/*USBÉè±¸Ïà¹ØĞÅÏ¢±í,×î¶àÖ§³Ö1¸öÉè±¸*/
+#define ROOT_DEV_DISCONNECT    0
+#define ROOT_DEV_CONNECTED     1
+#define ROOT_DEV_FAILED        2
+#define ROOT_DEV_SUCCESS       3
+#define DEV_TYPE_KEYBOARD      (USB_DEV_CLASS_HID | 0x20)
+#define DEV_TYPE_MOUSE         (USB_DEV_CLASS_HID | 0x30)
+#define DEF_AOA_DEVICE         0xF0
+#define DEV_TYPE_UNKNOW        0xFF
 
 /*
-çº¦å®š: USBè®¾å¤‡åœ°å€åˆ†é…è§„åˆ™(å‚è€ƒUSB_DEVICE_ADDR)
-åœ°å€å€¼  è®¾å¤‡ä½ç½®
-0x02    å†…ç½®Root-HUBä¸‹çš„USBè®¾å¤‡æˆ–å¤–éƒ¨HUB
-0x1x    å†…ç½®Root-HUBä¸‹çš„å¤–éƒ¨HUBçš„ç«¯å£xä¸‹çš„USBè®¾å¤‡,xä¸º1~n
+Ô¼¶¨: USBÉè±¸µØÖ··ÖÅä¹æÔò(²Î¿¼USB_DEVICE_ADDR)
+µØÖ·Öµ  Éè±¸Î»ÖÃ
+0x02    ÄÚÖÃRoot-HUBÏÂµÄUSBÉè±¸»òÍâ²¿HUB
+0x1x    ÄÚÖÃRoot-HUBÏÂµÄÍâ²¿HUBµÄ¶Ë¿ÚxÏÂµÄUSBÉè±¸,xÎª1~n
 */
-#define HUB_MAX_PORTS       	4
-#define WAIT_USB_TOUT_200US     800   // ç­‰å¾…USBä¸­æ–­è¶…æ—¶æ—¶é—´
-
+#define HUB_MAX_PORTS          4
+#define WAIT_USB_TOUT_200US    800   // µÈ´ıUSBÖĞ¶Ï³¬Ê±Ê±¼ä
 
 typedef struct
 {
-    UINT8   DeviceStatus;              // è®¾å¤‡çŠ¶æ€,0-æ— è®¾å¤‡,1-æœ‰è®¾å¤‡ä½†å°šæœªåˆå§‹åŒ–,2-æœ‰è®¾å¤‡ä½†åˆå§‹åŒ–æšä¸¾å¤±è´¥,3-æœ‰è®¾å¤‡ä¸”åˆå§‹åŒ–æšä¸¾æˆåŠŸ
-    UINT8   DeviceAddress;             // è®¾å¤‡è¢«åˆ†é…çš„USBåœ°å€
-    UINT8   DeviceSpeed;               // 0ä¸ºä½é€Ÿ,é0ä¸ºå…¨é€Ÿ
-    UINT8   DeviceType;                // è®¾å¤‡ç±»å‹
-    UINT16  DeviceVID;
-    UINT16  DevicePID;
-    UINT8   GpVar[4];                    // é€šç”¨å˜é‡ï¼Œå­˜æ”¾ç«¯ç‚¹
-    UINT8   GpHUBPortNum;                // é€šç”¨å˜é‡,å¦‚æœæ˜¯HUBï¼Œè¡¨ç¤ºHUBç«¯å£æ•°
+    uint8_t  DeviceStatus;  // Éè±¸×´Ì¬,0-ÎŞÉè±¸,1-ÓĞÉè±¸µ«ÉĞÎ´³õÊ¼»¯,2-ÓĞÉè±¸µ«³õÊ¼»¯Ã¶¾ÙÊ§°Ü,3-ÓĞÉè±¸ÇÒ³õÊ¼»¯Ã¶¾Ù³É¹¦
+    uint8_t  DeviceAddress; // Éè±¸±»·ÖÅäµÄUSBµØÖ·
+    uint8_t  DeviceSpeed;   // 0ÎªµÍËÙ,·Ç0ÎªÈ«ËÙ
+    uint8_t  DeviceType;    // Éè±¸ÀàĞÍ
+    uint16_t DeviceVID;
+    uint16_t DevicePID;
+    uint8_t  GpVar[4];     // Í¨ÓÃ±äÁ¿£¬´æ·Å¶Ëµã
+    uint8_t  GpHUBPortNum; // Í¨ÓÃ±äÁ¿,Èç¹ûÊÇHUB£¬±íÊ¾HUB¶Ë¿ÚÊı
 } _RootHubDev;
 
+typedef struct
+{
+    UINT8  DeviceStatus;  // Éè±¸×´Ì¬,0-ÎŞÉè±¸,1-ÓĞÉè±¸µ«ÉĞÎ´³õÊ¼»¯,2-ÓĞÉè±¸µ«³õÊ¼»¯Ã¶¾ÙÊ§°Ü,3-ÓĞÉè±¸ÇÒ³õÊ¼»¯Ã¶¾Ù³É¹¦
+    UINT8  DeviceAddress; // Éè±¸±»·ÖÅäµÄUSBµØÖ·
+    UINT8  DeviceSpeed;   // 0ÎªµÍËÙ,·Ç0ÎªÈ«ËÙ
+    UINT8  DeviceType;    // Éè±¸ÀàĞÍ
+    UINT16 DeviceVID;
+    UINT16 DevicePID;
+    UINT8  GpVar[4]; // Í¨ÓÃ±äÁ¿
+} _DevOnHubPort;     // ¼Ù¶¨:²»³¬¹ı1¸öÍâ²¿HUB,Ã¿¸öÍâ²¿HUB²»³¬¹ıHUB_MAX_PORTS¸ö¶Ë¿Ú(¶àÁË²»¹Ü)
 
-extern _RootHubDev  ThisUsbDev;
-extern UINT8  UsbDevEndp0Size;              // USBè®¾å¤‡çš„ç«¯ç‚¹0çš„æœ€å¤§åŒ…å°ºå¯¸ */
-extern UINT8  FoundNewDev;
+extern _RootHubDev   ThisUsbDev;
+extern _DevOnHubPort DevOnHubPort[HUB_MAX_PORTS]; // ¼Ù¶¨:²»³¬¹ı1¸öÍâ²¿HUB,Ã¿¸öÍâ²¿HUB²»³¬¹ıHUB_MAX_PORTS¸ö¶Ë¿Ú(¶àÁË²»¹Ü)
+extern uint8_t       UsbDevEndp0Size;             // USBÉè±¸µÄ¶Ëµã0µÄ×î´ó°ü³ß´ç */
+extern uint8_t       FoundNewDev;
 
-extern PUINT8  pHOST_RX_RAM_Addr;
-extern PUINT8  pHOST_TX_RAM_Addr;
-#define pSetupReq   ((PUSB_SETUP_REQ)pHOST_TX_RAM_Addr)
-extern UINT8  Com_Buffer[];
+extern uint8_t *pHOST_RX_RAM_Addr;
+extern uint8_t *pHOST_TX_RAM_Addr;
+#define pSetupReq    ((PUSB_SETUP_REQ)pHOST_TX_RAM_Addr)
+extern uint8_t Com_Buffer[];
 
-/* ä»¥ä¸‹ä¸ºUSBä¸»æœºè¯·æ±‚åŒ… */
-extern const UINT8  SetupGetDevDescr[];    //*è·å–è®¾å¤‡æè¿°ç¬¦*/
-extern const UINT8  SetupGetCfgDescr[];    //*è·å–é…ç½®æè¿°ç¬¦*/
-extern const UINT8  SetupSetUsbAddr[];     //*è®¾ç½®USBåœ°å€*/
-extern const UINT8  SetupSetUsbConfig[];   //*è®¾ç½®USBé…ç½®*/
-extern const UINT8  SetupSetUsbInterface[];//*è®¾ç½®USBæ¥å£é…ç½®*/
-extern const UINT8  SetupClrEndpStall[];   //*æ¸…é™¤ç«¯ç‚¹STALL*/
+/* ÒÔÏÂÎªUSBÖ÷»úÇëÇó°ü */
+extern const uint8_t SetupGetDevDescr[];     // »ñÈ¡Éè±¸ÃèÊö·û*/
+extern const uint8_t SetupGetCfgDescr[];     // »ñÈ¡ÅäÖÃÃèÊö·û*/
+extern const uint8_t SetupSetUsbAddr[];      // ÉèÖÃUSBµØÖ·*/
+extern const uint8_t SetupSetUsbConfig[];    // ÉèÖÃUSBÅäÖÃ*/
+extern const uint8_t SetupSetUsbInterface[]; // ÉèÖÃUSB½Ó¿ÚÅäÖÃ*/
+extern const uint8_t SetupClrEndpStall[];    // Çå³ı¶ËµãSTALL*/
 
+/**
+ * @brief   ¹Ø±ÕROOT-HUB¶Ë¿Ú,Êµ¼ÊÉÏÓ²¼şÒÑ¾­×Ô¶¯¹Ø±Õ,´Ë´¦Ö»ÊÇÇå³ıÒ»Ğ©½á¹¹×´Ì¬
+ */
+void DisableRootHubPort(void);
 
-void  DisableRootHubPort(void)  ;                   // å…³é—­ROOT-HUBç«¯å£,å®é™…ä¸Šç¡¬ä»¶å·²ç»è‡ªåŠ¨å…³é—­,æ­¤å¤„åªæ˜¯æ¸…é™¤ä¸€äº›ç»“æ„çŠ¶æ€
-UINT8   AnalyzeRootHub( void ) ;         // åˆ†æROOT-HUBçŠ¶æ€,å¤„ç†ROOT-HUBç«¯å£çš„è®¾å¤‡æ’æ‹”äº‹ä»¶
-// è¿”å›ERR_SUCCESSä¸ºæ²¡æœ‰æƒ…å†µ,è¿”å›ERR_USB_CONNECTä¸ºæ£€æµ‹åˆ°æ–°è¿æ¥,è¿”å›ERR_USB_DISCONä¸ºæ£€æµ‹åˆ°æ–­å¼€
-void    SetHostUsbAddr( UINT8 addr );                 // è®¾ç½®USBä¸»æœºå½“å‰æ“ä½œçš„USBè®¾å¤‡åœ°å€
-void    SetUsbSpeed( UINT8 FullSpeed );               // è®¾ç½®å½“å‰USBé€Ÿåº¦
-void    ResetRootHubPort(void);                          // æ£€æµ‹åˆ°è®¾å¤‡å,å¤ä½ç›¸åº”ç«¯å£çš„æ€»çº¿,ä¸ºæšä¸¾è®¾å¤‡å‡†å¤‡,è®¾ç½®ä¸ºé»˜è®¤ä¸ºå…¨é€Ÿ
-UINT8   EnableRootHubPort(void);                          // ä½¿èƒ½ROOT-HUBç«¯å£,ç›¸åº”çš„bUH_PORT_ENç½®1å¼€å¯ç«¯å£,è®¾å¤‡æ–­å¼€å¯èƒ½å¯¼è‡´è¿”å›å¤±è´¥
-void    SelectHubPort( UINT8 HubPortIndex );// HubPortIndex=0é€‰æ‹©æ“ä½œæŒ‡å®šçš„ROOT-HUBç«¯å£,å¦åˆ™é€‰æ‹©æ“ä½œæŒ‡å®šçš„ROOT-HUBç«¯å£çš„å¤–éƒ¨HUBçš„æŒ‡å®šç«¯å£
-UINT8   WaitUSB_Interrupt( void );                    // ç­‰å¾…USBä¸­æ–­
-// ä¼ è¾“äº‹åŠ¡,è¾“å…¥ç›®çš„ç«¯ç‚¹åœ°å€/PIDä»¤ç‰Œ,åŒæ­¥æ ‡å¿—,ä»¥20uSä¸ºå•ä½çš„NAKé‡è¯•æ€»æ—¶é—´(0åˆ™ä¸é‡è¯•,0xFFFFæ— é™é‡è¯•),è¿”å›0æˆåŠŸ,è¶…æ—¶/å‡ºé”™é‡è¯•
-UINT8   USBHostTransact( UINT8 endp_pid, UINT8 tog, UINT32 timeout );  // endp_pid: é«˜4ä½æ˜¯token_pidä»¤ç‰Œ, ä½4ä½æ˜¯ç«¯ç‚¹åœ°å€
-UINT8   HostCtrlTransfer( PUINT8 DataBuf, PUINT8 RetLen );  // æ‰§è¡Œæ§åˆ¶ä¼ è¾“,8å­—èŠ‚è¯·æ±‚ç åœ¨pSetupReqä¸­,DataBufä¸ºå¯é€‰çš„æ”¶å‘ç¼“å†²åŒº
-// å¦‚æœéœ€è¦æ¥æ”¶å’Œå‘é€æ•°æ®,é‚£ä¹ˆDataBuféœ€æŒ‡å‘æœ‰æ•ˆç¼“å†²åŒºç”¨äºå­˜æ”¾åç»­æ•°æ®,å®é™…æˆåŠŸæ”¶å‘çš„æ€»é•¿åº¦è¿”å›ä¿å­˜åœ¨ReqLenæŒ‡å‘çš„å­—èŠ‚å˜é‡ä¸­
+/**
+ * @brief   ·ÖÎöROOT-HUB×´Ì¬,´¦ÀíROOT-HUB¶Ë¿ÚµÄÉè±¸²å°ÎÊÂ¼ş
+ *          Èç¹ûÉè±¸°Î³ö,º¯ÊıÖĞµ÷ÓÃDisableRootHubPort()º¯Êı,½«¶Ë¿Ú¹Ø±Õ,²åÈëÊÂ¼ş,ÖÃÏàÓ¦¶Ë¿ÚµÄ×´Ì¬Î»
+ *
+ * @return  ·µ»ØERR_SUCCESSÎªÃ»ÓĞÇé¿ö,·µ»ØERR_USB_CONNECTÎª¼ì²âµ½ĞÂÁ¬½Ó,·µ»ØERR_USB_DISCONÎª¼ì²âµ½¶Ï¿ª
+ */
+uint8_t AnalyzeRootHub(void);
 
+/**
+ * @brief   ÉèÖÃUSBÖ÷»úµ±Ç°²Ù×÷µÄUSBÉè±¸µØÖ·
+ *
+ * @param   addr    - USBÉè±¸µØÖ·
+ */
+void SetHostUsbAddr(uint8_t addr);
 
-void CopySetupReqPkg( PCCHAR pReqPkt );            // å¤åˆ¶æ§åˆ¶ä¼ è¾“çš„è¯·æ±‚åŒ…
-UINT8 CtrlGetDeviceDescr( void );                    // è·å–è®¾å¤‡æè¿°ç¬¦,è¿”å›åœ¨ pHOST_TX_RAM_Addr ä¸­
-UINT8 CtrlGetConfigDescr( void );                    // è·å–é…ç½®æè¿°ç¬¦,è¿”å›åœ¨ pHOST_TX_RAM_Addr ä¸­
-UINT8 CtrlSetUsbAddress( UINT8 addr );                         // è®¾ç½®USBè®¾å¤‡åœ°å€
-UINT8 CtrlSetUsbConfig( UINT8 cfg );                           // è®¾ç½®USBè®¾å¤‡é…ç½®
-UINT8 CtrlClearEndpStall( UINT8 endp ) ;                       // æ¸…é™¤ç«¯ç‚¹STALL
-UINT8 CtrlSetUsbIntercace( UINT8 cfg );					       // è®¾ç½®USBè®¾å¤‡æ¥å£
+/**
+ * @brief   ÉèÖÃµ±Ç°USBËÙ¶È
+ *
+ * @param   FullSpeed   - USBËÙ¶È
+ */
+void SetUsbSpeed(uint8_t FullSpeed);
 
+/**
+ * @brief   ¼ì²âµ½Éè±¸ºó,¸´Î»×ÜÏß,ÎªÃ¶¾ÙÉè±¸×¼±¸,ÉèÖÃÎªÄ¬ÈÏÎªÈ«ËÙ
+ */
+void ResetRootHubPort(void);
 
-void    USB_HostInit( void );                                  // åˆå§‹åŒ–USBä¸»æœº
+/**
+ * @brief   Ê¹ÄÜROOT-HUB¶Ë¿Ú,ÏàÓ¦µÄbUH_PORT_ENÖÃ1¿ªÆô¶Ë¿Ú,Éè±¸¶Ï¿ª¿ÉÄÜµ¼ÖÂ·µ»ØÊ§°Ü
+ *
+ * @return  ·µ»ØERR_SUCCESSÎª¼ì²âµ½ĞÂÁ¬½Ó,·µ»ØERR_USB_DISCONÎªÎŞÁ¬½Ó
+ */
+uint8_t EnableRootHubPort(void);
 
+/**
+ * @brief   µÈ´ıUSBÖĞ¶Ï
+ *
+ * @return  ·µ»ØERR_SUCCESS Êı¾İ½ÓÊÕ»òÕß·¢ËÍ³É¹¦,·µ»ØERR_USB_UNKNOWN Êı¾İ½ÓÊÕ»òÕß·¢ËÍÊ§°Ü
+ */
+uint8_t WaitUSB_Interrupt(void);
 
+/**
+ * @brief   ´«ÊäÊÂÎñ,ÊäÈëÄ¿µÄ¶ËµãµØÖ·/PIDÁîÅÆ,Í¬²½±êÖ¾,ÒÔ20uSÎªµ¥Î»µÄNAKÖØÊÔ×ÜÊ±¼ä(0Ôò²»ÖØÊÔ,0xFFFFÎŞÏŞÖØÊÔ),·µ»Ø0³É¹¦,³¬Ê±/³ö´íÖØÊÔ
+ *          ±¾×Ó³ÌĞò×ÅÖØÓÚÒ×Àí½â,¶øÔÚÊµ¼ÊÓ¦ÓÃÖĞ,ÎªÁËÌá¹©ÔËĞĞËÙ¶È,Ó¦¸Ã¶Ô±¾×Ó³ÌĞò´úÂë½øĞĞÓÅ»¯
+ *
+ * @param   endp_pid    - ÁîÅÆºÍµØÖ·, ¸ß4Î»ÊÇtoken_pidÁîÅÆ, µÍ4Î»ÊÇ¶ËµãµØÖ·
+ * @param   tog         - Í¬²½±êÖ¾
+ * @param   timeout     - ³¬Ê±Ê±¼ä
+ *
+ * @return  ERR_USB_UNKNOWN ³¬Ê±£¬¿ÉÄÜÓ²¼şÒì³£
+ *          ERR_USB_DISCON  Éè±¸¶Ï¿ª
+ *          ERR_USB_CONNECT Éè±¸Á¬½Ó
+ *          ERR_SUCCESS     ´«ÊäÍê³É
+ */
+uint8_t USBHostTransact(uint8_t endp_pid, uint8_t tog, uint32_t timeout);
 
-/*************************************************************/
+/**
+ * @brief   Ö´ĞĞ¿ØÖÆ´«Êä,8×Ö½ÚÇëÇóÂëÔÚpSetupReqÖĞ,DataBufÎª¿ÉÑ¡µÄÊÕ·¢»º³åÇø
+ *
+ * @param   DataBuf     - Èç¹ûĞèÒª½ÓÊÕºÍ·¢ËÍÊı¾İ,ÄÇÃ´DataBufĞèÖ¸ÏòÓĞĞ§»º³åÇøÓÃÓÚ´æ·ÅºóĞøÊı¾İ
+ * @param   RetLen      - Êµ¼Ê³É¹¦ÊÕ·¢µÄ×Ü³¤¶È±£´æÔÚRetLenÖ¸ÏòµÄ×Ö½Ú±äÁ¿ÖĞ
+ *
+ * @return  ERR_USB_BUF_OVER    IN×´Ì¬½×¶Î³ö´í
+ *          ERR_SUCCESS         Êı¾İ½»»»³É¹¦
+ */
+uint8_t HostCtrlTransfer(uint8_t *DataBuf, uint8_t *RetLen);
 
+/**
+ * @brief   ¸´ÖÆ¿ØÖÆ´«ÊäµÄÇëÇó°ü
+ *
+ * @param   pReqPkt     - ¿ØÖÆÇëÇó°üµØÖ·
+ */
+void CopySetupReqPkg(const uint8_t *pReqPkt);
 
-UINT8 InitRootDevice( void ); 
+/**
+ * @brief   »ñÈ¡Éè±¸ÃèÊö·û,·µ»ØÔÚ pHOST_TX_RAM_Addr ÖĞ
+ *
+ * @return  ERR_USB_BUF_OVER    ÃèÊö·û³¤¶È´íÎó
+ *          ERR_SUCCESS         ³É¹¦
+ */
+uint8_t CtrlGetDeviceDescr(void);
 
-UINT8   CtrlGetHIDDeviceReport( UINT8 infc );          // HIDç±»å‘½ä»¤ï¼ŒSET_IDLEå’ŒGET_REPORT 
-UINT8   CtrlGetHubDescr( void );                       // è·å–HUBæè¿°ç¬¦,è¿”å›åœ¨TxBufferä¸­
-UINT8   HubGetPortStatus( UINT8 HubPortIndex );        // æŸ¥è¯¢HUBç«¯å£çŠ¶æ€,è¿”å›åœ¨TxBufferä¸­
-UINT8   HubSetPortFeature( UINT8 HubPortIndex, UINT8 FeatureSelt );  // è®¾ç½®HUBç«¯å£ç‰¹æ€§
-UINT8   HubClearPortFeature( UINT8 HubPortIndex, UINT8 FeatureSelt );  // æ¸…é™¤HUBç«¯å£ç‰¹æ€§
-	 	 
-	 
-	 
+/**
+ * @brief   »ñÈ¡ÅäÖÃÃèÊö·û,·µ»ØÔÚ pHOST_TX_RAM_Addr ÖĞ
+ *
+ * @return  ERR_USB_BUF_OVER    ÃèÊö·û³¤¶È´íÎó
+ *          ERR_SUCCESS         ³É¹¦
+ */
+uint8_t CtrlGetConfigDescr(void);
+
+/**
+ * @brief   ÉèÖÃUSBÉè±¸µØÖ·
+ *
+ * @param   addr    - Éè±¸µØÖ·
+ *
+ * @return  ERR_SUCCESS     ³É¹¦
+ */
+uint8_t CtrlSetUsbAddress(uint8_t addr);
+
+/**
+ * @brief   ÉèÖÃUSBÉè±¸ÅäÖÃ
+ *
+ * @param   cfg     - ÅäÖÃÖµ
+ *
+ * @return  ERR_SUCCESS     ³É¹¦
+ */
+uint8_t CtrlSetUsbConfig(uint8_t cfg);
+
+/**
+ * @brief   Çå³ı¶ËµãSTALL
+ *
+ * @param   endp    - ¶ËµãµØÖ·
+ *
+ * @return  ERR_SUCCESS     ³É¹¦
+ */
+uint8_t CtrlClearEndpStall(uint8_t endp);
+
+/**
+ * @brief   ÉèÖÃUSBÉè±¸½Ó¿Ú
+ *
+ * @param   cfg     - ÅäÖÃÖµ
+ *
+ * @return  ERR_SUCCESS     ³É¹¦
+ */
+uint8_t CtrlSetUsbIntercace(uint8_t cfg);
+
+/**
+ * @brief   USBÖ÷»ú¹¦ÄÜ³õÊ¼»¯
+ */
+void USB_HostInit(void);
+uint8_t EnumAllHubPort(void);// Ã¶¾ÙËùÓĞROOT-HUB¶Ë¿ÚÏÂÍâ²¿HUBºóµÄ¶ş¼¶USBÉè±¸
+void SelectHubPort(uint8_t HubPortIndex); // HubPortIndex=0Ñ¡Ôñ²Ù×÷Ö¸¶¨µÄROOT-HUB¶Ë¿Ú,·ñÔòÑ¡Ôñ²Ù×÷Ö¸¶¨µÄROOT-HUB¶Ë¿ÚµÄÍâ²¿HUBµÄÖ¸¶¨¶Ë¿Ú
+uint16_t SearchTypeDevice(uint8_t type); // ÔÚROOT-HUBÒÔ¼°Íâ²¿HUB¸÷¶Ë¿ÚÉÏËÑË÷Ö¸¶¨ÀàĞÍµÄÉè±¸ËùÔÚµÄ¶Ë¿ÚºÅ,Êä³ö¶Ë¿ÚºÅÎª0xFFFFÔòÎ´ËÑË÷µ½.
+uint8_t SETorOFFNumLock(uint8_t *buf); // NumLockµÄµãµÆÅĞ¶Ï
+
+/**
+ * @brief   ³õÊ¼»¯Ö¸¶¨ROOT-HUB¶Ë¿ÚµÄUSBÉè±¸
+ *
+ * @return  ´íÎóÂë
+ */
+uint8_t InitRootDevice(void);
+
+/**
+ * @brief   »ñÈ¡HIDÉè±¸±¨±íÃèÊö·û,·µ»ØÔÚTxBufferÖĞ
+ *
+ * @return  ´íÎóÂë
+ */
+uint8_t CtrlGetHIDDeviceReport(uint8_t infc);
+
+/**
+ * @brief   »ñÈ¡HUBÃèÊö·û,·µ»ØÔÚCom_BufferÖĞ
+ *
+ * @return  ´íÎóÂë
+ */
+uint8_t CtrlGetHubDescr(void);
+
+/**
+ * @brief   ²éÑ¯HUB¶Ë¿Ú×´Ì¬,·µ»ØÔÚCom_BufferÖĞ
+ *
+ * @param   HubPortIndex    - ¶Ë¿ÚºÅ
+ *
+ * @return  ´íÎóÂë
+ */
+uint8_t HubGetPortStatus(uint8_t HubPortIndex);
+
+/**
+ * @brief   ÉèÖÃHUB¶Ë¿ÚÌØĞÔ
+ *
+ * @param   HubPortIndex    - ¶Ë¿ÚºÅ
+ * @param   FeatureSelt     - ¶Ë¿ÚÌØĞÔ
+ *
+ * @return  ´íÎóÂë
+ */
+uint8_t HubSetPortFeature(uint8_t HubPortIndex, uint8_t FeatureSelt);
+
+/**
+ * @brief   Çå³ıHUB¶Ë¿ÚÌØĞÔ
+ *
+ * @param   HubPortIndex    - ¶Ë¿ÚºÅ
+ * @param   FeatureSelt     - ¶Ë¿ÚÌØĞÔ
+ *
+ * @return  ´íÎóÂë
+ */
+uint8_t HubClearPortFeature(uint8_t HubPortIndex, uint8_t FeatureSelt);
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif  // __CH57x_USBHOST_H__	
-
+#endif // __CH57x_USBHOST_H__

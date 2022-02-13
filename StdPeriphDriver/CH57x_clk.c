@@ -1,450 +1,499 @@
 /********************************** (C) COPYRIGHT *******************************
-* File Name          : CH57x_clk.c
-* Author             : WCH
-* Version            : V1.0
-* Date               : 2018/12/15
-* Description 
-*******************************************************************************/
+ * File Name          : CH57x_clk.c
+ * Author             : WCH
+ * Version            : V1.2
+ * Date               : 2021/11/17
+ * Description
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * SPDX-License-Identifier: Apache-2.0
+ *******************************************************************************/
 
 #include "CH57x_common.h"
 
-UINT16 Int32K_Tune_FLASH = 0;
-UINT16 Int32K_Tune_RAM = 0;
+uint16_t Int32K_Tune_FLASH = 0;
+uint16_t Int32K_Tune_RAM = 0;
 
-/*******************************************************************************
-* Function Name  : LClk32K_Select
-* Description    : 32K ‰ΩéÈ¢ëÊó∂ÈíüÊù•Ê∫ê
-* Input          : hc: 
-					Clk32K_LSI   -   ÈÄâÊã©ÂÜÖÈÉ®32K
-					Clk32K_LSE   -   ÈÄâÊã©Â§ñÈÉ®32K
-* Return         : None
-*******************************************************************************/
-void LClk32K_Select( LClk32KTypeDef hc)
+/*********************************************************************
+ * @fn      LClk32K_Select
+ *
+ * @brief   32K µÕ∆µ ±÷”¿¥‘¥
+ *
+ * @param   hc  - —°‘Ò32K π”√ƒ⁄≤øªπ «Õ‚≤ø
+ *
+ * @return  none
+ */
+void LClk32K_Select(LClk32KTypeDef hc)
 {
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;	
-    if( hc == Clk32K_LSI)
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    if(hc == Clk32K_LSI)
+    {
         R8_CK32K_CONFIG &= ~RB_CLK_OSC32K_XT;
+    }
     else
+    {
         R8_CK32K_CONFIG |= RB_CLK_OSC32K_XT;
+    }
     R8_SAFE_ACCESS_SIG = 0;
 }
 
-/*******************************************************************************
-* Function Name  : HSECFG_Current
-* Description    : HSEÊô∂‰Ωì ÂÅèÁΩÆÁîµÊµÅÈÖçÁΩÆ
-* Input          : c: 75%,100%,125%,150%
-* Return         : None
-*******************************************************************************/
-void HSECFG_Current( HSECurrentTypeDef c )
+/*********************************************************************
+ * @fn      HSECFG_Current
+ *
+ * @brief   HSEæßÃÂ ∆´÷√µÁ¡˜≈‰÷√
+ *
+ * @param   c   - 75%,100%,125%,150%
+ *
+ * @return  none
+ */
+void HSECFG_Current(HSECurrentTypeDef c)
 {
-    UINT8  x32M_c;
-    
+    uint8_t x32M_c;
+
     x32M_c = R8_XT32M_TUNE;
-    x32M_c = (x32M_c&0xfc)|(c&0x03);
-    
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;	
+    x32M_c = (x32M_c & 0xfc) | (c & 0x03);
+
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
     R8_XT32M_TUNE = x32M_c;
     R8_SAFE_ACCESS_SIG = 0;
 }
 
-/*******************************************************************************
-* Function Name  : HSECFG_Capacitance
-* Description    : HSEÊô∂‰Ωì Ë¥üËΩΩÁîµÂÆπÈÖçÁΩÆ
-* Input          : c: refer to HSECapTypeDef
-* Return         : None
-*******************************************************************************/
-void HSECFG_Capacitance( HSECapTypeDef c )
+/*********************************************************************
+ * @fn      HSECFG_Capacitance
+ *
+ * @brief   HSEæßÃÂ ∏∫‘ÿµÁ»›≈‰÷√
+ *
+ * @param   c   - refer to HSECapTypeDef
+ *
+ * @return  none
+ */
+void HSECFG_Capacitance(HSECapTypeDef c)
 {
-    UINT8  x32M_c;
-    
+    uint8_t x32M_c;
+
     x32M_c = R8_XT32M_TUNE;
-    x32M_c = (x32M_c&0x8f)|(c<<4);
-    
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;	
+    x32M_c = (x32M_c & 0x8f) | (c << 4);
+
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
     R8_XT32M_TUNE = x32M_c;
     R8_SAFE_ACCESS_SIG = 0;
 }
 
-/*******************************************************************************
-* Function Name  : LSECFG_Current
-* Description    : LSEÊô∂‰Ωì ÂÅèÁΩÆÁîµÊµÅÈÖçÁΩÆ
-* Input          : c: 70%,100%,140%,200%
-* Return         : None
-*******************************************************************************/
-void LSECFG_Current( LSECurrentTypeDef c )
+/*********************************************************************
+ * @fn      LSECFG_Current
+ *
+ * @brief   LSEæßÃÂ ∆´÷√µÁ¡˜≈‰÷√
+ *
+ * @param   c   - 70%,100%,140%,200%
+ *
+ * @return  none
+ */
+void LSECFG_Current(LSECurrentTypeDef c)
 {
-    UINT8  x32K_c;
-    
+    uint8_t x32K_c;
+
     x32K_c = R8_XT32K_TUNE;
-    x32K_c = (x32K_c&0xfc)|(c&0x03);
-    
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;	
+    x32K_c = (x32K_c & 0xfc) | (c & 0x03);
+
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
     R8_XT32K_TUNE = x32K_c;
     R8_SAFE_ACCESS_SIG = 0;
 }
 
-/*******************************************************************************
-* Function Name  : LSECFG_Capacitance
-* Description    : LSEÊô∂‰Ωì Ë¥üËΩΩÁîµÂÆπÈÖçÁΩÆ
-* Input          : c: refer to LSECapTypeDef
-* Return         : None
-*******************************************************************************/
-void LSECFG_Capacitance( LSECapTypeDef c )
+/*********************************************************************
+ * @fn      LSECFG_Capacitance
+ *
+ * @brief   LSEæßÃÂ ∏∫‘ÿµÁ»›≈‰÷√
+ *
+ * @param   c   - refer to LSECapTypeDef
+ *
+ * @return  none
+ */
+void LSECFG_Capacitance(LSECapTypeDef c)
 {
-    UINT8  x32K_c;
-    
+    uint8_t x32K_c;
+
     x32K_c = R8_XT32K_TUNE;
-    x32K_c = (x32K_c&0x0f)|(c<<4);
-    
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;	
+    x32K_c = (x32K_c & 0x0f) | (c << 4);
+
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
     R8_XT32K_TUNE = x32K_c;
     R8_SAFE_ACCESS_SIG = 0;
 }
-/*******************************************************************************
-* Function Name  : Calibration_LSI_FLASH
-* Description    : Ê†°ÂáÜÂú®FLASH‰∏≠ËøêË°åÊó∂ÁöÑÂÜÖÈÉ®32KÊó∂Èíü
-* Input          : None
-* Return         : ËØØÂ∑ÆÔºö‰∏áÂàÜ‰πãÔºàÂçï‰ΩçÔºâ
-*******************************************************************************/
-UINT16 Calibration_LSI_FLASH( void )
+
+/*********************************************************************
+ * @fn      Calibration_LSI_FLASH
+ *
+ * @brief   –£◊º‘⁄FLASH÷–‘À–– ±µƒƒ⁄≤ø32K ±÷”
+ *
+ * @param   none
+ *
+ * @return  ŒÛ≤Ó£∫ÕÚ∑÷÷Æ£®µ•Œª£©
+ */
+uint16_t Calibration_LSI_FLASH(void)
 {
-  UINT16 rev, basev;
-  UINT32 calv;
-  UINT16 i;
-  UINT16 loc, loc_t;
-  float CNT_STEP_K;
-  signed short diff_1, diff_2, diffc;
-  UINT8 k = 0;
+    uint16_t     rev, basev;
+    uint32_t     calv;
+    uint16_t     i;
+    uint16_t     loc, loc_t;
+    float        CNT_STEP_K;
+    signed short diff_1, diff_2, diffc;
+    uint8_t      k = 0;
 
-  /* Ê†πÊçÆÂΩìÂâçÊó∂ÈíüËé∑ÂèñÊ†áÁß∞ÂÄºÂíåÊñúÁéáÔºàT-stepÔºâ */
-  rev = R16_CLK_SYS_CFG & 0xff;
-  if ( ( rev & RB_CLK_SYS_MOD ) == ( 2 << 6 ) )
-  {       // 32MÂÅö‰∏ªÈ¢ë
-    calv = ( ( 5 * 32000000 + ( CAB_LSIFQ >> 1 ) ) / CAB_LSIFQ );
-    CNT_STEP_K = -1.6;
-  }
-  else if ( ( rev & RB_CLK_SYS_MOD ) == ( 1 << 6 ) )
-  {   // PLLËøõË°åÂàÜÈ¢ë
-    calv = ( ( ( UINT32 ) 5 * 480000000 / ( rev & 0x1f ) + ( CAB_LSIFQ >> 1 ) ) / CAB_LSIFQ );
-    CNT_STEP_K = -0.1 * ( rev & 0x1f );
-  }
-  else if ( ( rev & RB_CLK_SYS_MOD ) == ( 0 << 6 ) )
-  {   // 32MËøõË°åÂàÜÈ¢ë
-    calv = ( ( 5 * 32000000 / ( rev & 0x1f ) + ( CAB_LSIFQ >> 1 ) ) / CAB_LSIFQ );
-    CNT_STEP_K = -1.6 * ( rev & 0x1f );
-  }
-  else
-  {                       // 32KÂÅö‰∏ªÈ¢ë
-    calv = ( 5 );
-    CNT_STEP_K = 0;
-  }
-  basev = calv;             // Ëé∑ÂèñÊ†°ÂáÜÊ†áÁß∞ÂÄº
+    /* ∏˘æ›µ±«∞ ±÷”ªÒ»°±Í≥∆÷µ∫Õ–±¬ £®T-step£© */
+    rev = R16_CLK_SYS_CFG & 0xff;
+    if((rev & RB_CLK_SYS_MOD) == (2 << 6))
+    { // 32M◊ˆ÷˜∆µ
+        calv = ((5 * 32000000 + (CAB_LSIFQ >> 1)) / CAB_LSIFQ);
+        CNT_STEP_K = -1.6;
+    }
+    else if((rev & RB_CLK_SYS_MOD) == (1 << 6))
+    { // PLLΩ¯––∑÷∆µ
+        calv = (((uint32_t)5 * 480000000 / (rev & 0x1f) + (CAB_LSIFQ >> 1)) / CAB_LSIFQ);
+        CNT_STEP_K = -0.1 * (rev & 0x1f);
+    }
+    else if((rev & RB_CLK_SYS_MOD) == (0 << 6))
+    { // 32MΩ¯––∑÷∆µ
+        calv = ((5 * 32000000 / (rev & 0x1f) + (CAB_LSIFQ >> 1)) / CAB_LSIFQ);
+        CNT_STEP_K = -1.6 * (rev & 0x1f);
+    }
+    else
+    { // 32K◊ˆ÷˜∆µ
+        calv = (5);
+        CNT_STEP_K = 0;
+    }
+    basev = calv; // ªÒ»°–£◊º±Í≥∆÷µ
 
-  if( Int32K_Tune_FLASH )
-    loc = Int32K_Tune_FLASH;
-  else
-    loc = 2048;
-//  if (loc == 2048)
-//    loc = 1837; //10040.625-1.640625*5000;  //ÁªèÈ™åÊõ≤Á∫ø
+    if(Int32K_Tune_FLASH)
+    {
+        loc = Int32K_Tune_FLASH;
+    }
+    else
+    {
+        loc = 2048;
+    }
+    //  if (loc == 2048)
+    //    loc = 1837; //10040.625-1.640625*5000;  //æ≠—È«˙œﬂ
 
-  diff_2 = 0;
-  diffc = 0;
+    diff_2 = 0;
+    diffc = 0;
 
-  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-  R8_OSC_CAL_CTRL = RB_OSC_CNT_EN;
-  do
-  {
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    R8_OSC_CAL_CTRL = RB_OSC_CNT_EN;
+    do
+    {
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+        R16_INT32K_TUNE = loc;
+        R8_SAFE_ACCESS_SIG = 0;
+
+        /* ∂¡»°µ±«∞÷µ */
+        while(!(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT));
+        i = R16_OSC_CAL_CNT; // ”√”⁄∂™∆˙
+        while(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT);
+        while(!(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT));
+        i = R16_OSC_CAL_CNT; //  µ ±–£◊º∫Û≤…—˘÷µ
+        k++;
+        diff_1 = i - basev;
+
+        Int32K_Tune_FLASH = loc;
+        if(diff_1 == 0)
+        {
+            return 0; // –£◊º’˝∫√
+        }
+        else if((diff_1 * diff_2) < 0)
+        { // ¥¶”⁄¡Ωµ„÷Æº‰
+            if((diffc == 1) || (diffc == -1) || (diffc == 0))
+            {
+                // ∂º±‰≥…’˝ ˝
+                if(diff_2 < 0)
+                {
+                    diff_2 = ~(diff_2 - 1);
+                }
+                else
+                {
+                    diff_1 = ~(diff_1 - 1);
+                }
+
+                if(diff_1 > diff_2)
+                {
+                    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+                    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+                    R16_INT32K_TUNE = loc_t;
+                    R8_SAFE_ACCESS_SIG = 0;
+
+                    return (diff_2 * 10000 / basev); // ∑µªÿŒÛ≤Ó÷µ£¨ÕÚ∑÷÷Æ
+                }
+                else
+                {
+                    return (diff_1 * 10000 / basev);
+                }
+            }
+        }
+
+        if(((i > basev ? (i - basev) : (basev - i)) * 10000 / basev) < 11)
+        {
+            return ((i > basev ? (i - basev) : (basev - i)) * 10000 / basev);
+        }
+        // ±£¥Ê…œ“ª¥Œ÷µ
+        diff_2 = diff_1;
+        loc_t = loc;
+        diffc = diff_1 * CNT_STEP_K;
+        loc = loc - diffc;
+        if(loc == loc_t)
+        {
+            if(diff_1 > 0)
+            {
+                loc = loc + 1; // µ±«∞∆µ¬ ∆´–°
+            }
+            else
+            {
+                loc = loc - 1; // µ±«∞∆µ¬ ∆´¥Û
+            }
+        }
+    } while(k < 20);
+
+    Int32K_Tune_FLASH = loc;
+    return ((i > basev ? (i - basev) : (basev - i)) * 10000 / basev);
+}
+
+/*********************************************************************
+ * @fn      Get_Calibration_Cnt_RAM
+ *
+ * @brief   ªÒ»°‘⁄RAM÷–º∆ ˝µƒ–£◊ºº∆ ˝÷µ
+ *
+ * @param   loc - TUNE÷µ
+ *
+ * @return  º∆ ˝÷µ
+ */
+__attribute__((section(".highcode")))
+uint16_t Get_Calibration_Cnt_RAM(uint16_t loc)
+{
+    uint16_t i;
+
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
     R16_INT32K_TUNE = loc;
     R8_SAFE_ACCESS_SIG = 0;
+    /* ∂¡»°µ±«∞÷µ */
+    while(!(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT));
+    i = R16_OSC_CAL_CNT; // ”√”⁄∂™∆˙
+    while(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT);
+    while(!(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT));
+    i = R16_OSC_CAL_CNT;
+    return i;
+}
 
-    /* ËØªÂèñÂΩìÂâçÂÄº */
-    while( !( R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT ) )
-      ;
-    i = R16_OSC_CAL_CNT;      // Áî®‰∫é‰∏¢ÂºÉ
-    while( R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT )
-      ;
-    while( !( R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT ) )
-      ;
-    i = R16_OSC_CAL_CNT;      // ÂÆûÊó∂Ê†°ÂáÜÂêéÈááÊ†∑ÂÄº
-    k++;
-    diff_1 = i - basev;
+/*********************************************************************
+ * @fn      Calibration_LSI_RAM
+ *
+ * @brief   –£◊º‘⁄RAM÷–‘À–– ±µƒƒ⁄≤ø32K ±÷”
+ *
+ * @param   none
+ *
+ * @return  ŒÛ≤Ó£∫ÕÚ∑÷÷Æ£®µ•Œª£©
+ */
+uint16_t Calibration_LSI_RAM(void)
+{
+    uint16_t     rev, basev;
+    uint32_t     calv;
+    uint16_t     i;
+    uint16_t     loc, loc_t;
+    float        CNT_STEP_K;
+    signed short diff_1, diff_2, diffc;
+    uint8_t      k = 0;
 
-    Int32K_Tune_FLASH = loc;
-    if ( diff_1 == 0 )
-    {
-      return 0;    // Ê†°ÂáÜÊ≠£Â•Ω
+    /* ∏˘æ›µ±«∞ ±÷”ªÒ»°±Í≥∆÷µ∫Õ–±¬ £®T-step£© */
+    rev = R16_CLK_SYS_CFG & 0xff;
+    if((rev & RB_CLK_SYS_MOD) == (2 << 6))
+    { // 32M◊ˆ÷˜∆µ
+        calv = ((5 * 32000000 + (CAB_LSIFQ >> 1)) / CAB_LSIFQ);
+        CNT_STEP_K = -1.6;
     }
-    else if ( ( diff_1 * diff_2 ) < 0 )
-    {         // Â§Ñ‰∫é‰∏§ÁÇπ‰πãÈó¥
-      if ( ( diffc == 1 ) || ( diffc == -1 ) || ( diffc == 0 ) )
-      {
-        // ÈÉΩÂèòÊàêÊ≠£Êï∞
-        if ( diff_2 < 0 )
-          diff_2 = ~( diff_2 - 1 );
-        else
-          diff_1 = ~( diff_1 - 1 );
+    else if((rev & RB_CLK_SYS_MOD) == (1 << 6))
+    { // PLLΩ¯––∑÷∆µ
+        calv = (((uint32_t)5 * 480000000 / (rev & 0x1f) + (CAB_LSIFQ >> 1)) / CAB_LSIFQ);
+        CNT_STEP_K = -0.1 * (rev & 0x1f);
+    }
+    else if((rev & RB_CLK_SYS_MOD) == (0 << 6))
+    { // 32MΩ¯––∑÷∆µ
+        calv = ((5 * 32000000 / (rev & 0x1f) + (CAB_LSIFQ >> 1)) / CAB_LSIFQ);
+        CNT_STEP_K = -1.6 * (rev & 0x1f);
+    }
+    else
+    { // 32K◊ˆ÷˜∆µ
+        calv = (5);
+        CNT_STEP_K = 0;
+    }
+    basev = calv; // ªÒ»°–£◊º±Í≥∆÷µ
 
-        if ( diff_1 > diff_2 )
+    if(Int32K_Tune_RAM)
+    {
+        loc = Int32K_Tune_RAM;
+    }
+    else
+    {
+        loc = 2048;
+    }
+    //  if (loc == 2048)
+    //    loc = 1837; //10040.625-1.640625*5000;  //æ≠—È«˙œﬂ
+
+    diff_2 = 0;
+    diffc = 0;
+
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    R8_OSC_CAL_CTRL = RB_OSC_CNT_EN;
+    do
+    {
+        i = Get_Calibration_Cnt_RAM(loc); //  µ ±–£◊º∫Û≤…—˘÷µ
+        k++;
+        diff_1 = i - basev;
+
+        Int32K_Tune_RAM = loc;
+        if(diff_1 == 0)
         {
-          R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-          R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-          R16_INT32K_TUNE = loc_t;
-          R8_SAFE_ACCESS_SIG = 0;
-
-          return ( diff_2 * 10000 / basev );       // ËøîÂõûËØØÂ∑ÆÂÄºÔºå‰∏áÂàÜ‰πã
+            return 0; // –£◊º’˝∫√
         }
-        else
-          return ( diff_1 * 10000 / basev );
-      }
-    }
+        else if((diff_1 * diff_2) < 0)
+        { // ¥¶”⁄¡Ωµ„÷Æº‰
+            if((diffc == 1) || (diffc == -1) || (diffc == 0))
+            {
+                // ∂º±‰≥…’˝ ˝
+                if(diff_2 < 0)
+                {
+                    diff_2 = ~(diff_2 - 1);
+                }
+                else
+                {
+                    diff_1 = ~(diff_1 - 1);
+                }
 
-    if (((i > basev ? (i - basev) : (basev - i)) * 10000 / basev) < 11)
-    {
-      return ((i > basev ? (i - basev) : (basev - i)) * 10000 / basev);
+                if(diff_1 > diff_2)
+                {
+                    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+                    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+                    R16_INT32K_TUNE = loc_t;
+                    R8_SAFE_ACCESS_SIG = 0;
 
-    }
-    // ‰øùÂ≠ò‰∏ä‰∏ÄÊ¨°ÂÄº
-    diff_2 = diff_1;
-    loc_t = loc;
-    diffc = diff_1 *CNT_STEP_K;
-    loc = loc - diffc;
-    if ( loc == loc_t )
-    {
-      if ( diff_1 > 0 )
-        loc = loc + 1;    // ÂΩìÂâçÈ¢ëÁéáÂÅèÂ∞è
-      else
-        loc = loc - 1;    // ÂΩìÂâçÈ¢ëÁéáÂÅèÂ§ß
-    }
-  } while( k < 20 );
+                    return (diff_2 * 10000 / basev); // ∑µªÿŒÛ≤Ó÷µ£¨ÕÚ∑÷÷Æ
+                }
+                else
+                {
+                    return (diff_1 * 10000 / basev);
+                }
+            }
+        }
 
-
-  Int32K_Tune_FLASH = loc;
-  return ( (i>basev?(i-basev):(basev-i))* 10000 / basev );
-}
-
-/*******************************************************************************
-* Function Name  : Get_Calibration_Cnt_RAM
-* Description    : Ëé∑ÂèñÂú®RAM‰∏≠ËÆ°Êï∞ÁöÑÊ†°ÂáÜËÆ°Êï∞ÂÄº
-* Input          : loc : TUNEÂÄº
-* Return         : ËÆ°Êï∞ÂÄº
-*******************************************************************************/
-__attribute__((section(".highcode")))
-UINT16 Get_Calibration_Cnt_RAM( UINT16 loc )
-{
-  UINT16 i;
-
-  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-  R16_INT32K_TUNE = loc;
-  R8_SAFE_ACCESS_SIG = 0;
-  /* ËØªÂèñÂΩìÂâçÂÄº */
-  while( !( R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT ) )
-    ;
-  i = R16_OSC_CAL_CNT;      // Áî®‰∫é‰∏¢ÂºÉ
-  while( R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT )
-    ;
-  while( !( R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT ) )
-    ;
-  i = R16_OSC_CAL_CNT;
-  return i;
-}
-
-/*******************************************************************************
-* Function Name  : Calibration_LSI_RAM
-* Description    : Ê†°ÂáÜÂú®RAM‰∏≠ËøêË°åÊó∂ÁöÑÂÜÖÈÉ®32KÊó∂Èíü
-* Input          : None
-* Return         : ËØØÂ∑ÆÔºö‰∏áÂàÜ‰πãÔºàÂçï‰ΩçÔºâ
-*******************************************************************************/
-UINT16 Calibration_LSI_RAM( void )
-{
-  UINT16 rev, basev;
-  UINT32 calv;
-  UINT16 i;
-  UINT16 loc, loc_t;
-  float CNT_STEP_K;
-  signed short diff_1, diff_2, diffc;
-  UINT8 k = 0;
-
-  /* Ê†πÊçÆÂΩìÂâçÊó∂ÈíüËé∑ÂèñÊ†áÁß∞ÂÄºÂíåÊñúÁéáÔºàT-stepÔºâ */
-  rev = R16_CLK_SYS_CFG & 0xff;
-  if ( ( rev & RB_CLK_SYS_MOD ) == ( 2 << 6 ) )
-  {       // 32MÂÅö‰∏ªÈ¢ë
-    calv = ( ( 5 * 32000000 + ( CAB_LSIFQ >> 1 ) ) / CAB_LSIFQ );
-    CNT_STEP_K = -1.6;
-  }
-  else if ( ( rev & RB_CLK_SYS_MOD ) == ( 1 << 6 ) )
-  {   // PLLËøõË°åÂàÜÈ¢ë
-    calv = ( ( ( UINT32 ) 5 * 480000000 / ( rev & 0x1f ) + ( CAB_LSIFQ >> 1 ) ) / CAB_LSIFQ );
-    CNT_STEP_K = -0.1 * ( rev & 0x1f );
-  }
-  else if ( ( rev & RB_CLK_SYS_MOD ) == ( 0 << 6 ) )
-  {   // 32MËøõË°åÂàÜÈ¢ë
-    calv = ( ( 5 * 32000000 / ( rev & 0x1f ) + ( CAB_LSIFQ >> 1 ) ) / CAB_LSIFQ );
-    CNT_STEP_K = -1.6 * ( rev & 0x1f );
-  }
-  else
-  {                       // 32KÂÅö‰∏ªÈ¢ë
-    calv = ( 5 );
-    CNT_STEP_K = 0;
-  }
-  basev = calv;             // Ëé∑ÂèñÊ†°ÂáÜÊ†áÁß∞ÂÄº
-
-  if( Int32K_Tune_RAM )
-    loc = Int32K_Tune_RAM;
-  else
-    loc = 2048;
-//  if (loc == 2048)
-//    loc = 1837; //10040.625-1.640625*5000;  //ÁªèÈ™åÊõ≤Á∫ø
-
-  diff_2 = 0;
-  diffc = 0;
-
-  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-  R8_OSC_CAL_CTRL = RB_OSC_CNT_EN;
-  do
-  {
-    i = Get_Calibration_Cnt_RAM( loc );      // ÂÆûÊó∂Ê†°ÂáÜÂêéÈááÊ†∑ÂÄº
-    k++;
-    diff_1 = i - basev;
+        if(((i > basev ? (i - basev) : (basev - i)) * 10000 / basev) < 11)
+        {
+            return ((i > basev ? (i - basev) : (basev - i)) * 10000 / basev);
+        }
+        // ±£¥Ê…œ“ª¥Œ÷µ
+        diff_2 = diff_1;
+        loc_t = loc;
+        diffc = diff_1 * CNT_STEP_K;
+        loc = loc - diffc;
+        if(loc == loc_t)
+        {
+            if(diff_1 > 0)
+            {
+                loc = loc + 1; // µ±«∞∆µ¬ ∆´–°
+            }
+            else
+            {
+                loc = loc - 1; // µ±«∞∆µ¬ ∆´¥Û
+            }
+        }
+    } while(k < 20);
 
     Int32K_Tune_RAM = loc;
-    if ( diff_1 == 0 )
-    {
-      return 0;    // Ê†°ÂáÜÊ≠£Â•Ω
-    }
-    else if ( ( diff_1 * diff_2 ) < 0 )
-    {         // Â§Ñ‰∫é‰∏§ÁÇπ‰πãÈó¥
-      if ( ( diffc == 1 ) || ( diffc == -1 ) || ( diffc == 0 ) )
-      {
-        // ÈÉΩÂèòÊàêÊ≠£Êï∞
-        if ( diff_2 < 0 )
-          diff_2 = ~( diff_2 - 1 );
-        else
-          diff_1 = ~( diff_1 - 1 );
-
-        if ( diff_1 > diff_2 )
-        {
-          R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-          R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-          R16_INT32K_TUNE = loc_t;
-          R8_SAFE_ACCESS_SIG = 0;
-
-          return ( diff_2 * 10000 / basev );       // ËøîÂõûËØØÂ∑ÆÂÄºÔºå‰∏áÂàÜ‰πã
-        }
-        else
-          return ( diff_1 * 10000 / basev );
-      }
-    }
-
-    if (((i > basev ? (i - basev) : (basev - i)) * 10000 / basev) < 11)
-    {
-      return ((i > basev ? (i - basev) : (basev - i)) * 10000 / basev);
-
-    }
-    // ‰øùÂ≠ò‰∏ä‰∏ÄÊ¨°ÂÄº
-    diff_2 = diff_1;
-    loc_t = loc;
-    diffc = diff_1 *CNT_STEP_K;
-    loc = loc - diffc;
-    if ( loc == loc_t )
-    {
-      if ( diff_1 > 0 )
-        loc = loc + 1;    // ÂΩìÂâçÈ¢ëÁéáÂÅèÂ∞è
-      else
-        loc = loc - 1;    // ÂΩìÂâçÈ¢ëÁéáÂÅèÂ§ß
-    }
-  } while( k < 20 );
-
-
-  Int32K_Tune_RAM = loc;
-  return ( (i>basev?(i-basev):(basev-i))* 10000 / basev );
+    return ((i > basev ? (i - basev) : (basev - i)) * 10000 / basev);
 }
 
-/*******************************************************************************
-* Function Name  : LSI_SetTune_FLASH
-* Description    : ËÆæÁΩÆÂú®FLASH‰∏≠ËøêË°åÊó∂ÁöÑÂÜÖÈÉ®32kÊ†°ÂáÜÂÄº
-* Input          : None
-* Return         : None
-*******************************************************************************/
-void LSI_SetTune_FLASH( void )
+/*********************************************************************
+ * @fn      LSI_SetTune_FLASH
+ *
+ * @brief   …Ë÷√‘⁄FLASH÷–‘À–– ±µƒƒ⁄≤ø32k–£◊º÷µ
+ *
+ * @param   none
+ *
+ * @return  none
+ */
+void LSI_SetTune_FLASH(void)
 {
-  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-  R16_INT32K_TUNE = Int32K_Tune_FLASH;
-  R8_SAFE_ACCESS_SIG = 0;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    R16_INT32K_TUNE = Int32K_Tune_FLASH;
+    R8_SAFE_ACCESS_SIG = 0;
 }
 
-/*******************************************************************************
-* Function Name  : LSI_SetTune_RAM
-* Description    : ËÆæÁΩÆÂú®RAM‰∏≠ËøêË°åÊó∂ÁöÑÂÜÖÈÉ®32kÊ†°ÂáÜÂÄº
-* Input          : None
-* Return         : None
-*******************************************************************************/
-void LSI_SetTune_RAM( void )
+/*********************************************************************
+ * @fn      LSI_SetTune_RAM
+ *
+ * @brief   …Ë÷√‘⁄RAM÷–‘À–– ±µƒƒ⁄≤ø32k–£◊º÷µ
+ *
+ * @param   none
+ *
+ * @return  none
+ */
+void LSI_SetTune_RAM(void)
 {
-  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-  R16_INT32K_TUNE = Int32K_Tune_RAM;
-  R8_SAFE_ACCESS_SIG = 0;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    R16_INT32K_TUNE = Int32K_Tune_RAM;
+    R8_SAFE_ACCESS_SIG = 0;
 }
 
-/*******************************************************************************
-* Function Name  : RTCInitTime
-* Description    : RTCÊó∂ÈíüÂàùÂßãÂåñÂΩìÂâçÊó∂Èó¥
-* Input          : y: ÈÖçÁΩÆÊó∂Èó¥ - Âπ¥
-          MAX_Y = BEGYEAR + 44
-           mon: ÈÖçÁΩÆÊó∂Èó¥ - Êúà
-          MAX_MON = 12
-           d: ÈÖçÁΩÆÊó∂Èó¥ - Êó•
-          MAX_D = 31
-
-           h: ÈÖçÁΩÆÊó∂Èó¥ - Â∞èÊó∂
-          MAX_H = 23
-           m: ÈÖçÁΩÆÊó∂Èó¥ - ÂàÜÈíü
-          MAX_M = 59
-           s: ÈÖçÁΩÆÊó∂Èó¥ - Áßí
-          MAX_S = 59
-* Return         : None
-*******************************************************************************/
-void RTC_InitTime( UINT16 y, UINT16 mon, UINT16 d, UINT16 h, UINT16 m, UINT16 s )
+/*********************************************************************
+ * @fn      RTCInitTime
+ *
+ * @brief   RTC ±÷”≥ı ºªØµ±«∞ ±º‰
+ *
+ * @param   y       - ≈‰÷√ƒÍ£¨MAX_Y = BEGYEAR + 44
+ * @param   mon     - ≈‰÷√‘¬£¨MAX_MON = 12
+ * @param   d       - ≈‰÷√»’£¨MAX_D = 31
+ * @param   h       - ≈‰÷√–° ±£¨MAX_H = 23
+ * @param   m       - ≈‰÷√∑÷÷”£¨MAX_M = 59
+ * @param   s       - ≈‰÷√√Î£¨MAX_S = 59
+ *
+ * @return  none
+ */
+void RTC_InitTime(uint16_t y, uint16_t mon, uint16_t d, uint16_t h, uint16_t m, uint16_t s)
 {
-    UINT32  t;
-    UINT16  year, month, day, sec2, t32k;
-    UINT8V clk_pin;
+    uint32_t         t;
+    uint16_t         year, month, day, sec2, t32k;
+    volatile uint8_t clk_pin;
 
     year = y;
     month = mon;
     day = 0;
-    while ( year > BEGYEAR )
+    while(year > BEGYEAR)
     {
-      day += YearLength( year-1 );
-      year--;
+        day += YearLength(year - 1);
+        year--;
     }
-    while ( month > 1 )
+    while(month > 1)
     {
-      day += monthLength( IsLeapYear( y ), month-2 );
-      month--;
+        day += monthLength(IsLeapYear(y), month - 2);
+        month--;
     }
 
-    day += d-1;
-    sec2 = (h%24)*1800+m*30+s/2;
-    t32k = (s&1)?(0x8000):(0);
+    day += d - 1;
+    sec2 = (h % 24) * 1800 + m * 30 + s / 2;
+    t32k = (s & 1) ? (0x8000) : (0);
     t = sec2;
-    t = t<<16 | t32k;
+    t = t << 16 | t32k;
 
-    do{
-      clk_pin = (R8_CK32K_CONFIG&RB_32K_CLK_PIN);
-    }while( (clk_pin != (R8_CK32K_CONFIG&RB_32K_CLK_PIN)) || (!clk_pin) );
-
+    do
+    {
+        clk_pin = (R8_CK32K_CONFIG & RB_32K_CLK_PIN);
+    } while((clk_pin != (R8_CK32K_CONFIG & RB_32K_CLK_PIN)) || (!clk_pin));
 
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
@@ -455,174 +504,198 @@ void RTC_InitTime( UINT16 y, UINT16 mon, UINT16 d, UINT16 h, UINT16 m, UINT16 s 
     R8_SAFE_ACCESS_SIG = 0;
 }
 
-/*******************************************************************************
-* Function Name  : RTC_GetTime
-* Description    : Ëé∑ÂèñÂΩìÂâçÊó∂Èó¥
-* Input          : y: Ëé∑ÂèñÂà∞ÁöÑÊó∂Èó¥ - Âπ¥
-          MAX_Y = BEGYEAR + 44
-           mon: Ëé∑ÂèñÂà∞ÁöÑÊó∂Èó¥ - Êúà
-          MAX_MON = 12
-           d: Ëé∑ÂèñÂà∞ÁöÑÊó∂Èó¥ - Êó•
-          MAX_D = 31
-           ph: Ëé∑ÂèñÂà∞ÁöÑÊó∂Èó¥ - Â∞èÊó∂
-          MAX_H = 23
-           pm: Ëé∑ÂèñÂà∞ÁöÑÊó∂Èó¥ - ÂàÜÈíü
-          MAX_M = 59
-           ps: Ëé∑ÂèñÂà∞ÁöÑÊó∂Èó¥ - Áßí
-          MAX_S = 59
-* Return         : None
-*******************************************************************************/
-void RTC_GetTime( PUINT16 py, PUINT16 pmon, PUINT16 pd, PUINT16 ph, PUINT16 pm, PUINT16 ps )
+/*********************************************************************
+ * @fn      RTC_GetTime
+ *
+ * @brief   ªÒ»°µ±«∞ ±º‰
+ *
+ * @param   py      - ªÒ»°µΩµƒƒÍ£¨MAX_Y = BEGYEAR + 44
+ * @param   pmon    - ªÒ»°µΩµƒ‘¬£¨MAX_MON = 12
+ * @param   pd      - ªÒ»°µΩµƒ»’£¨MAX_D = 31
+ * @param   ph      - ªÒ»°µΩµƒ–° ±£¨MAX_H = 23
+ * @param   pm      - ªÒ»°µΩµƒ∑÷÷”£¨MAX_M = 59
+ * @param   ps      - ªÒ»°µΩµƒ√Î£¨MAX_S = 59
+ *
+ * @return  none
+ */
+void RTC_GetTime(uint16_t *py, uint16_t *pmon, uint16_t *pd, uint16_t *ph, uint16_t *pm, uint16_t *ps)
 {
-    UINT32  t;
-    UINT16  day, sec2, t32k;
+    uint32_t t;
+    uint16_t day, sec2, t32k;
 
     day = R32_RTC_CNT_DAY & 0x3FFF;
-    sec2 = R16_RTC_CNT_2S; 
+    sec2 = R16_RTC_CNT_2S;
     t32k = R16_RTC_CNT_32K;
 
-    t = sec2*2 + ((t32k<0x8000)?0:1);
+    t = sec2 * 2 + ((t32k < 0x8000) ? 0 : 1);
 
     *py = BEGYEAR;
-    while ( day >= YearLength( *py ) )
+    while(day >= YearLength(*py))
     {
-      day -= YearLength( *py );
-      (*py)++;
+        day -= YearLength(*py);
+        (*py)++;
     }
 
     *pmon = 0;
-    while ( day >= monthLength( IsLeapYear( *py ), *pmon ) )
+    while(day >= monthLength(IsLeapYear(*py), *pmon))
     {
-      day -= monthLength( IsLeapYear( *py ), *pmon );
-      (*pmon)++;
+        day -= monthLength(IsLeapYear(*py), *pmon);
+        (*pmon)++;
     }
-    (*pmon) ++;
-    *pd = day+1;
-    *ph = t/3600;
-    *pm = t%3600/60;
-    *ps = t%60;
+    (*pmon)++;
+    *pd = day + 1;
+    *ph = t / 3600;
+    *pm = t % 3600 / 60;
+    *ps = t % 60;
 }
 
-/*******************************************************************************
-* Function Name  : RTC_SetCycle32k
-* Description    : Âü∫‰∫éLSE/LSIÊó∂ÈíüÔºåÈÖçÁΩÆÂΩìÂâçRTC Âë®ÊúüÊï∞
-* Input          : cyc: ÈÖçÁΩÆÂë®ÊúüËÆ°Êï∞ÂàùÂÄº - cycle
-					MAX_CYC = 0xA8BFFFFF = 2831155199
-* Return         : None
-*******************************************************************************/
-void RTC_SetCycle32k( UINT32 cyc )
+/*********************************************************************
+ * @fn      RTC_SetCycle32k
+ *
+ * @brief   ª˘”⁄LSE/LSI ±÷”£¨≈‰÷√µ±«∞RTC ÷‹∆⁄ ˝
+ *
+ * @param   cyc     - ≈‰÷√÷‹∆⁄º∆ ˝≥ı÷µ£¨MAX_CYC = 0xA8BFFFFF = 2831155199
+ *
+ * @return  none
+ */
+void RTC_SetCycle32k(uint32_t cyc)
 {
-    UINT8V clk_pin;
+    volatile uint8_t clk_pin;
 
-    do{
-      clk_pin = (R8_CK32K_CONFIG&RB_32K_CLK_PIN);
-    }while( (clk_pin != (R8_CK32K_CONFIG&RB_32K_CLK_PIN)) || (!clk_pin) );
+    do
+    {
+        clk_pin = (R8_CK32K_CONFIG & RB_32K_CLK_PIN);
+    } while((clk_pin != (R8_CK32K_CONFIG & RB_32K_CLK_PIN)) || (!clk_pin));
 
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;   
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
     R32_RTC_TRIG = cyc;
     R8_RTC_MODE_CTRL |= RB_RTC_LOAD_LO;
     R8_SAFE_ACCESS_SIG = 0;
 }
 
-/*******************************************************************************
-* Function Name  : RTC_GetCycle32k
-* Description    : Âü∫‰∫éLSE/LSIÊó∂ÈíüÔºåËé∑ÂèñÂΩìÂâçRTC Âë®ÊúüÊï∞
-* Input          : None
-* Return         : ËøîÂõûÂΩìÂâçÂë®ÊúüÊï∞ÔºåMAX_CYC = 0xA8BFFFFF = 2831155199
-*******************************************************************************/
-UINT32 RTC_GetCycle32k( void )
+/*********************************************************************
+ * @fn      RTC_GetCycle32k
+ *
+ * @brief   ª˘”⁄LSE/LSI ±÷”£¨ªÒ»°µ±«∞RTC ÷‹∆⁄ ˝
+ *
+ * @param   none
+ *
+ * @return  µ±«∞÷‹∆⁄ ˝£¨MAX_CYC = 0xA8BFFFFF = 2831155199
+ */
+uint32_t RTC_GetCycle32k(void)
 {
-    UINT32V i;
-    
-    do{
-    	i = R32_RTC_CNT_32K;
-    }while( i != R32_RTC_CNT_32K );
-    
+    volatile uint32_t i;
+
+    do
+    {
+        i = R32_RTC_CNT_32K;
+    } while(i != R32_RTC_CNT_32K);
+
     return (i);
 }
 
-/*******************************************************************************
-* Function Name  : RTC_TMRFunCfg
-* Description    : RTCÂÆöÊó∂Ê®°ÂºèÈÖçÁΩÆÔºàÊ≥®ÊÑèÂÆöÊó∂Âü∫ÂáÜÂõ∫ÂÆö‰∏∫32768HzÔºâ
-* Input          : t: 
-					refer to RTC_TMRCycTypeDef
-* Return         : None
-*******************************************************************************/
-void RTC_TMRFunCfg( RTC_TMRCycTypeDef t )
+/*********************************************************************
+ * @fn      RTC_TMRFunCfg
+ *
+ * @brief   RTC∂® ±ƒ£ Ω≈‰÷√£®◊¢“‚∂® ±ª˘◊ºπÃ∂®Œ™32768Hz£©
+ *
+ * @param   t   - refer to RTC_TMRCycTypeDef
+ *
+ * @return  none
+ */
+void RTC_TMRFunCfg(RTC_TMRCycTypeDef t)
 {
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-    R8_RTC_MODE_CTRL &= ~(RB_RTC_TMR_EN|RB_RTC_TMR_MODE);
+    R8_RTC_MODE_CTRL &= ~(RB_RTC_TMR_EN | RB_RTC_TMR_MODE);
     R8_RTC_MODE_CTRL |= RB_RTC_TMR_EN | (t);
     R8_SAFE_ACCESS_SIG = 0;
 }
 
-/*******************************************************************************
-* Function Name  : RTC_TRIGFunCfg
-* Description    : RTCÊó∂Èó¥Ëß¶ÂèëÊ®°ÂºèÈÖçÁΩÆ
-* Input          : cyc: Áõ∏ÂØπÂΩìÂâçÊó∂Èó¥ÁöÑËß¶ÂèëÈó¥ÈöîÊó∂Èó¥ÔºåÂü∫‰∫éLSE/LSIÊó∂ÈíüÂë®ÊúüÊï∞
-* Return         : None
-*******************************************************************************/
-void RTC_TRIGFunCfg( UINT32 cyc )
+/*********************************************************************
+ * @fn      RTC_TRIGFunCfg
+ *
+ * @brief   RTC ±º‰¥•∑¢ƒ£ Ω≈‰÷√
+ *
+ * @param   cyc - œ‡∂‘µ±«∞ ±º‰µƒ¥•∑¢º‰∏Ù ±º‰£¨ª˘”⁄LSE/LSI ±÷”÷‹∆⁄ ˝
+ *
+ * @return  none
+ */
+void RTC_TRIGFunCfg(uint32_t cyc)
 {
-    UINT32 t;
+    uint32_t t;
 
     t = RTC_GetCycle32k() + cyc;
 
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
     R32_RTC_TRIG = t;
     R8_RTC_MODE_CTRL |= RB_RTC_TRIG_EN;
     R8_SAFE_ACCESS_SIG = 0;
 }
 
-/*******************************************************************************
-* Function Name  : RTC_ModeFunDisable
-* Description    : RTC Ê®°ÂºèÂäüËÉΩÂÖ≥Èó≠
-* Input          : m: ÈúÄË¶ÅÂÖ≥Èó≠ÁöÑÂΩìÂâçÊ®°Âºè
-* Return         : None
-*******************************************************************************/
-void RTC_ModeFunDisable( RTC_MODETypeDef m )
+/*********************************************************************
+ * @fn      RTC_ModeFunDisable
+ *
+ * @brief   RTC ƒ£ Ωπ¶ƒ‹πÿ±’
+ *
+ * @param   m   - –Ë“™πÿ±’µƒµ±«∞ƒ£ Ω
+ *
+ * @return  none
+ */
+void RTC_ModeFunDisable(RTC_MODETypeDef m)
 {
-    UINT8  i=0;
-    
-    if( m == RTC_TRIG_MODE )    i |= RB_RTC_TRIG_EN;
-    else if( m == RTC_TMR_MODE )     i |= RB_RTC_TMR_EN;
-    
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
+    uint8_t i = 0;
+
+    if(m == RTC_TRIG_MODE)
+    {
+        i |= RB_RTC_TRIG_EN;
+    }
+    else if(m == RTC_TMR_MODE)
+    {
+        i |= RB_RTC_TMR_EN;
+    }
+
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
     R8_RTC_MODE_CTRL &= ~(i);
     R8_SAFE_ACCESS_SIG = 0;
 }
 
-/*******************************************************************************
-* Function Name  : RTC_GetITFlag
-* Description    : Ëé∑ÂèñRTC‰∏≠Êñ≠Ê†áÂøó
-* Input          : f: 
-					refer to RTC_EVENTTypeDef
-* Return         : ‰∏≠Êñ≠Ê†áÂøóÁä∂ÊÄÅ:
-					0     -  	Êú™ÂèëÁîü‰∫ã‰ª∂
-				   (!0)   -  	ÂèëÁîü‰∫ã‰ª∂
-*******************************************************************************/
-UINT8 RTC_GetITFlag( RTC_EVENTTypeDef f )
+/*********************************************************************
+ * @fn      RTC_GetITFlag
+ *
+ * @brief   ªÒ»°RTC÷–∂œ±Í÷æ
+ *
+ * @param   f   - refer to RTC_EVENTTypeDef
+ *
+ * @return  ÷–∂œ±Í÷æ◊¥Ã¨
+ */
+uint8_t RTC_GetITFlag(RTC_EVENTTypeDef f)
 {
-    if( f == RTC_TRIG_EVENT )
-        return ( R8_RTC_FLAG_CTRL & RB_RTC_TRIG_FLAG );
-    else 
-        return ( R8_RTC_FLAG_CTRL & RB_RTC_TMR_FLAG );
+    if(f == RTC_TRIG_EVENT)
+    {
+        return (R8_RTC_FLAG_CTRL & RB_RTC_TRIG_FLAG);
+    }
+    else
+    {
+        return (R8_RTC_FLAG_CTRL & RB_RTC_TMR_FLAG);
+    }
 }
 
-/*******************************************************************************
-* Function Name  : RTC_ClearITFlag
-* Description    : Ê∏ÖÈô§RTC‰∏≠Êñ≠Ê†áÂøó
-* Input          : f: 
-					refer to RTC_EVENTTypeDef
-* Return         : None
-*******************************************************************************/
-void RTC_ClearITFlag( RTC_EVENTTypeDef f )
+/*********************************************************************
+ * @fn      RTC_ClearITFlag
+ *
+ * @brief   «Â≥˝RTC÷–∂œ±Í÷æ
+ *
+ * @param   f   - refer to RTC_EVENTTypeDef
+ *
+ * @return  none
+ */
+void RTC_ClearITFlag(RTC_EVENTTypeDef f)
 {
-    switch( f ) 
+    switch(f)
     {
         case RTC_TRIG_EVENT:
             R8_RTC_FLAG_CTRL = RB_RTC_TRIG_CLR;
@@ -630,9 +703,8 @@ void RTC_ClearITFlag( RTC_EVENTTypeDef f )
         case RTC_TMR_EVENT:
             R8_RTC_FLAG_CTRL = RB_RTC_TMR_CLR;
             break;
-        default :
+        default:
             break;
     }
 }
-
 

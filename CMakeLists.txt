@@ -19,7 +19,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 99)
 
 # 编译参数 一般不用改
-add_compile_options(-march=rv32imac -mabi=ilp32 -mcmodel=medany -msmall-data-limit=8 -mno-save-restore)
+add_compile_options(-march=rv32imac -mabi=ilp32 -mcmodel=medany -msmall-data-limit=8 -mno-save-restore -std=gnu99)
 add_compile_options(-fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common)
 
 # 编译等级
@@ -41,7 +41,9 @@ endif ()
 include_directories(BLE_LIB 
                     USB_LIB 
                     RVMSIS  
-                    StdPeriphDriver/inc)
+                    StdPeriphDriver/inc
+                    HAL/include
+                    APP/inc)
 
 # 宏定义
 add_definitions(-DDEBUG=1 -DHAL_KEY=0)
@@ -52,12 +54,14 @@ file(GLOB_RECURSE SOURCES
                 "RVMSIS/*.c"
                 "StdPeriphDriver/*.c" 
                 "USB_LIB/*.c" 
-                "src/*.c")
+                "HAL/*.c"
+                "APP/*.c")
 
 # 链接参数
 set(LINKER_SCRIPT  ${CMAKE_SOURCE_DIR}/Ld/Link.ld)
 add_link_options(-nostartfiles 
                 -Xlinker --gc-sections  
+                -Wl,--print-memory-usage
                 -Wl,-Map,${PROJECT_NAME}.map 
                 --specs=nano.specs 
                 --specs=nosys.specs 
@@ -78,6 +82,4 @@ set(HEX_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.hex)
 set(BIN_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.bin)
 add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
         COMMAND ${CMAKE_OBJCOPY} -Oihex $<TARGET_FILE:${PROJECT_NAME}.elf> ${HEX_FILE}
-        COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE:${PROJECT_NAME}.elf> ${BIN_FILE}
-        COMMENT "Building ${HEX_FILE}"
-        COMMENT "Building ${BIN_FILE}")
+        COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE:${PROJECT_NAME}.elf> ${BIN_FILE})

@@ -1,158 +1,300 @@
-
-
+/********************************** (C) COPYRIGHT *******************************
+ * File Name          : CH57x_clk.h
+ * Author             : WCH
+ * Version            : V1.2
+ * Date               : 2021/11/17
+ * Description
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * SPDX-License-Identifier: Apache-2.0
+ *******************************************************************************/
 
 #ifndef __CH57x_CLK_H__
 #define __CH57x_CLK_H__
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
-
+/**
+ * @brief  ÏµÍ³Ö÷Æµ¶¨Òå
+ */
 typedef enum
 {
-  CLK_SOURCE_LSI = 0x00,
-  CLK_SOURCE_LSE,
+    CLK_SOURCE_LSI = 0x00,
+    CLK_SOURCE_LSE,
 
-  CLK_SOURCE_HSE_16MHz = 0x22,
-  CLK_SOURCE_HSE_8MHz = 0x24,
-  CLK_SOURCE_HSE_6_4MHz = 0x25,
-  CLK_SOURCE_HSE_4MHz = 0x28,
-  CLK_SOURCE_HSE_2MHz = (0x20|16),
-  CLK_SOURCE_HSE_1MHz = (0x20|0),
+    CLK_SOURCE_HSE_8MHz = 0x24,
+    CLK_SOURCE_HSE_6_4MHz = 0x25,
+    CLK_SOURCE_HSE_4MHz = 0x28,
+    CLK_SOURCE_HSE_2MHz = (0x20 | 16),
+    CLK_SOURCE_HSE_1MHz = (0x20 | 0),
 
-  CLK_SOURCE_PLL_60MHz = 0x48,
-  CLK_SOURCE_PLL_48MHz = (0x40|10),
-  CLK_SOURCE_PLL_40MHz = (0x40|12),
-  CLK_SOURCE_PLL_36_9MHz = (0x40|13),
-  CLK_SOURCE_PLL_32MHz = (0x40|15),
-  CLK_SOURCE_PLL_30MHz = (0x40|16),
-  CLK_SOURCE_PLL_24MHz = (0x40|20),
-  CLK_SOURCE_PLL_20MHz = (0x40|24),
-  CLK_SOURCE_PLL_15MHz = (0x40|0),
-}SYS_CLKTypeDef;
+    CLK_SOURCE_PLL_60MHz = 0x48,
+    CLK_SOURCE_PLL_48MHz = (0x40 | 10),
+    CLK_SOURCE_PLL_40MHz = (0x40 | 12),
+    CLK_SOURCE_PLL_36_9MHz = (0x40 | 13),
+    CLK_SOURCE_PLL_32MHz = (0x40 | 15),
+    CLK_SOURCE_PLL_30MHz = (0x40 | 16),
+    CLK_SOURCE_PLL_24MHz = (0x40 | 20),
+    CLK_SOURCE_PLL_20MHz = (0x40 | 24),
+    CLK_SOURCE_PLL_15MHz = (0x40 | 0),
+} SYS_CLKTypeDef;
 
+/**
+ * @brief  32KÊ±ÖÓÑ¡Ôñ
+ */
 typedef enum
 {
-	Clk32K_LSI = 0,
-	Clk32K_LSE,
-	
-}LClk32KTypeDef;
+    Clk32K_LSI = 0,
+    Clk32K_LSE,
 
+} LClk32KTypeDef;
+
+/**
+ * @brief  32M¾§ÕñµçÁ÷µ²Î»
+ */
 typedef enum
 {
-	HSE_RCur_75 = 0,
-	HSE_RCur_100,
+    HSE_RCur_75 = 0,
+    HSE_RCur_100,
     HSE_RCur_125,
     HSE_RCur_150
-	
-}HSECurrentTypeDef;
 
+} HSECurrentTypeDef;
+
+/**
+ * @brief  32M¾§ÕñÄÚ²¿µçÈİµ²Î»
+ */
 typedef enum
 {
-	HSECap_10p = 0,
-	HSECap_12p,  HSECap_14p,  HSECap_16p,  HSECap_18p,  
-    HSECap_20p,  HSECap_22p,  HSECap_24p
-	
-}HSECapTypeDef;
+    HSECap_10p = 0,
+    HSECap_12p,
+    HSECap_14p,
+    HSECap_16p,
+    HSECap_18p,
+    HSECap_20p,
+    HSECap_22p,
+    HSECap_24p
 
+} HSECapTypeDef;
+
+/**
+ * @brief  32K¾§ÕñµçÁ÷µ²Î»
+ */
 typedef enum
 {
-	LSE_RCur_70 = 0,
-	LSE_RCur_100,
+    LSE_RCur_70 = 0,
+    LSE_RCur_100,
     LSE_RCur_140,
     LSE_RCur_200
-	
-}LSECurrentTypeDef;
 
-typedef enum
-{
-	LSECap_2p = 0,
-	LSECap_13p,  LSECap_14p,  LSECap_15p,  LSECap_16p,  
-    LSECap_17p,  LSECap_18p,  LSECap_19p,  LSECap_20p,
-    LSECap_21p,  LSECap_22p,  LSECap_23p,  LSECap_24p,
-    LSECap_25p,  LSECap_26p,  LSECap_27p
-	
-}LSECapTypeDef;
-
-#define  MAX_DAY		0x00004000 
-#define	 MAX_2_SEC		0x0000A8C0
-//#define	 MAX_SEC		0x545FFFFF	
-
-#define BEGYEAR                         2020
-#define IsLeapYear(yr)                  (!((yr) % 400) || (((yr) % 100) && !((yr) % 4)))
-#define YearLength(yr)                  (IsLeapYear(yr) ? 366 : 365)
-#define monthLength(lpyr,mon)           ((mon==1) ? (28+lpyr) : ((mon>6) ? ((mon&1)?31:30) : ((mon&1)?30:31)))
-
+} LSECurrentTypeDef;
 
 /**
-  * @brief  rtc timer mode period define
-  */
+ * @brief  32K¾§ÕñÄÚ²¿µçÈİµ²Î»
+ */
 typedef enum
 {
-	Period_0_125_S = 0,			// 0.125s å‘¨æœŸ
-	Period_0_25_S,				// 0.25s å‘¨æœŸ
-	Period_0_5_S,				// 0.5s å‘¨æœŸ
-	Period_1_S,					// 1s å‘¨æœŸ
-	Period_2_S,					// 2s å‘¨æœŸ
-	Period_4_S,					// 4s å‘¨æœŸ
-	Period_8_S,					// 8s å‘¨æœŸ
-	Period_16_S,				// 16s å‘¨æœŸ
-}RTC_TMRCycTypeDef;	 
-	 
+    LSECap_2p = 0,
+    LSECap_13p,
+    LSECap_14p,
+    LSECap_15p,
+    LSECap_16p,
+    LSECap_17p,
+    LSECap_18p,
+    LSECap_19p,
+    LSECap_20p,
+    LSECap_21p,
+    LSECap_22p,
+    LSECap_23p,
+    LSECap_24p,
+    LSECap_25p,
+    LSECap_26p,
+    LSECap_27p
+
+} LSECapTypeDef;
+
+#define MAX_DAY                   0x00004000
+#define MAX_2_SEC                 0x0000A8C0
+//#define	 MAX_SEC		0x545FFFFF
+
+#define BEGYEAR                   2020
+#define IsLeapYear(yr)            (!((yr) % 400) || (((yr) % 100) && !((yr) % 4)))
+#define YearLength(yr)            (IsLeapYear(yr) ? 366 : 365)
+#define monthLength(lpyr, mon)    ((mon == 1) ? (28 + lpyr) : ((mon > 6) ? ((mon & 1) ? 31 : 30) : ((mon & 1) ? 30 : 31)))
 
 /**
-  * @brief  rtc interrupt event define
-  */
+ * @brief  rtc timer mode period define
+ */
 typedef enum
 {
-	RTC_TRIG_EVENT = 0,			// RTC è§¦å‘äº‹ä»¶
-	RTC_TMR_EVENT,				// RTC å‘¨æœŸå®šæ—¶äº‹ä»¶
-
-}RTC_EVENTTypeDef;	 
+    Period_0_125_S = 0, // 0.125s ÖÜÆÚ
+    Period_0_25_S,      // 0.25s ÖÜÆÚ
+    Period_0_5_S,       // 0.5s ÖÜÆÚ
+    Period_1_S,         // 1s ÖÜÆÚ
+    Period_2_S,         // 2s ÖÜÆÚ
+    Period_4_S,         // 4s ÖÜÆÚ
+    Period_8_S,         // 8s ÖÜÆÚ
+    Period_16_S,        // 16s ÖÜÆÚ
+} RTC_TMRCycTypeDef;
 
 /**
-  * @brief  rtc interrupt event define
-  */
+ * @brief  rtc interrupt event define
+ */
 typedef enum
 {
-	RTC_TRIG_MODE = 0,			// RTC è§¦å‘æ¨¡å¼
-	RTC_TMR_MODE,				// RTC å‘¨æœŸå®šæ—¶æ¨¡å¼
+    RTC_TRIG_EVENT = 0, // RTC ´¥·¢ÊÂ¼ş
+    RTC_TMR_EVENT,      // RTC ÖÜÆÚ¶¨Ê±ÊÂ¼ş
 
-}RTC_MODETypeDef;
+} RTC_EVENTTypeDef;
 
-extern UINT16 Int32K_Tune_FLASH;
-extern UINT16 Int32K_Tune_RAM;
+/**
+ * @brief  rtc interrupt event define
+ */
+typedef enum
+{
+    RTC_TRIG_MODE = 0, // RTC ´¥·¢Ä£Ê½
+    RTC_TMR_MODE,      // RTC ÖÜÆÚ¶¨Ê±Ä£Ê½
 
-void LClk32K_Select( LClk32KTypeDef hc);		/* 32K ä½é¢‘æ—¶é’Ÿæ¥æº */
+} RTC_MODETypeDef;
 
-void HSECFG_Current( HSECurrentTypeDef c );     /* HSEæ™¶ä½“ åç½®ç”µæµé…ç½® */
-void HSECFG_Capacitance( HSECapTypeDef c );     /* HSEæ™¶ä½“ è´Ÿè½½ç”µå®¹é…ç½® */
-void LSECFG_Current( LSECurrentTypeDef c );     /* LSEæ™¶ä½“ åç½®ç”µæµé…ç½® */
-void LSECFG_Capacitance( LSECapTypeDef c );     /* LSEæ™¶ä½“ è´Ÿè½½ç”µå®¹é…ç½® */
+extern uint16_t Int32K_Tune_FLASH;
+extern uint16_t Int32K_Tune_RAM;
 
-UINT16 Calibration_LSI_FLASH( void );				/* å¤–éƒ¨32Mæ—¶é’Ÿæ ¡å‡†FLASHè¿è¡Œæ—¶å†…éƒ¨32Kæ—¶é’Ÿ */
-UINT16 Calibration_LSI_RAM( void );         /* å¤–éƒ¨32Mæ—¶é’Ÿæ ¡å‡†RAMè¿è¡Œæ—¶å†…éƒ¨32Kæ—¶é’Ÿ */
-void LSI_SetTune_FLASH( void );           /* è®¾ç½®åœ¨FLASHä¸­è¿è¡Œæ—¶çš„å†…éƒ¨32kæ ¡å‡†å€¼ */
-void LSI_SetTune_RAM( void );             /* è®¾ç½®åœ¨RAMä¸­è¿è¡Œæ—¶çš„å†…éƒ¨32kæ ¡å‡†å€¼ */
+/**
+ * @brief   32K µÍÆµÊ±ÖÓÀ´Ô´
+ *
+ * @param   hc  - Ñ¡Ôñ32KÊ¹ÓÃÄÚ²¿»¹ÊÇÍâ²¿
+ */
+void LClk32K_Select(LClk32KTypeDef hc);
 
-	 
-void RTC_InitTime( UINT16 y, UINT16 mon, UINT16 d, UINT16 h, UINT16 m, UINT16 s );      /* RTCæ—¶é’Ÿåˆå§‹åŒ–å½“å‰æ—¶é—´ */
-void RTC_GetTime( PUINT16 py, PUINT16 pmon, PUINT16 pd, PUINT16 ph, PUINT16 pm, PUINT16 ps );   /* è·å–å½“å‰æ—¶é—´ */
-	 
-void RTC_SetCycle32k( UINT32 cyc );							/* åŸºäºLSE/LSIæ—¶é’Ÿï¼Œé…ç½®å½“å‰RTC å‘¨æœŸæ•° */	 
-UINT32 RTC_GetCycle32k( void );				                /* åŸºäºLSE/LSIæ—¶é’Ÿï¼Œè·å–å½“å‰RTC å‘¨æœŸæ•° */
+/**
+ * @brief   HSE¾§Ìå Æ«ÖÃµçÁ÷ÅäÖÃ
+ *
+ * @param   c   - 75%,100%,125%,150%
+ */
+void HSECFG_Current(HSECurrentTypeDef c);
 
-void RTC_TRIGFunCfg( UINT32 cyc );							/* RTCè§¦å‘æ¨¡å¼é…ç½®é—´éš”æ—¶é—´,åŸºäºLSE/LSIæ—¶é’Ÿï¼ŒåŒ¹é…å‘¨æœŸæ•° */
-void RTC_TMRFunCfg( RTC_TMRCycTypeDef t );					/* RTCå®šæ—¶æ¨¡å¼é…ç½® */
-void RTC_ModeFunDisable( RTC_MODETypeDef m );               /* RTC æ¨¡å¼åŠŸèƒ½å…³é—­ */
+/**
+ * @brief   HSE¾§Ìå ¸ºÔØµçÈİÅäÖÃ
+ *
+ * @param   c   - refer to HSECapTypeDef
+ */
+void HSECFG_Capacitance(HSECapTypeDef c);
 
-UINT8 RTC_GetITFlag( RTC_EVENTTypeDef f );					/* è·å–RTCä¸­æ–­æ ‡å¿— */	 
-void RTC_ClearITFlag( RTC_EVENTTypeDef f );					/* æ¸…é™¤RTCä¸­æ–­æ ‡å¿— */ 
+/**
+ * @brief   LSE¾§Ìå Æ«ÖÃµçÁ÷ÅäÖÃ
+ *
+ * @param   c   - 70%,100%,140%,200%
+ */
+void LSECFG_Current(LSECurrentTypeDef c);
 
-	 
+/**
+ * @brief   LSE¾§Ìå ¸ºÔØµçÈİÅäÖÃ
+ *
+ * @param   c   - refer to LSECapTypeDef
+ */
+void LSECFG_Capacitance(LSECapTypeDef c);
 
-	 
+/**
+ * @brief   Ğ£×¼ÔÚFLASHÖĞÔËĞĞÊ±µÄÄÚ²¿32KÊ±ÖÓ
+ *
+ * @return  Îó²î£ºÍò·ÖÖ®£¨µ¥Î»£©
+ */
+uint16_t Calibration_LSI_FLASH(void);
+
+/**
+ * @brief   Ğ£×¼ÔÚRAMÖĞÔËĞĞÊ±µÄÄÚ²¿32KÊ±ÖÓ
+ *
+ * @return  Îó²î£ºÍò·ÖÖ®£¨µ¥Î»£©
+ */
+uint16_t Calibration_LSI_RAM(void);
+
+/**
+ * @brief   ÉèÖÃÔÚFLASHÖĞÔËĞĞÊ±µÄÄÚ²¿32kĞ£×¼Öµ
+ */
+void LSI_SetTune_FLASH(void);
+
+/**
+ * @brief   ÉèÖÃÔÚRAMÖĞÔËĞĞÊ±µÄÄÚ²¿32kĞ£×¼Öµ
+ */
+void LSI_SetTune_RAM(void);
+
+/**
+ * @brief   RTCÊ±ÖÓ³õÊ¼»¯µ±Ç°Ê±¼ä
+ *
+ * @param   y       - ÅäÖÃÄê£¬MAX_Y = BEGYEAR + 44
+ * @param   mon     - ÅäÖÃÔÂ£¬MAX_MON = 12
+ * @param   d       - ÅäÖÃÈÕ£¬MAX_D = 31
+ * @param   h       - ÅäÖÃĞ¡Ê±£¬MAX_H = 23
+ * @param   m       - ÅäÖÃ·ÖÖÓ£¬MAX_M = 59
+ * @param   s       - ÅäÖÃÃë£¬MAX_S = 59
+ */
+void RTC_InitTime(uint16_t y, uint16_t mon, uint16_t d, uint16_t h, uint16_t m, uint16_t s);
+
+/**
+ * @brief   »ñÈ¡µ±Ç°Ê±¼ä
+ *
+ * @param   py      - »ñÈ¡µ½µÄÄê£¬MAX_Y = BEGYEAR + 44
+ * @param   pmon    - »ñÈ¡µ½µÄÔÂ£¬MAX_MON = 12
+ * @param   pd      - »ñÈ¡µ½µÄÈÕ£¬MAX_D = 31
+ * @param   ph      - »ñÈ¡µ½µÄĞ¡Ê±£¬MAX_H = 23
+ * @param   pm      - »ñÈ¡µ½µÄ·ÖÖÓ£¬MAX_M = 59
+ * @param   ps      - »ñÈ¡µ½µÄÃë£¬MAX_S = 59
+ */
+void RTC_GetTime(uint16_t *py, uint16_t *pmon, uint16_t *pd, uint16_t *ph, uint16_t *pm, uint16_t *ps);
+
+/**
+ * @brief   »ùÓÚLSE/LSIÊ±ÖÓ£¬ÅäÖÃµ±Ç°RTC ÖÜÆÚÊı
+ *
+ * @param   cyc     - ÅäÖÃÖÜÆÚ¼ÆÊı³õÖµ£¬MAX_CYC = 0xA8BFFFFF = 2831155199
+ */
+void RTC_SetCycle32k(uint32_t cyc);
+
+/**
+ * @brief   »ùÓÚLSE/LSIÊ±ÖÓ£¬»ñÈ¡µ±Ç°RTC ÖÜÆÚÊı
+ *
+ * @return  µ±Ç°ÖÜÆÚÊı£¬MAX_CYC = 0xA8BFFFFF = 2831155199
+ */
+uint32_t RTC_GetCycle32k(void);
+
+/**
+ * @brief   RTC¶¨Ê±Ä£Ê½ÅäÖÃ£¨×¢Òâ¶¨Ê±»ù×¼¹Ì¶¨Îª32768Hz£©
+ *
+ * @param   t   - refer to RTC_TMRCycTypeDef
+ */
+void RTC_TRIGFunCfg(uint32_t cyc);
+
+/**
+ * @brief   RTC¶¨Ê±Ä£Ê½ÅäÖÃ£¨×¢Òâ¶¨Ê±»ù×¼¹Ì¶¨Îª32768Hz£©
+ *
+ * @param   t   - refer to RTC_TMRCycTypeDef
+ */
+void RTC_TMRFunCfg(RTC_TMRCycTypeDef t);
+
+/**
+ * @brief   RTC Ä£Ê½¹¦ÄÜ¹Ø±Õ
+ *
+ * @param   m   - ĞèÒª¹Ø±ÕµÄµ±Ç°Ä£Ê½
+ */
+void RTC_ModeFunDisable(RTC_MODETypeDef m);
+
+/**
+ * @brief   »ñÈ¡RTCÖĞ¶Ï±êÖ¾
+ *
+ * @param   f   - refer to RTC_EVENTTypeDef
+ *
+ * @return  ÖĞ¶Ï±êÖ¾×´Ì¬
+ */
+uint8_t RTC_GetITFlag(RTC_EVENTTypeDef f);
+
+/**
+ * @brief   Çå³ıRTCÖĞ¶Ï±êÖ¾
+ *
+ * @param   f   - refer to RTC_EVENTTypeDef
+ */
+void RTC_ClearITFlag(RTC_EVENTTypeDef f);
+
 #ifdef __cplusplus
 }
 #endif

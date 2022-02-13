@@ -1,296 +1,372 @@
 /********************************** (C) COPYRIGHT *******************************
-* File Name          : CH57x_SYS.c
-* Author             : WCH
-* Version            : V1.0
-* Date               : 2018/12/15
-* Description 
-*******************************************************************************/
+ * File Name          : CH57x_SYS.c
+ * Author             : WCH
+ * Version            : V1.2
+ * Date               : 2021/11/17
+ * Description
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * SPDX-License-Identifier: Apache-2.0
+ *******************************************************************************/
 
 #include "CH57x_common.h"
 
-/*******************************************************************************
-* Function Name  : SetSysClock
-* Description    : ÈÖçÁΩÆÁ≥ªÁªüËøêË°åÊó∂Èíü
-* Input          : sc: Á≥ªÁªüÊó∂ÈíüÊ∫êÈÄâÊã©
-          refer to SYS_CLKTypeDef
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SetSysClock
+ *
+ * @brief   ≈‰÷√œµÕ≥‘À–– ±÷”
+ *
+ * @param   sc      - œµÕ≥ ±÷”‘¥—°‘Ò refer to SYS_CLKTypeDef
+ *
+ * @return  none
+ */
 __attribute__((section(".highcode")))
-void SetSysClock( SYS_CLKTypeDef sc)
+void SetSysClock(SYS_CLKTypeDef sc)
 {
-  UINT32 i;
-  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-  R8_PLL_CONFIG &= ~(1<<5);   //
-  R8_SAFE_ACCESS_SIG = 0;
-  if ( sc & 0x20 ){    // HSE div
-    if ( !( R8_HFCK_PWR_CTRL & RB_CLK_XT32M_PON ) ){
-      R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-      R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-      R8_HFCK_PWR_CTRL |= RB_CLK_XT32M_PON;    // HSE power on
-      for(i=0;i<1200;i++){  __nop();__nop();  }
-    }
-
+    uint32_t i;
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-    R16_CLK_SYS_CFG = ( 0 << 6 ) | ( sc & 0x1f );
-    __nop();__nop();__nop();__nop();
+    R8_PLL_CONFIG &= ~(1 << 5); //
     R8_SAFE_ACCESS_SIG = 0;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-    R8_FLASH_CFG = 0X01;
-    R8_SAFE_ACCESS_SIG = 0;
-  }
+    if(sc & 0x20)
+    { // HSE div
+        if(!(R8_HFCK_PWR_CTRL & RB_CLK_XT32M_PON))
+        {
+            R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+            R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+            R8_HFCK_PWR_CTRL |= RB_CLK_XT32M_PON; // HSE power on
+            for(i = 0; i < 1200; i++)
+            {
+                __nop();
+                __nop();
+            }
+        }
 
-  else if ( sc & 0x40 ){    // PLL div
-    if ( !( R8_HFCK_PWR_CTRL & RB_CLK_PLL_PON ) ){
         R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
         R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-        R8_HFCK_PWR_CTRL |= RB_CLK_PLL_PON;    // PLL power on
-        for(i=0;i<2000;i++){  __nop();__nop();  }
+        R16_CLK_SYS_CFG = (0 << 6) | (sc & 0x1f);
+        __nop();
+        __nop();
+        __nop();
+        __nop();
+        R8_SAFE_ACCESS_SIG = 0;
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+        R8_FLASH_CFG = 0X51;
+        R8_SAFE_ACCESS_SIG = 0;
     }
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-    R16_CLK_SYS_CFG = ( 1 << 6 ) | ( sc & 0x1f );
-    __nop();__nop();__nop();__nop();
-    R8_SAFE_ACCESS_SIG = 0;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-    R8_FLASH_CFG = 0X03;
-    R8_SAFE_ACCESS_SIG = 0;
-  }
+
+    else if(sc & 0x40)
+    { // PLL div
+        if(!(R8_HFCK_PWR_CTRL & RB_CLK_PLL_PON))
+        {
+            R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+            R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+            R8_HFCK_PWR_CTRL |= RB_CLK_PLL_PON; // PLL power on
+            for(i = 0; i < 2000; i++)
+            {
+                __nop();
+                __nop();
+            }
+        }
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+        R16_CLK_SYS_CFG = (1 << 6) | (sc & 0x1f);
+        __nop();
+        __nop();
+        __nop();
+        __nop();
+        R8_SAFE_ACCESS_SIG = 0;
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+        R8_FLASH_CFG = 0X53;
+        R8_SAFE_ACCESS_SIG = 0;
+    }
 }
 
-/*******************************************************************************
-* Function Name  : GetSysClock
-* Description    : Ëé∑ÂèñÂΩìÂâçÁ≥ªÁªüÊó∂Èíü
-* Input          : None
-* Return         : Hz
-*******************************************************************************/
-UINT32 GetSysClock( void )
+/*********************************************************************
+ * @fn      GetSysClock
+ *
+ * @brief   ªÒ»°µ±«∞œµÕ≥ ±÷”
+ *
+ * @param   none
+ *
+ * @return  Hz
+ */
+uint32_t GetSysClock(void)
 {
-  UINT16  rev;
+    uint16_t rev;
 
-  rev = R16_CLK_SYS_CFG & 0xff;
-  if( (rev & 0x40) == (0<<6) ){       // 32MËøõË°åÂàÜÈ¢ë
-      return (32000000/(rev&0x1f));
-  }
-  else if( (rev & RB_CLK_SYS_MOD) == (1<<6) ){    // PLLËøõË°åÂàÜÈ¢ë
-      return (480000000/(rev&0x1f));
-  }
-  else {                        // 32KÂÅö‰∏ªÈ¢ë
-    return (32000);
-  }
+    rev = R16_CLK_SYS_CFG & 0xff;
+    if((rev & 0x40) == (0 << 6))
+    { // 32MΩ¯––∑÷∆µ
+        return (32000000 / (rev & 0x1f));
+    }
+    else if((rev & RB_CLK_SYS_MOD) == (1 << 6))
+    { // PLLΩ¯––∑÷∆µ
+        return (480000000 / (rev & 0x1f));
+    }
+    else
+    { // 32K◊ˆ÷˜∆µ
+        return (32000);
+    }
 }
 
-/*******************************************************************************
-* Function Name  : SYS_GetInfoSta
-* Description    : Ëé∑ÂèñÂΩìÂâçÁ≥ªÁªü‰ø°ÊÅØÁä∂ÊÄÅ
-* Input          : i: 
-					refer to SYS_InfoStaTypeDef
-* Return         : DISABLE  -  ÂÖ≥Èó≠
-				   ENABLE   -  ÂºÄÂêØ
-*******************************************************************************/
-UINT8 SYS_GetInfoSta( SYS_InfoStaTypeDef i )
+/*********************************************************************
+ * @fn      SYS_GetInfoSta
+ *
+ * @brief   ªÒ»°µ±«∞œµÕ≥–≈œ¢◊¥Ã¨
+ *
+ * @param   i       - refer to SYS_InfoStaTypeDef
+ *
+ * @return   «∑Òø™∆Ù
+ */
+uint8_t SYS_GetInfoSta(SYS_InfoStaTypeDef i)
 {
-  if (i == STA_SAFEACC_ACT)
-    return (R8_SAFE_ACCESS_SIG & RB_SAFE_ACC_ACT);
-  else
-    return (R8_GLOB_CFG_INFO & (1 << i));
+    if(i == STA_SAFEACC_ACT)
+    {
+        return (R8_SAFE_ACCESS_SIG & RB_SAFE_ACC_ACT);
+    }
+    else
+    {
+        return (R8_GLOB_CFG_INFO & (1 << i));
+    }
 }
 
-/*******************************************************************************
-* Function Name  : SYS_ResetExecute
-* Description    : ÊâßË°åÁ≥ªÁªüËΩØ‰ª∂Â§ç‰Ωç
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      SYS_ResetExecute
+ *
+ * @brief   ÷¥––œµÕ≥»Ìº˛∏¥Œª
+ *
+ * @param   none
+ *
+ * @return  none
+ */
 __attribute__((section(".highcode")))
-void SYS_ResetExecute( void )
+void SYS_ResetExecute(void)
 {
-  FLASH_ROM_SW_RESET();
-  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-  R8_RST_WDOG_CTRL |= RB_SOFTWARE_RESET;
-  R8_SAFE_ACCESS_SIG = 0;
+    FLASH_ROM_SW_RESET();
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    R8_RST_WDOG_CTRL |= RB_SOFTWARE_RESET;
+    R8_SAFE_ACCESS_SIG = 0;
 }
 
-/*******************************************************************************
-* Function Name  : SYS_DisableAllIrq
-* Description    : ÂÖ≥Èó≠ÊâÄÊúâ‰∏≠Êñ≠ÔºåÂπ∂‰øùÁïôÂΩìÂâç‰∏≠Êñ≠ÂÄº
-* Input          : pirqvÔºöÂΩìÂâç‰øùÁïô‰∏≠Êñ≠ÂÄº
-* Return         : None
-*******************************************************************************/
-void SYS_DisableAllIrq( PUINT32 pirqv )
+/*********************************************************************
+ * @fn      SYS_DisableAllIrq
+ *
+ * @brief   πÿ±’À˘”–÷–∂œ£¨≤¢±£¡Ùµ±«∞÷–∂œ÷µ
+ *
+ * @param   pirqv   - µ±«∞±£¡Ù÷–∂œ÷µ
+ *
+ * @return  none
+ */
+void SYS_DisableAllIrq(uint32_t *pirqv)
 {
-  *pirqv = (PFIC->ISR[0] >> 8) | (PFIC->ISR[1] << 24);
-  PFIC->IRER[0] = 0xffffffff;
-  PFIC->IRER[1] = 0xffffffff;
+    *pirqv = (PFIC->ISR[0] >> 8) | (PFIC->ISR[1] << 24);
+    PFIC->IRER[0] = 0xffffffff;
+    PFIC->IRER[1] = 0xffffffff;
 }
 
-/*******************************************************************************
- * Function Name  : SYS_RecoverIrq
- * Description    : ÊÅ¢Â§ç‰πãÂâçÂÖ≥Èó≠ÁöÑ‰∏≠Êñ≠ÂÄº
- * Input          : irq_statusÔºöÂΩìÂâç‰øùÁïô‰∏≠Êñ≠ÂÄº
- * Return         : None
- *******************************************************************************/
-void SYS_RecoverIrq( UINT32 irq_status )
+/*********************************************************************
+ * @fn      SYS_RecoverIrq
+ *
+ * @brief   ª÷∏¥÷Æ«∞πÿ±’µƒ÷–∂œ÷µ
+ *
+ * @param   irq_status  - µ±«∞±£¡Ù÷–∂œ÷µ
+ *
+ * @return  none
+ */
+void SYS_RecoverIrq(uint32_t irq_status)
 {
-  PFIC->IENR[0] = (irq_status << 8);
-  PFIC->IENR[1] = (irq_status >> 24);
+    PFIC->IENR[0] = (irq_status << 8);
+    PFIC->IENR[1] = (irq_status >> 24);
 }
 
-/*******************************************************************************
-* Function Name  : SYS_GetSysTickCnt
-* Description    : Ëé∑ÂèñÂΩìÂâçÁ≥ªÁªü(SYSTICK)ËÆ°Êï∞ÂÄº
-* Input          : None
-* Return         : ÂΩìÂâçËÆ°Êï∞ÂÄº
-*******************************************************************************/
-UINT32 SYS_GetSysTickCnt( void )
+/*********************************************************************
+ * @fn      SYS_GetSysTickCnt
+ *
+ * @brief   ªÒ»°µ±«∞œµÕ≥(SYSTICK)º∆ ˝÷µ
+ *
+ * @param   none
+ *
+ * @return  µ±«∞º∆ ˝÷µ
+ */
+uint32_t SYS_GetSysTickCnt(void)
 {
-	UINT32 val;
+    uint32_t val;
 
-	val = SysTick->CNT;
-	return( val );
+    val = SysTick->CNT;
+    return (val);
 }
 
-/*******************************************************************************
-* Function Name  : WWDG_ITCfg
-* Description    : ÁúãÈó®ÁãóÂÆöÊó∂Âô®Ê∫¢Âá∫‰∏≠Êñ≠‰ΩøËÉΩ
-* Input          : DISABLE-Ê∫¢Âá∫‰∏ç‰∏≠Êñ≠      ENABLE-Ê∫¢Âá∫‰∏≠Êñ≠
-* Return         : None
-*******************************************************************************/
-void  WWDG_ITCfg( FunctionalState s )
+/*********************************************************************
+ * @fn      WWDG_ITCfg
+ *
+ * @brief   ø¥√≈π∑∂® ±∆˜“Á≥ˆ÷–∂œ πƒ‹
+ *
+ * @param   s       - “Á≥ˆ «∑Ò÷–∂œ
+ *
+ * @return  none
+ */
+void WWDG_ITCfg(FunctionalState s)
 {
-	R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
-	R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-	if(s == DISABLE)		R8_RST_WDOG_CTRL&=~RB_WDOG_INT_EN;
-	else 					R8_RST_WDOG_CTRL|=RB_WDOG_INT_EN;
-	R8_SAFE_ACCESS_SIG = 0;	
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    if(s == DISABLE)
+    {
+        R8_RST_WDOG_CTRL &= ~RB_WDOG_INT_EN;
+    }
+    else
+    {
+        R8_RST_WDOG_CTRL |= RB_WDOG_INT_EN;
+    }
+    R8_SAFE_ACCESS_SIG = 0;
 }
 
-/*******************************************************************************
-* Function Name  : WWDG_ResetCfg
-* Description    : ÁúãÈó®ÁãóÂÆöÊó∂Âô®Â§ç‰ΩçÂäüËÉΩ
-* Input          : DISABLE-Ê∫¢Âá∫‰∏çÂ§ç‰Ωç      ENABLE-Ê∫¢Âá∫Á≥ªÁªüÂ§ç‰Ωç
-* Return         : None
-*******************************************************************************/
-void WWDG_ResetCfg( FunctionalState s )
+/*********************************************************************
+ * @fn      WWDG_ResetCfg
+ *
+ * @brief   ø¥√≈π∑∂® ±∆˜∏¥Œªπ¶ƒ‹
+ *
+ * @param   s       - “Á≥ˆ «∑Ò∏¥Œª
+ *
+ * @return  none
+ */
+void WWDG_ResetCfg(FunctionalState s)
 {
-	R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
-	R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-	if(s == DISABLE)		R8_RST_WDOG_CTRL&=~RB_WDOG_RST_EN;
-	else 					R8_RST_WDOG_CTRL|=RB_WDOG_RST_EN;
-	R8_SAFE_ACCESS_SIG = 0;	
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    if(s == DISABLE)
+    {
+        R8_RST_WDOG_CTRL &= ~RB_WDOG_RST_EN;
+    }
+    else
+    {
+        R8_RST_WDOG_CTRL |= RB_WDOG_RST_EN;
+    }
+    R8_SAFE_ACCESS_SIG = 0;
 }
 
-/*******************************************************************************
-* Function Name  : WWDG_ClearFlag
-* Description    : Ê∏ÖÈô§ÁúãÈó®Áãó‰∏≠Êñ≠Ê†áÂøóÔºåÈáçÊñ∞Âä†ËΩΩËÆ°Êï∞ÂÄº‰πüÂèØÊ∏ÖÈô§
-* Input          : None
-* Return         : None
-*******************************************************************************/
-void WWDG_ClearFlag( void )
+/*********************************************************************
+ * @fn      WWDG_ClearFlag
+ *
+ * @brief   «Â≥˝ø¥√≈π∑÷–∂œ±Í÷æ£¨÷ÿ–¬º”‘ÿº∆ ˝÷µ“≤ø…«Â≥˝
+ *
+ * @param   none
+ *
+ * @return  none
+ */
+void WWDG_ClearFlag(void)
 {
-	R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;		
-	R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-	R8_RST_WDOG_CTRL |= RB_WDOG_INT_FLAG;
-	R8_SAFE_ACCESS_SIG = 0;	
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    R8_RST_WDOG_CTRL |= RB_WDOG_INT_FLAG;
+    R8_SAFE_ACCESS_SIG = 0;
 }
 
-/*******************************************************************************
-* Function Name  : HardFault_Handler
-* Description    : Á°¨‰ª∂ÈîôËØØ‰∏≠Êñ≠ÔºåËøõÂÖ•ÂêéÊâßË°åÂ§ç‰ΩçÔºåÂ§ç‰ΩçÁ±ªÂûã‰∏∫‰∏äÁîµÂ§ç‰Ωç
-* Input          : None
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      HardFault_Handler
+ *
+ * @brief   ”≤º˛¥ÌŒÛ÷–∂œ£¨Ω¯»Î∫Û÷¥––∏¥Œª£¨∏¥Œª¿‡–ÕŒ™…œµÁ∏¥Œª
+ *
+ * @param   none
+ *
+ * @return  none
+ */
 __attribute__((interrupt("WCH-Interrupt-fast")))
 __attribute__((section(".highcode")))
-void HardFault_Handler( void )
+void HardFault_Handler(void)
 {
-  FLASH_ROM_SW_RESET();
-  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-  R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-  R16_INT32K_TUNE = 0xFFFF;
-  R8_RST_WDOG_CTRL |= RB_SOFTWARE_RESET;
-  R8_SAFE_ACCESS_SIG = 0;
-  while(1);
+    FLASH_ROM_SW_RESET();
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
+    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    R16_INT32K_TUNE = 0xFFFF;
+    R8_RST_WDOG_CTRL |= RB_SOFTWARE_RESET;
+    R8_SAFE_ACCESS_SIG = 0;
+    while(1);
 }
 
-/*******************************************************************************
-* Function Name  : mDelayuS
-* Description    : uS Âª∂Êó∂
-* Input          : t: Êó∂Èó¥ÂèÇÊï∞
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      mDelayuS
+ *
+ * @brief   uS —” ±
+ *
+ * @param   t       -  ±º‰≤Œ ˝
+ *
+ * @return  none
+ */
 __attribute__((section(".highcode")))
-void mDelayuS( UINT16 t )
+void mDelayuS(uint16_t t)
 {
-    UINT32 i;
-#if     (FREQ_SYS == 60000000)
-    i = t*15;
-#elif (FREQ_SYS == 48000000)
-    i = t*12;
-#elif (FREQ_SYS == 40000000)
-    i = t*10;
-#elif	(FREQ_SYS == 32000000)
-    i = t<<3;
-#elif	(FREQ_SYS == 24000000)
-    i = t*6;
-#elif	(FREQ_SYS == 16000000)
-    i = t<<2;
-#elif	(FREQ_SYS == 8000000)
-    i = t<<1;
-#elif	(FREQ_SYS == 4000000)
+    uint32_t i;
+#if(FREQ_SYS == 60000000)
+    i = t * 15;
+#elif(FREQ_SYS == 48000000)
+    i = t * 12;
+#elif(FREQ_SYS == 40000000)
+    i = t * 10;
+#elif(FREQ_SYS == 32000000)
+    i = t << 3;
+#elif(FREQ_SYS == 24000000)
+    i = t * 6;
+#elif(FREQ_SYS == 16000000)
+    i = t << 2;
+#elif(FREQ_SYS == 8000000)
+    i = t << 1;
+#elif(FREQ_SYS == 4000000)
     i = t;
-#elif	(FREQ_SYS == 2000000)
-    i = t>>1;
-#elif	(FREQ_SYS == 1000000)
-    i = t>>2;
+#elif(FREQ_SYS == 2000000)
+    i = t >> 1;
+#elif(FREQ_SYS == 1000000)
+    i = t >> 2;
 #endif
     do
     {
-    	__nop();
-    }while(--i);
+        __nop();
+    } while(--i);
 }
 
-/*******************************************************************************
-* Function Name  : mDelaymS
-* Description    : mS Âª∂Êó∂
-* Input          : t: Êó∂Èó¥ÂèÇÊï∞
-* Return         : None
-*******************************************************************************/
+/*********************************************************************
+ * @fn      mDelaymS
+ *
+ * @brief   mS —” ±
+ *
+ * @param   t       -  ±º‰≤Œ ˝
+ *
+ * @return  none
+ */
 __attribute__((section(".highcode")))
-void mDelaymS( UINT16 t )
+void mDelaymS(uint16_t t)
 {
-    UINT16 i;
+    uint16_t i;
 
-    for(i=0; i<t; i++)
+    for(i = 0; i < t; i++)
+    {
         mDelayuS(1000);
+    }
 }
-
 
 #ifdef DEBUG
 int _write(int fd, char *buf, int size)
 {
-	int i;
-	for(i=0; i<size; i++)
-	{
-#if  DEBUG == Debug_UART0
-		while( R8_UART0_TFC == UART_FIFO_SIZE );                        /* Á≠âÂæÖÊï∞ÊçÆÂèëÈÄÅ */
-		R8_UART0_THR = *buf++;                                               /* ÂèëÈÄÅÊï∞ÊçÆ */
-#elif DEBUG == Debug_UART1       
-		while( R8_UART1_TFC == UART_FIFO_SIZE );                        /* Á≠âÂæÖÊï∞ÊçÆÂèëÈÄÅ */
-		R8_UART1_THR = *buf++;                                               /* ÂèëÈÄÅÊï∞ÊçÆ */
-#elif DEBUG == Debug_UART2       
-		while( R8_UART2_TFC == UART_FIFO_SIZE );                        /* Á≠âÂæÖÊï∞ÊçÆÂèëÈÄÅ */
-		R8_UART2_THR = *buf++;                                               /* ÂèëÈÄÅÊï∞ÊçÆ */
+    int i;
+    for(i = 0; i < size; i++)
+    {
+#if DEBUG == Debug_UART0
+        while(R8_UART0_TFC == UART_FIFO_SIZE);                  /* µ»¥˝ ˝æ›∑¢ÀÕ */
+        R8_UART0_THR = *buf++; /* ∑¢ÀÕ ˝æ› */
+#elif DEBUG == Debug_UART1
+        while(R8_UART1_TFC == UART_FIFO_SIZE);                  /* µ»¥˝ ˝æ›∑¢ÀÕ */
+        R8_UART1_THR = *buf++; /* ∑¢ÀÕ ˝æ› */
+#elif DEBUG == Debug_UART2
+        while(R8_UART2_TFC == UART_FIFO_SIZE);                  /* µ»¥˝ ˝æ›∑¢ÀÕ */
+        R8_UART2_THR = *buf++; /* ∑¢ÀÕ ˝æ› */
 #elif DEBUG == Debug_UART3       
-		while( R8_UART3_TFC == UART_FIFO_SIZE );                        /* Á≠âÂæÖÊï∞ÊçÆÂèëÈÄÅ */
-		R8_UART3_THR = *buf++;                                               /* ÂèëÈÄÅÊï∞ÊçÆ */
+        while(R8_UART3_TFC == UART_FIFO_SIZE);                  /* µ»¥˝ ˝æ›∑¢ÀÕ */
+        R8_UART3_THR = *buf++; /* ∑¢ÀÕ ˝æ› */
 #endif
-	}
-	return size;
+    }
+    return size;
 }
 
 #endif

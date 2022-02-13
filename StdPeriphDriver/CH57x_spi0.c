@@ -1,54 +1,67 @@
 /********************************** (C) COPYRIGHT *******************************
-* File Name          : CH57x_SPI0.c
-* Author             : WCH
-* Version            : V1.0
-* Date               : 2018/12/15
-* Description 
-*******************************************************************************/
+ * File Name          : CH57x_SPI0.c
+ * Author             : WCH
+ * Version            : V1.2
+ * Date               : 2021/11/17
+ * Description
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * SPDX-License-Identifier: Apache-2.0
+ *******************************************************************************/
 
 #include "CH57x_common.h"
 
-
-/*******************************************************************************
-* Function Name  : SPI0_MasterDefInit
-* Description    : ä¸»æœºæ¨¡å¼é»˜è®¤åˆå§‹åŒ–ï¼šæ¨¡å¼0+3çº¿å…¨åŒå·¥+8MHz
-* Input          : None			   				
-* Return         : None
-*******************************************************************************/
-void SPI0_MasterDefInit( void )
+/*********************************************************************
+ * @fn      SPI0_MasterDefInit
+ *
+ * @brief   Ö÷»úÄ£Ê½Ä¬ÈÏ³õÊ¼»¯£ºÄ£Ê½0+3ÏßÈ«Ë«¹¤+8MHz
+ *
+ * @param   none
+ *
+ * @return  none
+ */
+void SPI0_MasterDefInit(void)
 {
-    R8_SPI0_CLOCK_DIV = 4;		// ä¸»é¢‘æ—¶é’Ÿ4åˆ†é¢‘
+    R8_SPI0_CLOCK_DIV = 4; // Ö÷ÆµÊ±ÖÓ4·ÖÆµ
     R8_SPI0_CTRL_MOD = RB_SPI_ALL_CLEAR;
-    R8_SPI0_CTRL_MOD = RB_SPI_MOSI_OE | RB_SPI_SCK_OE ;
-    R8_SPI0_CTRL_CFG |= RB_SPI_AUTO_IF;		   // è®¿é—®BUFFER/FIFOè‡ªåŠ¨æ¸…é™¤IF_BYTE_ENDæ ‡å¿—
-    R8_SPI0_CTRL_CFG &= ~RB_SPI_DMA_ENABLE;    // ä¸å¯åŠ¨DMAæ–¹å¼ 
+    R8_SPI0_CTRL_MOD = RB_SPI_MOSI_OE | RB_SPI_SCK_OE;
+    R8_SPI0_CTRL_CFG |= RB_SPI_AUTO_IF;     // ·ÃÎÊBUFFER/FIFO×Ô¶¯Çå³ıIF_BYTE_END±êÖ¾
+    R8_SPI0_CTRL_CFG &= ~RB_SPI_DMA_ENABLE; // ²»Æô¶¯DMA·½Ê½
 }
 
-/*******************************************************************************
-* Function Name  : SPI0_CLKCfg
-* Description    : SPI0 åŸºå‡†æ—¶é’Ÿé…ç½®ï¼Œ= d*Tsys
-* Input          : c: æ—¶é’Ÿåˆ†é¢‘ç³»æ•°			   				
-* Return         : None
-*******************************************************************************/
-void SPI0_CLKCfg( UINT8 c )
+/*********************************************************************
+ * @fn      SPI0_CLKCfg
+ *
+ * @brief   SPI0 »ù×¼Ê±ÖÓÅäÖÃ£¬= d*Tsys
+ *
+ * @param   c       - Ê±ÖÓ·ÖÆµÏµÊı
+ *
+ * @return  none
+ */
+void SPI0_CLKCfg(uint8_t c)
 {
-    if(c==2)
+    if(c == 2)
+    {
         R8_SPI0_CTRL_CFG |= RB_SPI_MST_DLY_EN;
-    else 
+    }
+    else
+    {
         R8_SPI0_CTRL_CFG &= ~RB_SPI_MST_DLY_EN;
+    }
     R8_SPI0_CLOCK_DIV = c;
 }
 
-/*******************************************************************************
-* Function Name  : SPI0_DataMode
-* Description    : è®¾ç½®æ•°æ®æµæ¨¡å¼
-* Input          : m: æ•°æ®æµæ¨¡å¼
-					refer to ModeBitOrderTypeDef
-* Return         : None
-*******************************************************************************/
-void SPI0_DataMode( ModeBitOrderTypeDef m )
+/*********************************************************************
+ * @fn      SPI0_DataMode
+ *
+ * @brief   ÉèÖÃÊı¾İÁ÷Ä£Ê½
+ *
+ * @param   m       - Êı¾İÁ÷Ä£Ê½ refer to ModeBitOrderTypeDef
+ *
+ * @return  none
+ */
+void SPI0_DataMode(ModeBitOrderTypeDef m)
 {
-    switch( m )
+    switch(m)
     {
         case Mode0_LowBitINFront:
             R8_SPI0_CTRL_MOD &= ~RB_SPI_MST_SCK_MOD;
@@ -71,254 +84,283 @@ void SPI0_DataMode( ModeBitOrderTypeDef m )
     }
 }
 
-/*******************************************************************************
-* Function Name  : SPI0_MasterSendByte
-* Description    : å‘é€å•å­—èŠ‚ (buffer)
-* Input          : d: å‘é€å­—èŠ‚
-* Return         : None
-*******************************************************************************/
-void SPI0_MasterSendByte( UINT8 d )
+/*********************************************************************
+ * @fn      SPI0_MasterSendByte
+ *
+ * @brief   ·¢ËÍµ¥×Ö½Ú (buffer)
+ *
+ * @param   d       - ·¢ËÍ×Ö½Ú
+ *
+ * @return  none
+ */
+void SPI0_MasterSendByte(uint8_t d)
 {
     R8_SPI0_CTRL_MOD &= ~RB_SPI_FIFO_DIR;
     R8_SPI0_BUFFER = d;
-    while( !(R8_SPI0_INT_FLAG & RB_SPI_FREE) );	
+    while(!(R8_SPI0_INT_FLAG & RB_SPI_FREE));
 }
 
-/*******************************************************************************
-* Function Name  : SPI0_MasterRecvByte
-* Description    : æ¥æ”¶å•å­—èŠ‚ (buffer)
-* Input          : None
-* Return         : æ¥æ”¶åˆ°çš„å­—èŠ‚
-*******************************************************************************/
-UINT8 SPI0_MasterRecvByte( void )
+/*********************************************************************
+ * @fn      SPI0_MasterRecvByte
+ *
+ * @brief   ½ÓÊÕµ¥×Ö½Ú (buffer)
+ *
+ * @param   none
+ *
+ * @return  ½ÓÊÕµ½µÄ×Ö½Ú
+ */
+uint8_t SPI0_MasterRecvByte(void)
 {
     R8_SPI0_CTRL_MOD &= ~RB_SPI_FIFO_DIR;
-    R8_SPI0_BUFFER = 0xFF;           // å¯åŠ¨ä¼ è¾“
-    while( !(R8_SPI0_INT_FLAG & RB_SPI_FREE) );
-    return ( R8_SPI0_BUFFER );
+    R8_SPI0_BUFFER = 0xFF; // Æô¶¯´«Êä
+    while(!(R8_SPI0_INT_FLAG & RB_SPI_FREE));
+    return (R8_SPI0_BUFFER);
 }
 
-
-/*******************************************************************************
-* Function Name  : SPI0_MasterTrans
-* Description    : ä½¿ç”¨FIFOè¿ç»­å‘é€å¤šå­—èŠ‚
-* Input          : pbuf: å¾…å‘é€çš„æ•°æ®å†…å®¹é¦–åœ°å€
-                   len: è¯·æ±‚å‘é€çš„æ•°æ®é•¿åº¦ï¼Œæœ€å¤§4095				   
-* Return         : None
-*******************************************************************************/
-void SPI0_MasterTrans( UINT8 *pbuf, UINT16 len )
+/*********************************************************************
+ * @fn      SPI0_MasterTrans
+ *
+ * @brief   Ê¹ÓÃFIFOÁ¬Ğø·¢ËÍ¶à×Ö½Ú
+ *
+ * @param   pbuf    - ´ı·¢ËÍµÄÊı¾İÄÚÈİÊ×µØÖ·
+ * @param   len     - ÇëÇó·¢ËÍµÄÊı¾İ³¤¶È£¬×î´ó4095
+ *
+ * @return  none
+ */
+void SPI0_MasterTrans(uint8_t *pbuf, uint16_t len)
 {
-    UINT16 sendlen;
+    uint16_t sendlen;
 
     sendlen = len;
-    R8_SPI0_CTRL_MOD &= ~RB_SPI_FIFO_DIR;                     // è®¾ç½®æ•°æ®æ–¹å‘ä¸ºè¾“å‡º 
-    R16_SPI0_TOTAL_CNT = sendlen;                             // è®¾ç½®è¦å‘é€çš„æ•°æ®é•¿åº¦	
+    R8_SPI0_CTRL_MOD &= ~RB_SPI_FIFO_DIR; // ÉèÖÃÊı¾İ·½ÏòÎªÊä³ö
+    R16_SPI0_TOTAL_CNT = sendlen;         // ÉèÖÃÒª·¢ËÍµÄÊı¾İ³¤¶È
     R8_SPI0_INT_FLAG = RB_SPI_IF_CNT_END;
-    while( sendlen )
-    {                                         
-        if( R8_SPI0_FIFO_COUNT < SPI_FIFO_SIZE )
-        {                              
+    while(sendlen)
+    {
+        if(R8_SPI0_FIFO_COUNT < SPI_FIFO_SIZE)
+        {
             R8_SPI0_FIFO = *pbuf;
             pbuf++;
             sendlen--;
         }
     }
-    while( R8_SPI0_FIFO_COUNT != 0 );                         // ç­‰å¾…FIFOä¸­çš„æ•°æ®å…¨éƒ¨å‘é€å®Œæˆ 
+    while(R8_SPI0_FIFO_COUNT != 0); // µÈ´ıFIFOÖĞµÄÊı¾İÈ«²¿·¢ËÍÍê³É
 }
 
-/*******************************************************************************
-* Function Name  : SPI0_MasterRecv
-* Description    : ä½¿ç”¨FIFOè¿ç»­æ¥æ”¶å¤šå­—èŠ‚
-* Input          : pbuf: å¾…å‘é€çš„æ•°æ®å†…å®¹é¦–åœ°å€
-                   len: è¯·æ±‚å‘é€çš„æ•°æ®é•¿åº¦ï¼Œæœ€å¤§4095
-* Return         : None
-*******************************************************************************/
-void SPI0_MasterRecv( UINT8 *pbuf, UINT16 len )
+/*********************************************************************
+ * @fn      SPI0_MasterRecv
+ *
+ * @brief   Ê¹ÓÃFIFOÁ¬Ğø½ÓÊÕ¶à×Ö½Ú
+ *
+ * @param   pbuf    - ´ı½ÓÊÕµÄÊı¾İÊ×µØÖ·
+ * @param   len     - ´ı½ÓÊÕµÄÊı¾İ³¤¶È£¬×î´ó4095
+ *
+ * @return  none
+ */
+void SPI0_MasterRecv(uint8_t *pbuf, uint16_t len)
 {
-    UINT16  readlen;
+    uint16_t readlen;
 
     readlen = len;
-    R8_SPI0_CTRL_MOD |= RB_SPI_FIFO_DIR;                     // è®¾ç½®æ•°æ®æ–¹å‘ä¸ºè¾“å…¥ 
-    R16_SPI0_TOTAL_CNT = len;                                // è®¾ç½®éœ€è¦æ¥æ”¶çš„æ•°æ®é•¿åº¦ï¼ŒFIFOæ–¹å‘ä¸ºè¾“å…¥é•¿åº¦ä¸ä¸º0åˆ™ä¼šå¯åŠ¨ä¼ è¾“ */
+    R8_SPI0_CTRL_MOD |= RB_SPI_FIFO_DIR; // ÉèÖÃÊı¾İ·½ÏòÎªÊäÈë
+    R16_SPI0_TOTAL_CNT = len;            // ÉèÖÃĞèÒª½ÓÊÕµÄÊı¾İ³¤¶È£¬FIFO·½ÏòÎªÊäÈë³¤¶È²»Îª0Ôò»áÆô¶¯´«Êä */
     R8_SPI0_INT_FLAG = RB_SPI_IF_CNT_END;
-    while( readlen )
-    {                                                          
-        if( R8_SPI0_FIFO_COUNT )
-        {                                               
-            *pbuf = R8_SPI0_FIFO;                                             
+    while(readlen)
+    {
+        if(R8_SPI0_FIFO_COUNT)
+        {
+            *pbuf = R8_SPI0_FIFO;
             pbuf++;
             readlen--;
         }
     }
 }
 
-/*******************************************************************************
-* Function Name  : SPI0_MasterDMATrans
-* Description    : DMAæ–¹å¼è¿ç»­å‘é€æ•°æ®  
-* Input          : pbuf: å¾…å‘é€æ•°æ®èµ·å§‹åœ°å€
-*                  len : å¾…å‘é€æ•°æ®é•¿åº¦
-* Return         : None
-*******************************************************************************/
-void SPI0_MasterDMATrans( PUINT8 pbuf, UINT16 len)
-{                                    
-    R8_SPI0_CTRL_MOD &= ~RB_SPI_FIFO_DIR;     
-    R16_SPI0_DMA_BEG = (UINT32)pbuf;                                           
-    R16_SPI0_DMA_END = (UINT32)(pbuf + len);
-    R16_SPI0_TOTAL_CNT = len;
-    R8_SPI0_INT_FLAG = RB_SPI_IF_CNT_END|RB_SPI_IF_DMA_END;
-    R8_SPI0_CTRL_CFG |= RB_SPI_DMA_ENABLE;
-    while(!(R8_SPI0_INT_FLAG & RB_SPI_IF_CNT_END));
-    R8_SPI0_CTRL_CFG &= ~RB_SPI_DMA_ENABLE;
-}
-
-/*******************************************************************************
-* Function Name  : SPI0_MasterDMARecv
-* Description    : DMAæ–¹å¼è¿ç»­æ¥æ”¶æ•°æ®  
-* Input          : pbuf: å¾…æ¥æ”¶æ•°æ®å­˜æ”¾èµ·å§‹åœ°å€
-*                  len : å¾…æ¥æ”¶æ•°æ®é•¿åº¦
-* Return         : None
-*******************************************************************************/
-void SPI0_MasterDMARecv( PUINT8 pbuf, UINT16 len)
+/*********************************************************************
+ * @fn      SPI0_MasterDMATrans
+ *
+ * @brief   DMA·½Ê½Á¬Ğø·¢ËÍÊı¾İ
+ *
+ * @param   pbuf    - ´ı·¢ËÍÊı¾İÆğÊ¼µØÖ·,ĞèÒªËÄ×Ö½Ú¶ÔÆä
+ * @param   len     - ´ı·¢ËÍÊı¾İ³¤¶È
+ *
+ * @return  none
+ */
+void SPI0_MasterDMATrans(uint8_t *pbuf, uint16_t len)
 {
-    R8_SPI0_CTRL_MOD |= RB_SPI_FIFO_DIR;                                      
-    R16_SPI0_DMA_BEG = (UINT32)pbuf;                                           
-    R16_SPI0_DMA_END = (UINT32)(pbuf + len);                                 
-    R16_SPI0_TOTAL_CNT = len; 
-    R8_SPI0_INT_FLAG = RB_SPI_IF_CNT_END|RB_SPI_IF_DMA_END;
+    R8_SPI0_CTRL_MOD &= ~RB_SPI_FIFO_DIR;
+    R16_SPI0_DMA_BEG = (uint32_t)pbuf;
+    R16_SPI0_DMA_END = (uint32_t)(pbuf + len);
+    R16_SPI0_TOTAL_CNT = len;
+    R8_SPI0_INT_FLAG = RB_SPI_IF_CNT_END | RB_SPI_IF_DMA_END;
     R8_SPI0_CTRL_CFG |= RB_SPI_DMA_ENABLE;
     while(!(R8_SPI0_INT_FLAG & RB_SPI_IF_CNT_END));
     R8_SPI0_CTRL_CFG &= ~RB_SPI_DMA_ENABLE;
 }
 
+/*********************************************************************
+ * @fn      SPI0_MasterDMARecv
+ *
+ * @brief   DMA·½Ê½Á¬Ğø½ÓÊÕÊı¾İ
+ *
+ * @param   pbuf    - ´ı½ÓÊÕÊı¾İ´æ·ÅÆğÊ¼µØÖ·,ĞèÒªËÄ×Ö½Ú¶ÔÆä
+ * @param   len     - ´ı½ÓÊÕÊı¾İ³¤¶È
+ *
+ * @return  none
+ */
+void SPI0_MasterDMARecv(uint8_t *pbuf, uint16_t len)
+{
+    R8_SPI0_CTRL_MOD |= RB_SPI_FIFO_DIR;
+    R16_SPI0_DMA_BEG = (uint32_t)pbuf;
+    R16_SPI0_DMA_END = (uint32_t)(pbuf + len);
+    R16_SPI0_TOTAL_CNT = len;
+    R8_SPI0_INT_FLAG = RB_SPI_IF_CNT_END | RB_SPI_IF_DMA_END;
+    R8_SPI0_CTRL_CFG |= RB_SPI_DMA_ENABLE;
+    while(!(R8_SPI0_INT_FLAG & RB_SPI_IF_CNT_END));
+    R8_SPI0_CTRL_CFG &= ~RB_SPI_DMA_ENABLE;
+}
 
-
-/*******************************************************************************
-* Function Name  : SPI0_SlaveInit
-* Description    : è®¾å¤‡æ¨¡å¼é»˜è®¤åˆå§‹åŒ–ï¼Œå»ºè®®è®¾ç½®MISOçš„GPIOå¯¹åº”ä¸ºè¾“å…¥æ¨¡å¼
-* Input          : None
-* Return         : None
-*******************************************************************************/
-void SPI0_SlaveInit( void )
-{  
+/*********************************************************************
+ * @fn      SPI0_SlaveInit
+ *
+ * @brief   Éè±¸Ä£Ê½Ä¬ÈÏ³õÊ¼»¯£¬½¨ÒéÉèÖÃMISOµÄGPIO¶ÔÓ¦ÎªÊäÈëÄ£Ê½
+ *
+ * @return  none
+ */
+void SPI0_SlaveInit(void)
+{
     R8_SPI0_CTRL_MOD = RB_SPI_ALL_CLEAR;
-    R8_SPI0_CTRL_MOD = RB_SPI_MISO_OE | RB_SPI_MODE_SLAVE;	
+    R8_SPI0_CTRL_MOD = RB_SPI_MISO_OE | RB_SPI_MODE_SLAVE;
     R8_SPI0_CTRL_CFG |= RB_SPI_AUTO_IF;
 }
 
-/*******************************************************************************
-* Function Name  : SPI0_SlaveRecvByte
-* Description    : ä»æœºæ¨¡å¼ï¼Œæ¥æ”¶ä¸€å­—èŠ‚æ•°æ®  
-* Input          : None
-* Return         : æ¥æ”¶åˆ°æ•°æ®
-*******************************************************************************/
-UINT8 SPI0_SlaveRecvByte( void )
+/*********************************************************************
+ * @fn      SPI0_SlaveRecvByte
+ *
+ * @brief   ´Ó»úÄ£Ê½£¬½ÓÊÕÒ»×Ö½ÚÊı¾İ
+ *
+ * @return  ½ÓÊÕµ½Êı¾İ
+ */
+uint8_t SPI0_SlaveRecvByte(void)
 {
     R8_SPI0_CTRL_MOD |= RB_SPI_FIFO_DIR;
-    while( R8_SPI0_FIFO_COUNT == 0 );          
-    return R8_SPI0_FIFO; 
+    while(R8_SPI0_FIFO_COUNT == 0);
+    return R8_SPI0_FIFO;
 }
 
-/*******************************************************************************
-* Function Name  : SPI0_SlaveSendByte
-* Description    : ä»æœºæ¨¡å¼ï¼Œå‘é€ä¸€å­—èŠ‚æ•°æ®  
-* Input          : d -å¾…å‘é€æ•°æ® 
-* Return         : None
-*******************************************************************************/
-void SPI0_SlaveSendByte( UINT8 d )
+/*********************************************************************
+ * @fn      SPI0_SlaveSendByte
+ *
+ * @brief   ´Ó»úÄ£Ê½£¬·¢ËÍÒ»×Ö½ÚÊı¾İ
+ *
+ * @param   d       - ´ı·¢ËÍÊı¾İ
+ *
+ * @return  none
+ */
+void SPI0_SlaveSendByte(uint8_t d)
 {
-    R8_SPI0_CTRL_MOD &= ~RB_SPI_FIFO_DIR;                                              
-    R8_SPI0_FIFO = d;                    
-    while( R8_SPI0_FIFO_COUNT != 0 );               // ç­‰å¾…å‘é€å®Œæˆ 
+    R8_SPI0_CTRL_MOD &= ~RB_SPI_FIFO_DIR;
+    R8_SPI0_FIFO = d;
+    while(R8_SPI0_FIFO_COUNT != 0); // µÈ´ı·¢ËÍÍê³É
 }
 
-/*******************************************************************************
-* Function Name  : SPI0_SlaveRecv
-* Description    : ä»æœºæ¨¡å¼ï¼Œæ¥æ”¶å¤šå­—èŠ‚æ•°æ®  
-* Input          : pbuf: æ¥æ”¶æ”¶æ•°æ®å­˜æ”¾èµ·å§‹åœ°å€
-*                  len : è¯·æ±‚æ¥æ”¶æ•°æ®é•¿åº¦
-* Return         : None
-*******************************************************************************/
-void SPI0_SlaveRecv( PUINT8 pbuf, UINT16 len )
+/*********************************************************************
+ * @fn      SPI0_SlaveRecv
+ *
+ * @brief   ´Ó»úÄ£Ê½£¬½ÓÊÕ¶à×Ö½ÚÊı¾İ
+ *
+ * @param   pbuf    - ½ÓÊÕÊÕÊı¾İ´æ·ÅÆğÊ¼µØÖ·
+ * @param   len     - ÇëÇó½ÓÊÕÊı¾İ³¤¶È
+ *
+ * @return  none
+ */
+void SPI0_SlaveRecv(uint8_t *pbuf, uint16_t len)
 {
-    UINT16 revlen;
-    
+    uint16_t revlen;
+
     revlen = len;
     R8_SPI0_CTRL_MOD |= RB_SPI_FIFO_DIR;
     R8_SPI0_INT_FLAG = RB_SPI_IF_CNT_END;
-    while( revlen )
+    while(revlen)
     {
-        if( R8_SPI0_FIFO_COUNT )
-        {            
+        if(R8_SPI0_FIFO_COUNT)
+        {
             *pbuf = R8_SPI0_FIFO;
             pbuf++;
             revlen--;
         }
-    }        
+    }
 }
 
-/*******************************************************************************
-* Function Name  : SPI0_SlaveTrans
-* Description    : ä»æœºæ¨¡å¼ï¼Œå‘é€å¤šå­—èŠ‚æ•°æ®
-* Input          : pbuf: å¾…å‘é€çš„æ•°æ®å†…å®¹é¦–åœ°å€
-                   len: è¯·æ±‚å‘é€çš„æ•°æ®é•¿åº¦ï¼Œæœ€å¤§4095				   
-* Return         : None
-*******************************************************************************/
-void SPI0_SlaveTrans( UINT8 *pbuf, UINT16 len )
+/*********************************************************************
+ * @fn      SPI0_SlaveTrans
+ *
+ * @brief   ´Ó»úÄ£Ê½£¬·¢ËÍ¶à×Ö½ÚÊı¾İ
+ *
+ * @param   pbuf    - ´ı·¢ËÍµÄÊı¾İÄÚÈİÊ×µØÖ·
+ * @param   len     - ÇëÇó·¢ËÍµÄÊı¾İ³¤¶È£¬×î´ó4095
+ *
+ * @return  none
+ */
+void SPI0_SlaveTrans(uint8_t *pbuf, uint16_t len)
 {
-    UINT16 sendlen;
+    uint16_t sendlen;
 
     sendlen = len;
-    R8_SPI0_CTRL_MOD &= ~RB_SPI_FIFO_DIR;                     // è®¾ç½®æ•°æ®æ–¹å‘ä¸ºè¾“å‡º 
+    R8_SPI0_CTRL_MOD &= ~RB_SPI_FIFO_DIR; // ÉèÖÃÊı¾İ·½ÏòÎªÊä³ö
     R8_SPI0_INT_FLAG = RB_SPI_IF_CNT_END;
-    while( sendlen )
-    {                                         
-        if( R8_SPI0_FIFO_COUNT < SPI_FIFO_SIZE )
-        {                              
+    while(sendlen)
+    {
+        if(R8_SPI0_FIFO_COUNT < SPI_FIFO_SIZE)
+        {
             R8_SPI0_FIFO = *pbuf;
             pbuf++;
             sendlen--;
         }
     }
-    while( R8_SPI0_FIFO_COUNT != 0 );                         // ç­‰å¾…FIFOä¸­çš„æ•°æ®å…¨éƒ¨å‘é€å®Œæˆ 
+    while(R8_SPI0_FIFO_COUNT != 0); // µÈ´ıFIFOÖĞµÄÊı¾İÈ«²¿·¢ËÍÍê³É
 }
 
-/*******************************************************************************
-* Function Name  : SPI0_SlaveDMARecv
-* Description    : DMAæ–¹å¼è¿ç»­æ¥æ”¶æ•°æ®  
-* Input          : pbuf: å¾…æ¥æ”¶æ•°æ®å­˜æ”¾èµ·å§‹åœ°å€
-*                  len : å¾…æ¥æ”¶æ•°æ®é•¿åº¦
-* Return         : None
-*******************************************************************************/
-void SPI0_SlaveDMARecv( PUINT8 pbuf, UINT16 len)
+/*********************************************************************
+ * @fn      SPI0_SlaveDMARecv
+ *
+ * @brief   DMA·½Ê½Á¬Ğø½ÓÊÕÊı¾İ
+ *
+ * @param   pbuf    - ´ı½ÓÊÕÊı¾İ´æ·ÅÆğÊ¼µØÖ·,ĞèÒªËÄ×Ö½Ú¶ÔÆä
+ * @param   len     - ´ı½ÓÊÕÊı¾İ³¤¶È
+ *
+ * @return  none
+ */
+void SPI0_SlaveDMARecv(uint8_t *pbuf, uint16_t len)
 {
-    R8_SPI0_CTRL_MOD |= RB_SPI_FIFO_DIR;                                      
-    R16_SPI0_DMA_BEG = (UINT32)pbuf;                                           
-    R16_SPI0_DMA_END = (UINT32)(pbuf + len);
+    R8_SPI0_CTRL_MOD |= RB_SPI_FIFO_DIR;
+    R16_SPI0_DMA_BEG = (uint32_t)pbuf;
+    R16_SPI0_DMA_END = (uint32_t)(pbuf + len);
     R16_SPI0_TOTAL_CNT = len;
-    R8_SPI0_INT_FLAG = RB_SPI_IF_CNT_END|RB_SPI_IF_DMA_END;
+    R8_SPI0_INT_FLAG = RB_SPI_IF_CNT_END | RB_SPI_IF_DMA_END;
     R8_SPI0_CTRL_CFG |= RB_SPI_DMA_ENABLE;
     while(!(R8_SPI0_INT_FLAG & RB_SPI_IF_CNT_END));
     R8_SPI0_CTRL_CFG &= ~RB_SPI_DMA_ENABLE;
 }
 
-/*******************************************************************************
-* Function Name  : SPI0_SlaveDMATrans
-* Description    : DMAæ–¹å¼è¿ç»­å‘é€æ•°æ®  
-* Input          : pbuf: å¾…å‘é€æ•°æ®èµ·å§‹åœ°å€
-*                  len : å¾…å‘é€æ•°æ®é•¿åº¦
-* Return         : None
-*******************************************************************************/
-void SPI0_SlaveDMATrans( PUINT8 pbuf, UINT16 len)
-{                                    
-    R8_SPI0_CTRL_MOD &= ~RB_SPI_FIFO_DIR;     
-    R16_SPI0_DMA_BEG = (UINT32)pbuf;                                           
-    R16_SPI0_DMA_END = (UINT32)(pbuf + len);
+/*********************************************************************
+ * @fn      SPI0_SlaveDMATrans
+ *
+ * @brief   DMA·½Ê½Á¬Ğø·¢ËÍÊı¾İ
+ *
+ * @param   pbuf    - ´ı·¢ËÍÊı¾İÆğÊ¼µØÖ·,ĞèÒªËÄ×Ö½Ú¶ÔÆä
+ * @param   len     - ´ı·¢ËÍÊı¾İ³¤¶È
+ *
+ * @return  none
+ */
+void SPI0_SlaveDMATrans(uint8_t *pbuf, uint16_t len)
+{
+    R8_SPI0_CTRL_MOD &= ~RB_SPI_FIFO_DIR;
+    R16_SPI0_DMA_BEG = (uint32_t)pbuf;
+    R16_SPI0_DMA_END = (uint32_t)(pbuf + len);
     R16_SPI0_TOTAL_CNT = len;
-    R8_SPI0_INT_FLAG = RB_SPI_IF_CNT_END|RB_SPI_IF_DMA_END;
+    R8_SPI0_INT_FLAG = RB_SPI_IF_CNT_END | RB_SPI_IF_DMA_END;
     R8_SPI0_CTRL_CFG |= RB_SPI_DMA_ENABLE;
     while(!(R8_SPI0_INT_FLAG & RB_SPI_IF_CNT_END));
     R8_SPI0_CTRL_CFG &= ~RB_SPI_DMA_ENABLE;
 }
-
-
-

@@ -1,71 +1,82 @@
 /********************************** (C) COPYRIGHT *******************************
-* File Name          : CH57x_uart0.c
-* Author             : WCH
-* Version            : V1.0
-* Date               : 2018/12/15
-* Description 
-*******************************************************************************/
+ * File Name          : CH57x_uart0.c
+ * Author             : WCH
+ * Version            : V1.2
+ * Date               : 2021/11/17
+ * Description
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * SPDX-License-Identifier: Apache-2.0
+ *******************************************************************************/
 
 #include "CH57x_common.h"
 
-/*******************************************************************************
-* Function Name  : UART0_DefInit
-* Description    : ‰∏≤Âè£ÈªòËÆ§ÂàùÂßãÂåñÈÖçÁΩÆ
-* Input          : None
-* Return         : None
-*******************************************************************************/
-void UART0_DefInit( void )
-{	
-    UART0_BaudRateCfg( 115200 );
-    R8_UART0_FCR = (2<<6) | RB_FCR_TX_FIFO_CLR | RB_FCR_RX_FIFO_CLR | RB_FCR_FIFO_EN;		// FIFOÊâìÂºÄÔºåËß¶ÂèëÁÇπ4Â≠óËäÇ
-    R8_UART0_LCR = RB_LCR_WORD_SZ;	
+/*********************************************************************
+ * @fn      UART0_DefInit
+ *
+ * @brief   ¥Æø⁄ƒ¨»œ≥ı ºªØ≈‰÷√
+ *
+ * @param   none
+ *
+ * @return  none
+ */
+void UART0_DefInit(void)
+{
+    UART0_BaudRateCfg(115200);
+    R8_UART0_FCR = (2 << 6) | RB_FCR_TX_FIFO_CLR | RB_FCR_RX_FIFO_CLR | RB_FCR_FIFO_EN; // FIFO¥Úø™£¨¥•∑¢µ„4◊÷Ω⁄
+    R8_UART0_LCR = RB_LCR_WORD_SZ;
     R8_UART0_IER = RB_IER_TXD_EN;
-    R8_UART0_DIV = 1;	
+    R8_UART0_DIV = 1;
 }
 
-/*******************************************************************************
-* Function Name  : UART0_BaudRateCfg
-* Description    : ‰∏≤Âè£Ê≥¢ÁâπÁéáÈÖçÁΩÆ
-* Input          : 
-* Return         : 
-*******************************************************************************/
-void UART0_BaudRateCfg( UINT32 baudrate )
+/*********************************************************************
+ * @fn      UART0_BaudRateCfg
+ *
+ * @brief   ¥Æø⁄≤®Ãÿ¬ ≈‰÷√
+ *
+ * @param   baudrate    - ≤®Ãÿ¬ 
+ *
+ * @return  none
+ */
+void UART0_BaudRateCfg(uint32_t baudrate)
 {
-    UINT32	x;
+    uint32_t x;
 
     x = 10 * GetSysClock() / 8 / baudrate;
-    x = ( x + 5 ) / 10;
-    R16_UART0_DL = (UINT16)x;
+    x = (x + 5) / 10;
+    R16_UART0_DL = (uint16_t)x;
 }
 
-/*******************************************************************************
-* Function Name  : UART0_ByteTrigCfg
-* Description    : ‰∏≤Âè£Â≠óËäÇËß¶Âèë‰∏≠Êñ≠ÈÖçÁΩÆ
-* Input          : b: Ëß¶ÂèëÂ≠óËäÇÊï∞
-                    refer to UARTByteTRIGTypeDef
-* Return         : 
-*******************************************************************************/
-void UART0_ByteTrigCfg( UARTByteTRIGTypeDef b )
+/*********************************************************************
+ * @fn      UART0_ByteTrigCfg
+ *
+ * @brief   ¥Æø⁄◊÷Ω⁄¥•∑¢÷–∂œ≈‰÷√
+ *
+ * @param   b       - ¥•∑¢◊÷Ω⁄ ˝ refer to UARTByteTRIGTypeDef
+ *
+ * @return  none
+ */
+void UART0_ByteTrigCfg(UARTByteTRIGTypeDef b)
 {
-    R8_UART0_FCR = (R8_UART0_FCR&~RB_FCR_FIFO_TRIG)|(b<<6);
+    R8_UART0_FCR = (R8_UART0_FCR & ~RB_FCR_FIFO_TRIG) | (b << 6);
 }
 
-/*******************************************************************************
-* Function Name  : UART0_INTCfg
-* Description    : ‰∏≤Âè£‰∏≠Êñ≠ÈÖçÁΩÆ
-* Input          : s:  ‰∏≠Êñ≠ÊéßÂà∂Áä∂ÊÄÅ
-					ENABLE  - ‰ΩøËÉΩÁõ∏Â∫î‰∏≠Êñ≠    
-					DISABLE - ÂÖ≥Èó≠Áõ∏Â∫î‰∏≠Êñ≠
-				   i:  ‰∏≠Êñ≠Á±ªÂûã
-					RB_IER_MODEM_CHG  - Ë∞ÉÂà∂Ëß£Ë∞ÉÂô®ËæìÂÖ•Áä∂ÊÄÅÂèòÂåñ‰∏≠Êñ≠‰ΩøËÉΩ‰ΩçÔºà‰ªÖ UART0 ÊîØÊåÅÔºâ
-					RB_IER_LINE_STAT  - Êé•Êî∂Á∫øË∑ØÁä∂ÊÄÅ‰∏≠Êñ≠
-					RB_IER_THR_EMPTY  - ÂèëÈÄÅ‰øùÊåÅÂØÑÂ≠òÂô®Á©∫‰∏≠Êñ≠
-					RB_IER_RECV_RDY   - Êé•Êî∂Êï∞ÊçÆ‰∏≠Êñ≠
-* Return         : None
-*******************************************************************************/
-void UART0_INTCfg( FunctionalState s,  UINT8 i )
+/*********************************************************************
+ * @fn      UART0_INTCfg
+ *
+ * @brief   ¥Æø⁄÷–∂œ≈‰÷√
+ *
+ * @param   s       - ÷–∂œøÿ÷∆◊¥Ã¨£¨ «∑Ò πƒ‹œ‡”¶÷–∂œ
+ * @param   i       - ÷–∂œ¿‡–Õ
+ *                    RB_IER_MODEM_CHG  - µ˜÷∆Ω‚µ˜∆˜ ‰»Î◊¥Ã¨±‰ªØ÷–∂œ πƒ‹Œª£®Ωˆ UART0 ÷ß≥÷£©
+ *                    RB_IER_LINE_STAT  - Ω” ’œﬂ¬∑◊¥Ã¨÷–∂œ
+ *                    RB_IER_THR_EMPTY  - ∑¢ÀÕ±£≥÷ºƒ¥Ê∆˜ø’÷–∂œ
+ *                    RB_IER_RECV_RDY   - Ω” ’ ˝æ›÷–∂œ
+ *
+ * @return  none
+ */
+void UART0_INTCfg(FunctionalState s, uint8_t i)
 {
-    if( s )
+    if(s)
     {
         R8_UART0_IER |= i;
         R8_UART0_MCR |= RB_MCR_INT_OE;
@@ -76,27 +87,33 @@ void UART0_INTCfg( FunctionalState s,  UINT8 i )
     }
 }
 
-/*******************************************************************************
-* Function Name  : UART0_Reset
-* Description    : ‰∏≤Âè£ËΩØ‰ª∂Â§ç‰Ωç
-* Input          : None
-* Return         : None
-*******************************************************************************/
-void UART0_Reset( void )
+/*********************************************************************
+ * @fn      UART0_Reset
+ *
+ * @brief   ¥Æø⁄»Ìº˛∏¥Œª
+ *
+ * @param   none
+ *
+ * @return  none
+ */
+void UART0_Reset(void)
 {
     R8_UART0_IER = RB_IER_RESET;
 }
 
-/*******************************************************************************
-* Function Name  : UART0_SendString
-* Description    : ‰∏≤Âè£Â§öÂ≠óËäÇÂèëÈÄÅ
-* Input          : buf - ÂæÖÂèëÈÄÅÁöÑÊï∞ÊçÆÂÜÖÂÆπÈ¶ñÂú∞ÂùÄ
-                     l - ÂæÖÂèëÈÄÅÁöÑÊï∞ÊçÆÈïøÂ∫¶
-* Return         : None
-*******************************************************************************/
-void UART0_SendString( PUINT8 buf, UINT16 l )
+/*********************************************************************
+ * @fn      UART0_SendString
+ *
+ * @brief   ¥Æø⁄∂‡◊÷Ω⁄∑¢ÀÕ
+ *
+ * @param   buf     - ¥˝∑¢ÀÕµƒ ˝æ›ƒ⁄»› ◊µÿ÷∑
+ * @param   l       - ¥˝∑¢ÀÕµƒ ˝æ›≥§∂»
+ *
+ * @return  none
+ */
+void UART0_SendString(uint8_t *buf, uint16_t l)
 {
-    UINT16 len = l;
+    uint16_t len = l;
 
     while(len)
     {
@@ -104,27 +121,29 @@ void UART0_SendString( PUINT8 buf, UINT16 l )
         {
             R8_UART0_THR = *buf++;
             len--;
-        }		
+        }
     }
 }
 
-/*******************************************************************************
-* Function Name  : UART0_RecvString
-* Description    : ‰∏≤Âè£ËØªÂèñÂ§öÂ≠óËäÇ
-* Input          : buf - ËØªÂèñÊï∞ÊçÆÂ≠òÊîæÁºìÂ≠òÂå∫È¶ñÂú∞ÂùÄ
-* Return         : ËØªÂèñÊï∞ÊçÆÈïøÂ∫¶
-*******************************************************************************/
-UINT16 UART0_RecvString( PUINT8 buf )
+/*********************************************************************
+ * @fn      UART0_RecvString
+ *
+ * @brief   ¥Æø⁄∂¡»°∂‡◊÷Ω⁄
+ *
+ * @param   buf     - ∂¡»° ˝æ›¥Ê∑≈ª∫¥Ê«¯ ◊µÿ÷∑
+ *
+ * @return  ∂¡»° ˝æ›≥§∂»
+ */
+uint16_t UART0_RecvString(uint8_t *buf)
 {
-    UINT16 len = 0;
+    uint16_t len = 0;
 
-    while( R8_UART0_RFC )
+    while(R8_UART0_RFC)
     {
         *buf++ = R8_UART0_RBR;
-        len ++;
+        len++;
     }
 
     return (len);
 }
-
 

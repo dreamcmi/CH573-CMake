@@ -1,4 +1,5 @@
 #include "CH57x_common.h"
+#include "CH57xBLE_LIB.h"
 
 void DebugInit(void)
 {
@@ -14,6 +15,7 @@ int main()
   /* 配置串口调试 */
   DebugInit();
   printf("Start @ChipID=%02X\n", R8_CHIP_ID);
+  printf("%s\n", VER_LIB);
   while (1);  // 必须加while卡住主程序
   return 0;
 }

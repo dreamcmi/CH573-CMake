@@ -1,71 +1,82 @@
 /********************************** (C) COPYRIGHT *******************************
-* File Name          : CH57x_uart3.c
-* Author             : WCH
-* Version            : V1.0
-* Date               : 2018/12/15
-* Description 
-*******************************************************************************/
+ * File Name          : CH57x_uart3.c
+ * Author             : WCH
+ * Version            : V1.2
+ * Date               : 2021/11/17
+ * Description
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * SPDX-License-Identifier: Apache-2.0
+ *******************************************************************************/
 
 #include "CH57x_common.h"
 
-/*******************************************************************************
-* Function Name  : UART3_DefInit
-* Description    : ‰∏≤Âè£ÈªòËÆ§ÂàùÂßãÂåñÈÖçÁΩÆ
-* Input          : None
-* Return         : None
-*******************************************************************************/
-void UART3_DefInit( void )
-{	
-    UART3_BaudRateCfg( 115200 );
-    R8_UART3_FCR = (2<<6) | RB_FCR_TX_FIFO_CLR | RB_FCR_RX_FIFO_CLR | RB_FCR_FIFO_EN;		// FIFOÊâìÂºÄÔºåËß¶ÂèëÁÇπ4Â≠óËäÇ
-    R8_UART3_LCR = RB_LCR_WORD_SZ;	
+/*********************************************************************
+ * @fn      UART3_DefInit
+ *
+ * @brief   ¥Æø⁄ƒ¨»œ≥ı ºªØ≈‰÷√
+ *
+ * @param   none
+ *
+ * @return  none
+ */
+void UART3_DefInit(void)
+{
+    UART3_BaudRateCfg(115200);
+    R8_UART3_FCR = (2 << 6) | RB_FCR_TX_FIFO_CLR | RB_FCR_RX_FIFO_CLR | RB_FCR_FIFO_EN; // FIFO¥Úø™£¨¥•∑¢µ„4◊÷Ω⁄
+    R8_UART3_LCR = RB_LCR_WORD_SZ;
     R8_UART3_IER = RB_IER_TXD_EN;
-    R8_UART3_DIV = 1;	
+    R8_UART3_DIV = 1;
 }
 
-/*******************************************************************************
-* Function Name  : UART3_BaudRateCfg
-* Description    : ‰∏≤Âè£Ê≥¢ÁâπÁéáÈÖçÁΩÆ
-* Input          : 
-* Return         : 
-*******************************************************************************/
-void UART3_BaudRateCfg( UINT32 baudrate )
+/*********************************************************************
+ * @fn      UART3_BaudRateCfg
+ *
+ * @brief   ¥Æø⁄≤®Ãÿ¬ ≈‰÷√
+ *
+ * @param   baudrate    - ≤®Ãÿ¬ 
+ *
+ * @return  none
+ */
+void UART3_BaudRateCfg(uint32_t baudrate)
 {
-    UINT32	x;
+    uint32_t x;
 
     x = 10 * GetSysClock() / 8 / baudrate;
-    x = ( x + 5 ) / 10;
-    R16_UART3_DL = (UINT16)x;
+    x = (x + 5) / 10;
+    R16_UART3_DL = (uint16_t)x;
 }
 
-/*******************************************************************************
-* Function Name  : UART3_ByteTrigCfg
-* Description    : ‰∏≤Âè£Â≠óËäÇËß¶Âèë‰∏≠Êñ≠ÈÖçÁΩÆ
-* Input          : b: Ëß¶ÂèëÂ≠óËäÇÊï∞
-                    refer to UARTByteTRIGTypeDef
-* Return         : 
-*******************************************************************************/
-void UART3_ByteTrigCfg( UARTByteTRIGTypeDef b )
+/*********************************************************************
+ * @fn      UART3_ByteTrigCfg
+ *
+ * @brief   ¥Æø⁄◊÷Ω⁄¥•∑¢÷–∂œ≈‰÷√
+ *
+ * @param   b       - ¥•∑¢◊÷Ω⁄ ˝ refer to UARTByteTRIGTypeDef
+ *
+ * @return  none
+ */
+void UART3_ByteTrigCfg(UARTByteTRIGTypeDef b)
 {
-    R8_UART3_FCR = (R8_UART3_FCR&~RB_FCR_FIFO_TRIG)|(b<<6);
+    R8_UART3_FCR = (R8_UART3_FCR & ~RB_FCR_FIFO_TRIG) | (b << 6);
 }
 
-/*******************************************************************************
-* Function Name  : UART3_INTCfg
-* Description    : ‰∏≤Âè£‰∏≠Êñ≠ÈÖçÁΩÆ
-* Input          : s:  ‰∏≠Êñ≠ÊéßÂà∂Áä∂ÊÄÅ
-					ENABLE  - ‰ΩøËÉΩÁõ∏Â∫î‰∏≠Êñ≠    
-					DISABLE - ÂÖ≥Èó≠Áõ∏Â∫î‰∏≠Êñ≠
-				   i:  ‰∏≠Êñ≠Á±ªÂûã
-					RB_IER_MODEM_CHG  - Ë∞ÉÂà∂Ëß£Ë∞ÉÂô®ËæìÂÖ•Áä∂ÊÄÅÂèòÂåñ‰∏≠Êñ≠‰ΩøËÉΩ‰ΩçÔºà‰ªÖ UART0 ÊîØÊåÅÔºâ
-					RB_IER_LINE_STAT  - Êé•Êî∂Á∫øË∑ØÁä∂ÊÄÅ‰∏≠Êñ≠
-					RB_IER_THR_EMPTY  - ÂèëÈÄÅ‰øùÊåÅÂØÑÂ≠òÂô®Á©∫‰∏≠Êñ≠
-					RB_IER_RECV_RDY   - Êé•Êî∂Êï∞ÊçÆ‰∏≠Êñ≠
-* Return         : None
-*******************************************************************************/
-void UART3_INTCfg( FunctionalState s,  UINT8 i )
+/*********************************************************************
+ * @fn      UART3_INTCfg
+ *
+ * @brief   ¥Æø⁄÷–∂œ≈‰÷√
+ *
+ * @param   s       - ÷–∂œøÿ÷∆◊¥Ã¨£¨ «∑Ò πƒ‹œ‡”¶÷–∂œ
+ * @param   i       - ÷–∂œ¿‡–Õ
+ *                    RB_IER_MODEM_CHG  - µ˜÷∆Ω‚µ˜∆˜ ‰»Î◊¥Ã¨±‰ªØ÷–∂œ πƒ‹Œª£®Ωˆ UART0 ÷ß≥÷£©
+ *                    RB_IER_LINE_STAT  - Ω” ’œﬂ¬∑◊¥Ã¨÷–∂œ
+ *                    RB_IER_THR_EMPTY  - ∑¢ÀÕ±£≥÷ºƒ¥Ê∆˜ø’÷–∂œ
+ *                    RB_IER_RECV_RDY   - Ω” ’ ˝æ›÷–∂œ
+ *
+ * @return  none
+ */
+void UART3_INTCfg(FunctionalState s, uint8_t i)
 {
-    if( s )
+    if(s)
     {
         R8_UART3_IER |= i;
         R8_UART3_MCR |= RB_MCR_INT_OE;
@@ -76,27 +87,33 @@ void UART3_INTCfg( FunctionalState s,  UINT8 i )
     }
 }
 
-/*******************************************************************************
-* Function Name  : UART3_Reset
-* Description    : ‰∏≤Âè£ËΩØ‰ª∂Â§ç‰Ωç
-* Input          : None
-* Return         : None
-*******************************************************************************/
-void UART3_Reset( void )
+/*********************************************************************
+ * @fn      UART3_Reset
+ *
+ * @brief   ¥Æø⁄»Ìº˛∏¥Œª
+ *
+ * @param   none
+ *
+ * @return  none
+ */
+void UART3_Reset(void)
 {
     R8_UART3_IER = RB_IER_RESET;
 }
 
-/*******************************************************************************
-* Function Name  : UART3_SendString
-* Description    : ‰∏≤Âè£Â§öÂ≠óËäÇÂèëÈÄÅ
-* Input          : buf - ÂæÖÂèëÈÄÅÁöÑÊï∞ÊçÆÂÜÖÂÆπÈ¶ñÂú∞ÂùÄ
-                     l - ÂæÖÂèëÈÄÅÁöÑÊï∞ÊçÆÈïøÂ∫¶
-* Return         : None
-*******************************************************************************/
-void UART3_SendString( PUINT8 buf, UINT16 l )
+/*********************************************************************
+ * @fn      UART3_SendString
+ *
+ * @brief   ¥Æø⁄∂‡◊÷Ω⁄∑¢ÀÕ
+ *
+ * @param   buf     - ¥˝∑¢ÀÕµƒ ˝æ›ƒ⁄»› ◊µÿ÷∑
+ * @param   l       - ¥˝∑¢ÀÕµƒ ˝æ›≥§∂»
+ *
+ * @return  none
+ */
+void UART3_SendString(uint8_t *buf, uint16_t l)
 {
-    UINT16 len = l;
+    uint16_t len = l;
 
     while(len)
     {
@@ -104,27 +121,29 @@ void UART3_SendString( PUINT8 buf, UINT16 l )
         {
             R8_UART3_THR = *buf++;
             len--;
-        }		
+        }
     }
 }
 
-/*******************************************************************************
-* Function Name  : UART3_RecvString
-* Description    : ‰∏≤Âè£ËØªÂèñÂ§öÂ≠óËäÇ
-* Input          : buf - ËØªÂèñÊï∞ÊçÆÂ≠òÊîæÁºìÂ≠òÂå∫È¶ñÂú∞ÂùÄ
-* Return         : ËØªÂèñÊï∞ÊçÆÈïøÂ∫¶
-*******************************************************************************/
-UINT16 UART3_RecvString( PUINT8 buf )
+/*********************************************************************
+ * @fn      UART3_RecvString
+ *
+ * @brief   ¥Æø⁄∂¡»°∂‡◊÷Ω⁄
+ *
+ * @param   buf     - ∂¡»° ˝æ›¥Ê∑≈ª∫¥Ê«¯ ◊µÿ÷∑
+ *
+ * @return  ∂¡»° ˝æ›≥§∂»
+ */
+uint16_t UART3_RecvString(uint8_t *buf)
 {
-    UINT16 len = 0;
+    uint16_t len = 0;
 
-    while( R8_UART3_RFC )
+    while(R8_UART3_RFC)
     {
         *buf++ = R8_UART3_RBR;
-        len ++;
+        len++;
     }
 
     return (len);
 }
-
 

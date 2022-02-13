@@ -1,53 +1,137 @@
-
-
+/********************************** (C) COPYRIGHT *******************************
+ * File Name          : CH57x_usbdev.h
+ * Author             : WCH
+ * Version            : V1.2
+ * Date               : 2021/11/17
+ * Description
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * SPDX-License-Identifier: Apache-2.0
+ *******************************************************************************/
 
 #ifndef __CH57x_USBDEV_H__
 #define __CH57x_USBDEV_H__
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
+/* HIDÀàÇëÇó */
+#define DEF_USB_GET_IDLE           0x02                                         /* get idle for key or mouse */
+#define DEF_USB_GET_PROTOCOL       0x03                                         /* get protocol for bios type */
+#define DEF_USB_SET_REPORT         0x09                                         /* set report for key */
+#define DEF_USB_SET_IDLE           0x0A                                         /* set idle for key or mouse */
+#define DEF_USB_SET_PROTOCOL       0x0B                                         /* set protocol for bios type */
 
-/* ä»¥ä¸‹ç¼“å­˜åŒºæ˜¯USBæ¨¡å—æ”¶å‘ä½¿ç”¨çš„æ•°æ®ç¼“å†²åŒºï¼Œæ€»å…±9ä¸ªé€šé“ï¼ˆ9å—ç¼“å­˜ï¼‰ï¼Œç”¨æˆ·å¯æ ¹æ®å®é™…ä½¿ç”¨çš„é€šé“æ•°å®šä¹‰ç›¸åº”ç¼“å­˜åŒº */
-extern PUINT8  pEP0_RAM_Addr;		//ep0(64)+ep4_out(64)+ep4_in(64)
-extern PUINT8  pEP1_RAM_Addr;		//ep1_out(64)+ep1_in(64)
-extern PUINT8  pEP2_RAM_Addr;		//ep2_out(64)+ep2_in(64)
-extern PUINT8  pEP3_RAM_Addr;		//ep3_out(64)+ep3_in(64)
+/* ÒÔÏÂ»º´æÇøÊÇUSBÄ£¿éÊÕ·¢Ê¹ÓÃµÄÊı¾İ»º³åÇø£¬×Ü¹²9¸öÍ¨µÀ£¨9¿é»º´æ£©£¬ÓÃ»§¿É¸ù¾İÊµ¼ÊÊ¹ÓÃµÄÍ¨µÀÊı¶¨ÒåÏàÓ¦»º´æÇø */
+extern uint8_t *pEP0_RAM_Addr; //ep0(64)+ep4_out(64)+ep4_in(64)
+extern uint8_t *pEP1_RAM_Addr; //ep1_out(64)+ep1_in(64)
+extern uint8_t *pEP2_RAM_Addr; //ep2_out(64)+ep2_in(64)
+extern uint8_t *pEP3_RAM_Addr; //ep3_out(64)+ep3_in(64)
 
-#define	pSetupReqPak		((PUSB_SETUP_REQ)pEP0_RAM_Addr)
-#define pEP0_DataBuf		(pEP0_RAM_Addr)
-#define pEP1_OUT_DataBuf	(pEP1_RAM_Addr)
-#define pEP1_IN_DataBuf		(pEP1_RAM_Addr+64)
-#define pEP2_OUT_DataBuf	(pEP2_RAM_Addr)
-#define pEP2_IN_DataBuf		(pEP2_RAM_Addr+64)
-#define pEP3_OUT_DataBuf	(pEP3_RAM_Addr)
-#define pEP3_IN_DataBuf		(pEP3_RAM_Addr+64)
-#define pEP4_OUT_DataBuf	(pEP0_RAM_Addr+64)
-#define pEP4_IN_DataBuf		(pEP0_RAM_Addr+128)	 
-	 
+#define pSetupReqPak        ((PUSB_SETUP_REQ)pEP0_RAM_Addr)
+#define pEP0_DataBuf        (pEP0_RAM_Addr)
+#define pEP1_OUT_DataBuf    (pEP1_RAM_Addr)
+#define pEP1_IN_DataBuf     (pEP1_RAM_Addr + 64)
+#define pEP2_OUT_DataBuf    (pEP2_RAM_Addr)
+#define pEP2_IN_DataBuf     (pEP2_RAM_Addr + 64)
+#define pEP3_OUT_DataBuf    (pEP3_RAM_Addr)
+#define pEP3_IN_DataBuf     (pEP3_RAM_Addr + 64)
+#define pEP4_OUT_DataBuf    (pEP0_RAM_Addr + 64)
+#define pEP4_IN_DataBuf     (pEP0_RAM_Addr + 128)
 
-	 
-void USB_DeviceInit( void );			/* USBè®¾å¤‡åŠŸèƒ½åˆå§‹åŒ–ï¼Œ4ä¸ªç«¯ç‚¹ï¼Œ8ä¸ªé€šé“ */	 
-void USB_DevTransProcess( void );		/* USBè®¾å¤‡åº”ç­”ä¼ è¾“å¤„ç† */	 
-	 
-void DevEP1_OUT_Deal( UINT8 l );		/* è®¾å¤‡ç«¯ç‚¹1ä¸‹ä¼ é€šé“å¤„ç† */
-void DevEP2_OUT_Deal( UINT8 l );		/* è®¾å¤‡ç«¯ç‚¹2ä¸‹ä¼ é€šé“å¤„ç† */
-void DevEP3_OUT_Deal( UINT8 l );		/* è®¾å¤‡ç«¯ç‚¹3ä¸‹ä¼ é€šé“å¤„ç† */
-void DevEP4_OUT_Deal( UINT8 l );		/* è®¾å¤‡ç«¯ç‚¹4ä¸‹ä¼ é€šé“å¤„ç† */
+/**
+ * @brief   USBÉè±¸¹¦ÄÜ³õÊ¼»¯£¬4¸ö¶Ëµã£¬8¸öÍ¨µÀ¡£
+ */
+void USB_DeviceInit(void);
 
-void DevEP1_IN_Deal( UINT8 l );		/* è®¾å¤‡ç«¯ç‚¹1ä¸Šä¼ é€šé“å¤„ç† */
-void DevEP2_IN_Deal( UINT8 l );		/* è®¾å¤‡ç«¯ç‚¹2ä¸Šä¼ é€šé“å¤„ç† */
-void DevEP3_IN_Deal( UINT8 l );		/* è®¾å¤‡ç«¯ç‚¹3ä¸Šä¼ é€šé“å¤„ç† */
-void DevEP4_IN_Deal( UINT8 l );		/* è®¾å¤‡ç«¯ç‚¹4ä¸Šä¼ é€šé“å¤„ç† */
+/**
+ * @brief   USBÉè±¸Ó¦´ğ´«Êä´¦Àí
+ */
+void USB_DevTransProcess(void);
 
-// 0-æœªå®Œæˆ  (!0)-å·²å®Œæˆ
-#define EP1_GetINSta()		(R8_UEP1_CTRL&UEP_T_RES_NAK)		/* æŸ¥è¯¢ç«¯ç‚¹1æ˜¯å¦ä¸Šä¼ å®Œæˆ */
-#define EP2_GetINSta()		(R8_UEP2_CTRL&UEP_T_RES_NAK)		/* æŸ¥è¯¢ç«¯ç‚¹2æ˜¯å¦ä¸Šä¼ å®Œæˆ */
-#define EP3_GetINSta()		(R8_UEP3_CTRL&UEP_T_RES_NAK)		/* æŸ¥è¯¢ç«¯ç‚¹3æ˜¯å¦ä¸Šä¼ å®Œæˆ */
-#define EP4_GetINSta()		(R8_UEP4_CTRL&UEP_T_RES_NAK)		/* æŸ¥è¯¢ç«¯ç‚¹4æ˜¯å¦ä¸Šä¼ å®Œæˆ */
+/**
+ * @brief   ¶Ëµã1ÏÂ´«Êı¾İ´¦Àí
+ *
+ * @param   l   - ´ı´¦ÀíÊı¾İ³¤¶È(<64B)
+ */
+void DevEP1_OUT_Deal(uint8_t l);
 
+/**
+ * @brief   ¶Ëµã2ÏÂ´«Êı¾İ´¦Àí
+ *
+ * @param   l   - ´ı´¦ÀíÊı¾İ³¤¶È(<64B)
+ */
+void DevEP2_OUT_Deal(uint8_t l);
 
+/**
+ * @brief   ¶Ëµã3ÏÂ´«Êı¾İ´¦Àí
+ *
+ * @param   l   - ´ı´¦ÀíÊı¾İ³¤¶È(<64B)
+ */
+void DevEP3_OUT_Deal(uint8_t l);
+
+/**
+ * @brief   ¶Ëµã4ÏÂ´«Êı¾İ´¦Àí
+ *
+ * @param   l   - ´ı´¦ÀíÊı¾İ³¤¶È(<64B)
+ */
+void DevEP4_OUT_Deal(uint8_t l);
+
+/**
+ * @brief   ¶Ëµã1Êı¾İÉÏ´«
+ *
+ * @param   l   - ÉÏ´«Êı¾İ³¤¶È(<64B)
+ */
+void DevEP1_IN_Deal(uint8_t l);
+
+/**
+ * @brief   ¶Ëµã2Êı¾İÉÏ´«
+ *
+ * @param   l   - ÉÏ´«Êı¾İ³¤¶È(<64B)
+ */
+void DevEP2_IN_Deal(uint8_t l);
+
+/**
+ * @brief   ¶Ëµã3Êı¾İÉÏ´«
+ *
+ * @param   l   - ÉÏ´«Êı¾İ³¤¶È(<64B)
+ */
+void DevEP3_IN_Deal(uint8_t l);
+
+/**
+ * @brief   ¶Ëµã4Êı¾İÉÏ´«
+ *
+ * @param   l   - ÉÏ´«Êı¾İ³¤¶È(<64B)
+ */
+void DevEP4_IN_Deal(uint8_t l);
+
+/**
+ * @brief   ²éÑ¯¶Ëµã1ÊÇ·ñÉÏ´«Íê³É
+ *
+ * @return  0-Î´Íê³É  (!0)-ÒÑÍê³É
+ */
+#define EP1_GetINSta()         (R8_UEP1_CTRL & UEP_T_RES_NAK)
+
+/**
+ * @brief   ²éÑ¯¶Ëµã2ÊÇ·ñÉÏ´«Íê³É
+ *
+ * @return  0-Î´Íê³É  (!0)-ÒÑÍê³É
+ */
+#define EP2_GetINSta()         (R8_UEP2_CTRL & UEP_T_RES_NAK)
+
+/**
+ * @brief   ²éÑ¯¶Ëµã3ÊÇ·ñÉÏ´«Íê³É
+ *
+ * @return  0-Î´Íê³É  (!0)-ÒÑÍê³É
+ */
+#define EP3_GetINSta()         (R8_UEP3_CTRL & UEP_T_RES_NAK)
+
+/**
+ * @brief   ²éÑ¯¶Ëµã4ÊÇ·ñÉÏ´«Íê³É
+ *
+ * @return  0-Î´Íê³É  (!0)-ÒÑÍê³É
+ */
+#define EP4_GetINSta()      (R8_UEP4_CTRL&UEP_T_RES_NAK)
 	 
 #ifdef __cplusplus
 }

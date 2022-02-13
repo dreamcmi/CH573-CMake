@@ -1,92 +1,167 @@
-
-
+/********************************** (C) COPYRIGHT *******************************
+ * File Name          : CH57x_pwr.h
+ * Author             : WCH
+ * Version            : V1.2
+ * Date               : 2021/11/17
+ * Description
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * SPDX-License-Identifier: Apache-2.0
+ *******************************************************************************/
 
 #ifndef __CH57x_PWR_H__
 #define __CH57x_PWR_H__
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
-#define ROM_CFG_ADR_HW    0x7F00C // config address for hardware config for LDO&OSC and etc
-
-/** 
-  * @brief	Peripher CLK control bit define
-  */
-#define BIT_SLP_CLK_TMR0                 (0x00000001)  /*!< TMR0 peripher clk bit */
-#define BIT_SLP_CLK_TMR1                 (0x00000002)  /*!< TMR1 peripher clk bit */
-#define BIT_SLP_CLK_TMR2                 (0x00000004)  /*!< TMR2 peripher clk bit */
-#define BIT_SLP_CLK_TMR3                 (0x00000008)  /*!< TMR3 peripher clk bit */
-#define BIT_SLP_CLK_UART0                (0x00000010)  /*!< UART0 peripher clk bit */
-#define BIT_SLP_CLK_UART1                (0x00000020)  /*!< UART1 peripher clk bit */
-#define BIT_SLP_CLK_UART2                (0x00000040)  /*!< UART2 peripher clk bit */
-#define BIT_SLP_CLK_UART3                (0x00000080)  /*!< UART3 peripher clk bit */
-#define BIT_SLP_CLK_SPI0                 (0x00000100)  /*!< SPI0 peripher clk bit */
-//#define BIT_SLP_CLK_SPI1                 (0x00000200)  /*!< SPI1 peripher clk bit */
-#define BIT_SLP_CLK_PWMX                 (0x00000400)  /*!< PWMX peripher clk bit */
-//#define BIT_SLP_CLK_LCD                  (0x00000800)  /*!< LCD peripher clk bit */
-#define BIT_SLP_CLK_USB                  (0x00001000)  /*!< USB peripher clk bit */
-//#define BIT_SLP_CLK_ETH                  (0x00002000)  /*!< ETH peripher clk bit */
-//#define BIT_SLP_CLK_LED                  (0x00004000)  /*!< LED peripher clk bit */
-#define BIT_SLP_CLK_BLE                  (0x00008000)  /*!< BLE peripher clk bit */
-
-#define BIT_SLP_CLK_RAMX                 (0x10000000)  /*!< main SRAM RAM16K peripher clk bit */
-#define BIT_SLP_CLK_RAM2K                (0x20000000)  /*!< RAM2K peripher clk bit */
-#define BIT_SLP_CLK_ALL                  (0x3000FFFF)  /*!< All peripher clk bit */	 
+#define ROM_CFG_ADR_HW       0x7F00C            // config address for hardware config for LDO&OSC and etc
 
 /**
-  * @brief  unit of controllable power supply 
-  */
-#define UNIT_SYS_LSE                RB_CLK_XT32K_PON        // å¤–éƒ¨32K æ—¶é’ŸæŒ¯è¡
-#define UNIT_SYS_LSI                RB_CLK_INT32K_PON       // å†…éƒ¨32K æ—¶é’ŸæŒ¯è¡
-#define UNIT_SYS_HSE                RB_CLK_XT32M_PON        // å¤–éƒ¨32M æ—¶é’ŸæŒ¯è¡
-#define UNIT_SYS_PLL                RB_CLK_PLL_PON          // PLL æ—¶é’ŸæŒ¯è¡
+ * @brief	Peripher CLK control bit define
+ */
+#define BIT_SLP_CLK_TMR0     (0x00000001) /*!< TMR0 peripher clk bit */
+#define BIT_SLP_CLK_TMR1     (0x00000002) /*!< TMR1 peripher clk bit */
+#define BIT_SLP_CLK_TMR2     (0x00000004) /*!< TMR2 peripher clk bit */
+#define BIT_SLP_CLK_TMR3     (0x00000008) /*!< TMR3 peripher clk bit */
+#define BIT_SLP_CLK_UART0    (0x00000010) /*!< UART0 peripher clk bit */
+#define BIT_SLP_CLK_UART1    (0x00000020) /*!< UART1 peripher clk bit */
+#define BIT_SLP_CLK_UART2    (0x00000040) /*!< UART2 peripher clk bit */
+#define BIT_SLP_CLK_UART3    (0x00000080) /*!< UART3 peripher clk bit */
+#define BIT_SLP_CLK_SPI0     (0x00000100) /*!< SPI0 peripher clk bit */
+//#define BIT_SLP_CLK_SPI1     (0x00000200)  /*!< SPI1 peripher clk bit */
+#define BIT_SLP_CLK_PWMX     (0x00000400) /*!< PWMX peripher clk bit */
+//#define BIT_SLP_CLK_LCD      (0x00000800)  /*!< LCD peripher clk bit */
+#define BIT_SLP_CLK_USB      (0x00001000) /*!< USB peripher clk bit */
+//#define BIT_SLP_CLK_ETH      (0x00002000)  /*!< ETH peripher clk bit */
+//#define BIT_SLP_CLK_LED      (0x00004000)  /*!< LED peripher clk bit */
+#define BIT_SLP_CLK_BLE      (0x00008000) /*!< BLE peripher clk bit */
 
+#define BIT_SLP_CLK_RAMX     (0x10000000) /*!< main SRAM RAM16K peripher clk bit */
+#define BIT_SLP_CLK_RAM2K    (0x20000000) /*!< RAM2K peripher clk bit */
+#define BIT_SLP_CLK_ALL      (0x3000FFFF) /*!< All peripher clk bit */
 
- /**
-   * @brief  wakeup mode define
-   */
- typedef enum
- {
- 	Edge_LongDelay = 0,
-	Edge_ShortDelay,
-	Level_LongDelay,
-	Level_ShortDelay,
+/**
+ * @brief  unit of controllable power supply
+ */
+#define UNIT_SYS_LSE         RB_CLK_XT32K_PON   // Íâ²¿32K Ê±ÖÓÕñµ´
+#define UNIT_SYS_LSI         RB_CLK_INT32K_PON  // ÄÚ²¿32K Ê±ÖÓÕñµ´
+#define UNIT_SYS_HSE         RB_CLK_XT32M_PON   // Íâ²¿32M Ê±ÖÓÕñµ´
+#define UNIT_SYS_PLL         RB_CLK_PLL_PON     // PLL Ê±ÖÓÕñµ´
 
- }WakeUP_ModeypeDef;
+/**
+ * @brief  wakeup mode define
+ */
+typedef enum
+{
+    Edge_LongDelay = 0,
+    Edge_ShortDelay,
+    Level_LongDelay,
+    Level_ShortDelay,
 
- /**
-   * @brief  wakeup mode define
-   */
- typedef enum
- {
-	/* ä¸‹é¢ç­‰çº§å°†ä½¿ç”¨é«˜ç²¾åº¦ç›‘æŽ§ï¼Œ210uAæ¶ˆè€— */
- 	HALevel_1V9 = 0,		// 1.7-1.9
-	HALevel_2V1,			// 1.9-2.1
-	HALevel_2V3,			// 2.1-2.3
-	HALevel_2V5,			// 2.3-2.5
+} WakeUP_ModeypeDef;
 
-	/* ä¸‹é¢ç­‰çº§å°†ä½¿ç”¨ä½ŽåŠŸè€—ç›‘æŽ§ï¼Œ1uAæ¶ˆè€— */
-	LPLevel_1V8 = 0x80,
-	LPLevel_1V9,	LPLevel_2V0,	LPLevel_2V1,
-	LPLevel_2V2,	LPLevel_2V3,	LPLevel_2V4,	LPLevel_2V5,
+/**
+ * @brief  wakeup mode define
+ */
+typedef enum
+{
+    /* ÏÂÃæµÈ¼¶½«Ê¹ÓÃ¸ß¾«¶È¼à¿Ø£¬210uAÏûºÄ */
+    HALevel_1V9 = 0, // 1.7-1.9
+    HALevel_2V1,     // 1.9-2.1
+    HALevel_2V3,     // 2.1-2.3
+    HALevel_2V5,     // 2.3-2.5
 
- }VolM_LevelypeDef;
+    /* ÏÂÃæµÈ¼¶½«Ê¹ÓÃµÍ¹¦ºÄ¼à¿Ø£¬1uAÏûºÄ */
+    LPLevel_1V8 = 0x80,
+    LPLevel_1V9,
+    LPLevel_2V0,
+    LPLevel_2V1,
+    LPLevel_2V2,
+    LPLevel_2V3,
+    LPLevel_2V4,
+    LPLevel_2V5,
 
+} VolM_LevelypeDef;
 
-void PWR_DCDCCfg( FunctionalState s );	                              /* å†…éƒ¨DC/DCç”µæºæŽ§åˆ¶ */
-void PWR_UnitModCfg( FunctionalState s, UINT8 unit );                   /* å¯æŽ§å•å…ƒæ¨¡å—çš„ç”µæºæŽ§åˆ¶ */
-void PWR_PeriphWakeUpCfg( FunctionalState s, UINT8 perph, WakeUP_ModeypeDef mode );    /* ä½ŽåŠŸè€—å”¤é†’æºé…ç½® */
+/**
+ * @brief   ÆôÓÃÄÚ²¿DC/DCµçÔ´£¬ÓÃÓÚ½ÚÔ¼ÏµÍ³¹¦ºÄ
+ *
+ * @param   s   - ÊÇ·ñ´ò¿ªDCDCµçÔ´
+ */
+void PWR_DCDCCfg(FunctionalState s);
 
-void PowerMonitor( FunctionalState s , VolM_LevelypeDef vl);          /* ç”µæºç”µåŽ‹ç›‘æŽ§æŽ§åˆ¶ */
+/**
+ * @brief   ¿É¿Øµ¥ÔªÄ£¿éµÄµçÔ´¿ØÖÆ
+ *
+ * @param   s       - ÊÇ·ñ´ò¿ªµçÔ´
+ * @param   unit    - please refer to unit of controllable power supply
+ */
+void PWR_UnitModCfg(FunctionalState s, uint8_t unit);
 
-void LowPower_Idle( void );                                 /* ä½ŽåŠŸè€—-IDLEæ¨¡å¼ */	 
-void LowPower_Halt( void );                                 /* ä½ŽåŠŸè€—-Haltæ¨¡å¼ */
-void LowPower_Sleep( UINT8 rm );                            /* ä½ŽåŠŸè€—-Sleepæ¨¡å¼ */
-void LowPower_Shutdown( UINT8 rm );                         /* ä½ŽåŠŸè€—-Shutdownæ¨¡å¼ */
+/**
+ * @brief   ÍâÉèÊ±ÖÓ¿ØÖÆÎ»
+ *
+ * @param   s       - ÊÇ·ñ´ò¿ª¶ÔÓ¦ÍâÉèÊ±ÖÓ
+ * @param   perph   - please refer to Peripher CLK control bit define
+ */
+void PWR_PeriphClkCfg(FunctionalState s, uint16_t perph);
 
-	 
-	 
+/**
+ * @brief   Ë¯Ãß»½ÐÑÔ´ÅäÖÃ
+ *
+ * @param   s       - ÊÇ·ñ´ò¿ª´ËÍâÉèË¯Ãß»½ÐÑ¹¦ÄÜ
+ * @param   perph   - ÐèÒªÉèÖÃµÄ»½ÐÑÔ´
+ *                    RB_SLP_USB_WAKE   -  USB Îª»½ÐÑÔ´
+ *                    RB_SLP_RTC_WAKE   -  RTC Îª»½ÐÑÔ´
+ *                    RB_SLP_GPIO_WAKE  -  GPIO Îª»½ÐÑÔ´
+ *                    RB_SLP_BAT_WAKE   -  BAT Îª»½ÐÑÔ´
+ * @param   mode    - refer to WakeUP_ModeypeDef
+ */
+void PWR_PeriphWakeUpCfg(FunctionalState s, uint8_t perph, WakeUP_ModeypeDef mode);
+
+/**
+ * @brief   µçÔ´¼à¿Ø
+ *
+ * @param   s       - ÊÇ·ñ´ò¿ª´Ë¹¦ÄÜ
+ * @param   vl      - refer to VolM_LevelypeDef
+ */
+void PowerMonitor(FunctionalState s, VolM_LevelypeDef vl);
+
+/**
+ * @brief   µÍ¹¦ºÄ-IdleÄ£Ê½
+ */
+void LowPower_Idle(void);
+
+/**
+ * @brief   µÍ¹¦ºÄ-HaltÄ£Ê½£¬´ËµÍ¹¦ºÄÇÐµ½HSI/5Ê±ÖÓÔËÐÐ£¬»½ÐÑºóÐèÒªÓÃ»§×Ô¼ºÖØÐÂÑ¡ÔñÏµÍ³Ê±ÖÓÔ´
+ */
+void LowPower_Halt(void);
+
+/**
+ * @brief   µÍ¹¦ºÄ-SleepÄ£Ê½£¬´ËµÍ¹¦ºÄÇÐµ½HSI/5Ê±ÖÓÔËÐÐ£¬»½ÐÑºóÐèÒªÓÃ»§×Ô¼ºÖØÐÂÑ¡ÔñÏµÍ³Ê±ÖÓÔ´
+ *          @note ×¢Òâµ÷ÓÃ´Ëº¯Êý£¬DCDC¹¦ÄÜÇ¿ÖÆ¹Ø±Õ£¬»½ÐÑºó¿ÉÒÔÊÖ¶¯ÔÙ´Î´ò¿ª
+ *
+ * @param   rm      - ¹©µçÄ£¿éÑ¡Ôñ
+ *                    RB_PWR_RAM2K  -   2K retention SRAM ¹©µç
+ *                    RB_PWR_RAM16K -   16K main SRAM ¹©µç
+ *                    RB_PWR_EXTEND -   USB ºÍ BLE µ¥Ôª±£ÁôÇøÓò¹©µç
+ *                    RB_PWR_XROM   -   FlashROM ¹©µç
+ *                    NULL          -   ÒÔÉÏµ¥Ôª¶¼¶Ïµç
+ */
+void LowPower_Sleep(uint8_t rm);
+
+/**
+ * @brief   µÍ¹¦ºÄ-ShutdownÄ£Ê½£¬´ËµÍ¹¦ºÄÇÐµ½HSI/5Ê±ÖÓÔËÐÐ£¬»½ÐÑºóÐèÒªÓÃ»§×Ô¼ºÖØÐÂÑ¡ÔñÏµÍ³Ê±ÖÓÔ´
+ *          @note ×¢Òâµ÷ÓÃ´Ëº¯Êý£¬DCDC¹¦ÄÜÇ¿ÖÆ¹Ø±Õ£¬»½ÐÑºó¿ÉÒÔÊÖ¶¯ÔÙ´Î´ò¿ª
+ *
+ * @param   rm      - ¹©µçÄ£¿éÑ¡Ôñ
+ *                    RB_PWR_RAM2K  -   2K retention SRAM ¹©µç
+ *                    RB_PWR_RAM16K -   16K main SRAM ¹©µç
+ *                    NULL          -   ÒÔÉÏµ¥Ôª¶¼¶Ïµç
+ */
+void LowPower_Shutdown(uint8_t rm);
+
 #ifdef __cplusplus
 }
 #endif

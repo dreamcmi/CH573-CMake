@@ -1,97 +1,262 @@
-
-
+/********************************** (C) COPYRIGHT *******************************
+ * File Name          : CH57x_gpio.h
+ * Author             : WCH
+ * Version            : V1.2
+ * Date               : 2021/11/17
+ * Description
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * SPDX-License-Identifier: Apache-2.0
+ *******************************************************************************/
 
 #ifndef __CH57x_GPIO_H__
 #define __CH57x_GPIO_H__
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
-
-/** 
-  * @brief	GPIO_pins_define
-  */
-#define GPIO_Pin_0                 (0x00000001)  /*!< Pin 0 selected */
-#define GPIO_Pin_1                 (0x00000002)  /*!< Pin 1 selected */
-#define GPIO_Pin_2                 (0x00000004)  /*!< Pin 2 selected */
-#define GPIO_Pin_3                 (0x00000008)  /*!< Pin 3 selected */
-#define GPIO_Pin_4                 (0x00000010)  /*!< Pin 4 selected */
-#define GPIO_Pin_5                 (0x00000020)  /*!< Pin 5 selected */
-#define GPIO_Pin_6                 (0x00000040)  /*!< Pin 6 selected */
-#define GPIO_Pin_7                 (0x00000080)  /*!< Pin 7 selected */
-#define GPIO_Pin_8                 (0x00000100)  /*!< Pin 8 selected */
-#define GPIO_Pin_9                 (0x00000200)  /*!< Pin 9 selected */
-#define GPIO_Pin_10                (0x00000400)  /*!< Pin 10 selected */
-#define GPIO_Pin_11                (0x00000800)  /*!< Pin 11 selected */
-#define GPIO_Pin_12                (0x00001000)  /*!< Pin 12 selected */
-#define GPIO_Pin_13                (0x00002000)  /*!< Pin 13 selected */
-#define GPIO_Pin_14                (0x00004000)  /*!< Pin 14 selected */
-#define GPIO_Pin_15                (0x00008000)  /*!< Pin 15 selected */
-#define GPIO_Pin_16                (0x00010000)  /*!< Pin 16 selected */
-#define GPIO_Pin_17                (0x00020000)  /*!< Pin 17 selected */
-#define GPIO_Pin_18                (0x00040000)  /*!< Pin 18 selected */
-#define GPIO_Pin_19                (0x00080000)  /*!< Pin 19 selected */
-#define GPIO_Pin_20                (0x00100000)  /*!< Pin 20 selected */
-#define GPIO_Pin_21                (0x00200000)  /*!< Pin 21 selected */
-#define GPIO_Pin_22                (0x00400000)  /*!< Pin 22 selected */
-#define GPIO_Pin_23                (0x00800000)  /*!< Pin 23 selected */
-#define GPIO_Pin_All               (0xFFFFFFFF)  /*!< All pins selected */	 
-	 
 /**
-  * @brief  Configuration GPIO Mode
-  */
-typedef enum
-{
-    GPIO_ModeIN_Floating,			//æµ®ç©ºè¾“å…¥
-    GPIO_ModeIN_PU,					//ä¸Šæ‹‰è¾“å…¥
-    GPIO_ModeIN_PD,					//ä¸‹æ‹‰è¾“å…¥
-    GPIO_ModeOut_PP_5mA,			//æŽ¨æŒ½è¾“å‡ºæœ€å¤§5mA
-    GPIO_ModeOut_PP_20mA,			//æŽ¨æŒ½è¾“å‡ºæœ€å¤§20mA
-
-}GPIOModeTypeDef;
+ * @brief	GPIO_pins_define
+ */
+#define GPIO_Pin_0      (0x00000001) /*!< Pin 0 selected */
+#define GPIO_Pin_1      (0x00000002) /*!< Pin 1 selected */
+#define GPIO_Pin_2      (0x00000004) /*!< Pin 2 selected */
+#define GPIO_Pin_3      (0x00000008) /*!< Pin 3 selected */
+#define GPIO_Pin_4      (0x00000010) /*!< Pin 4 selected */
+#define GPIO_Pin_5      (0x00000020) /*!< Pin 5 selected */
+#define GPIO_Pin_6      (0x00000040) /*!< Pin 6 selected */
+#define GPIO_Pin_7      (0x00000080) /*!< Pin 7 selected */
+#define GPIO_Pin_8      (0x00000100) /*!< Pin 8 selected */
+#define GPIO_Pin_9      (0x00000200) /*!< Pin 9 selected */
+#define GPIO_Pin_10     (0x00000400) /*!< Pin 10 selected */
+#define GPIO_Pin_11     (0x00000800) /*!< Pin 11 selected */
+#define GPIO_Pin_12     (0x00001000) /*!< Pin 12 selected */
+#define GPIO_Pin_13     (0x00002000) /*!< Pin 13 selected */
+#define GPIO_Pin_14     (0x00004000) /*!< Pin 14 selected */
+#define GPIO_Pin_15     (0x00008000) /*!< Pin 15 selected */
+#define GPIO_Pin_16     (0x00010000) /*!< Pin 16 selected */
+#define GPIO_Pin_17     (0x00020000) /*!< Pin 17 selected */
+#define GPIO_Pin_18     (0x00040000) /*!< Pin 18 selected */
+#define GPIO_Pin_19     (0x00080000) /*!< Pin 19 selected */
+#define GPIO_Pin_20     (0x00100000) /*!< Pin 20 selected */
+#define GPIO_Pin_21     (0x00200000) /*!< Pin 21 selected */
+#define GPIO_Pin_22     (0x00400000) /*!< Pin 22 selected */
+#define GPIO_Pin_23     (0x00800000) /*!< Pin 23 selected */
+#define GPIO_Pin_All    (0xFFFFFFFF) /*!< All pins selected */
 
 /**
-  * @brief  Configuration GPIO IT Mode
-  */
+ * @brief  Configuration GPIO Mode
+ */
 typedef enum
 {
-    GPIO_ITMode_LowLevel,			//ä½Žç”µå¹³è§¦å‘
-    GPIO_ITMode_HighLevel,			//é«˜ç”µå¹³è§¦å‘
-    GPIO_ITMode_FallEdge,			//ä¸‹é™æ²¿è§¦å‘
-    GPIO_ITMode_RiseEdge,			//ä¸Šå‡æ²¿è§¦å‘
+    GPIO_ModeIN_Floating, //¸¡¿ÕÊäÈë
+    GPIO_ModeIN_PU,       //ÉÏÀ­ÊäÈë
+    GPIO_ModeIN_PD,       //ÏÂÀ­ÊäÈë
+    GPIO_ModeOut_PP_5mA,  //ÍÆÍìÊä³ö×î´ó5mA
+    GPIO_ModeOut_PP_20mA, //ÍÆÍìÊä³ö×î´ó20mA
 
-}GPIOITModeTpDef;
+} GPIOModeTypeDef;
 
+/**
+ * @brief  Configuration GPIO IT Mode
+ */
+typedef enum
+{
+    GPIO_ITMode_LowLevel,  //µÍµçÆ½´¥·¢
+    GPIO_ITMode_HighLevel, //¸ßµçÆ½´¥·¢
+    GPIO_ITMode_FallEdge,  //ÏÂ½µÑØ´¥·¢
+    GPIO_ITMode_RiseEdge,  //ÉÏÉýÑØ´¥·¢
 
+} GPIOITModeTpDef;
 
-		
-void GPIOA_ModeCfg( UINT32 pin, GPIOModeTypeDef mode );				/* GPIOAç«¯å£å¼•è„šæ¨¡å¼é…ç½® */
-void GPIOB_ModeCfg( UINT32 pin, GPIOModeTypeDef mode );				/* GPIOBç«¯å£å¼•è„šæ¨¡å¼é…ç½® */
-#define	GPIOA_ResetBits( pin )			(R32_PA_CLR |= pin)			/* GPIOAç«¯å£å¼•è„šè¾“å‡ºç½®ä½Ž */
-#define	GPIOA_SetBits( pin )			(R32_PA_OUT |= pin)			/* GPIOAç«¯å£å¼•è„šè¾“å‡ºç½®é«˜ */
-#define	GPIOB_ResetBits( pin )			(R32_PB_CLR |= pin)			/* GPIOBç«¯å£å¼•è„šè¾“å‡ºç½®ä½Ž */
-#define	GPIOB_SetBits( pin )			(R32_PB_OUT |= pin)			/* GPIOBç«¯å£å¼•è„šè¾“å‡ºç½®é«˜ */	 
-#define	GPIOA_InverseBits( pin )		(R32_PA_OUT ^= pin)			/* GPIOAç«¯å£å¼•è„šè¾“å‡ºç”µå¹³ç¿»è½¬ */
-#define	GPIOB_InverseBits( pin )		(R32_PB_OUT ^= pin)			/* GPIOBç«¯å£å¼•è„šè¾“å‡ºç”µå¹³ç¿»è½¬ */
-#define	GPIOA_ReadPort()				(R32_PA_PIN)				/* GPIOAç«¯å£32ä½æ•°æ®è¿”å›žï¼Œä½Ž16ä½æœ‰æ•ˆ */
-#define	GPIOB_ReadPort()				(R32_PB_PIN)				/* GPIOBç«¯å£32ä½æ•°æ®è¿”å›žï¼Œä½Ž24ä½æœ‰æ•ˆ */
-#define	GPIOA_ReadPortPin( pin )		(R32_PA_PIN&(pin))			/* GPIOAç«¯å£å¼•è„šçŠ¶æ€ï¼Œ0-å¼•è„šä½Žç”µå¹³ï¼Œ(!0)-å¼•è„šé«˜ç”µå¹³ */
-#define	GPIOB_ReadPortPin( pin )		(R32_PB_PIN&(pin))			/* GPIOBç«¯å£å¼•è„šçŠ¶æ€ï¼Œ0-å¼•è„šä½Žç”µå¹³ï¼Œ(!0)-å¼•è„šé«˜ç”µå¹³ */
+/**
+ * @brief   GPIOA¶Ë¿ÚÒý½ÅÄ£Ê½ÅäÖÃ
+ *
+ * @param   pin     - PA0-PA15
+ * @param   mode    - ÊäÈëÊä³öÀàÐÍ
+ */
+void GPIOA_ModeCfg(uint32_t pin, GPIOModeTypeDef mode);
 
-void GPIOA_ITModeCfg( UINT32 pin, GPIOITModeTpDef mode );			/* GPIOAå¼•è„šä¸­æ–­æ¨¡å¼é…ç½® */
-void GPIOB_ITModeCfg( UINT32 pin, GPIOITModeTpDef mode );			/* GPIOBå¼•è„šä¸­æ–­æ¨¡å¼é…ç½® */
-#define	GPIOA_ReadITFlagPort()			(R16_PA_INT_IF)				/* è¯»å–GPIOAç«¯å£ä¸­æ–­æ ‡å¿—çŠ¶æ€ */
-#define	GPIOB_ReadITFlagPort()			((R16_PB_INT_IF&(~((GPIO_Pin_22|GPIO_Pin_23)>>14)))|((R16_PB_INT_IF<<14)&(GPIO_Pin_22|GPIO_Pin_23)))				/* è¯»å–GPIOBç«¯å£ä¸­æ–­æ ‡å¿—çŠ¶æ€ */
-#define	GPIOA_ReadITFlagBit( pin )		(R16_PA_INT_IF&(pin))		    /* è¯»å–GPIOAç«¯å£å¼•è„šä¸­æ–­æ ‡å¿—çŠ¶æ€ */
-#define	GPIOB_ReadITFlagBit( pin )		(R16_PB_INT_IF&((pin)|(((pin)&(GPIO_Pin_22|GPIO_Pin_23))>>14)))		    /* è¯»å–GPIOBç«¯å£å¼•è„šä¸­æ–­æ ‡å¿—çŠ¶æ€ */
-#define	GPIOA_ClearITFlagBit( pin )		(R16_PA_INT_IF = pin)		/* æ¸…é™¤GPIOAç«¯å£å¼•è„šä¸­æ–­æ ‡å¿—çŠ¶æ€ */
-#define	GPIOB_ClearITFlagBit( pin )		(R16_PB_INT_IF = ((pin)|(((pin)&(GPIO_Pin_22|GPIO_Pin_23))>>14)))		/* æ¸…é™¤GPIOBç«¯å£å¼•è„šä¸­æ–­æ ‡å¿—çŠ¶æ€ */
+/**
+ * @brief   GPIOB¶Ë¿ÚÒý½ÅÄ£Ê½ÅäÖÃ
+ *
+ * @param   pin     - PB0-PB23
+ * @param   mode    - ÊäÈëÊä³öÀàÐÍ
+ */
+void GPIOB_ModeCfg(uint32_t pin, GPIOModeTypeDef mode);
 
-void GPIOPinRemap( FunctionalState s, UINT16 perph );				/* å¤–è®¾åŠŸèƒ½å¼•è„šæ˜ å°„ */
-void GPIOAGPPCfg( FunctionalState s, UINT16 perph );				/* æ¨¡æ‹Ÿå¤–è®¾GPIOå¼•è„šåŠŸèƒ½æŽ§åˆ¶ */
-	 
-	 
+/**
+ * @brief   GPIOA¶Ë¿ÚÒý½ÅÊä³öÖÃµÍ
+ *
+ * @param   pin     - PA0-PA15
+ */
+#define GPIOA_ResetBits(pin)      (R32_PA_CLR |= pin)
+
+/**
+ * @brief   GPIOA¶Ë¿ÚÒý½ÅÊä³öÖÃ¸ß
+ *
+ * @param   pin     - PA0-PA15
+ */
+#define GPIOA_SetBits(pin)        (R32_PA_OUT |= pin)
+
+/**
+ * @brief   GPIOB¶Ë¿ÚÒý½ÅÊä³öÖÃµÍ
+ *
+ * @param   pin     - PB0-PB23
+ */
+#define GPIOB_ResetBits(pin)      (R32_PB_CLR |= pin)
+
+/**
+ * @brief   GPIOB¶Ë¿ÚÒý½ÅÊä³öÖÃ¸ß
+ *
+ * @param   pin     - PB0-PB23
+ */
+#define GPIOB_SetBits(pin)        (R32_PB_OUT |= pin)
+
+/**
+ * @brief   GPIOA¶Ë¿ÚÒý½ÅÊä³öµçÆ½·­×ª
+ *
+ * @param   pin     - PA0-PA15
+ */
+#define GPIOA_InverseBits(pin)    (R32_PA_OUT ^= pin)
+
+/**
+ * @brief   GPIOB¶Ë¿ÚÒý½ÅÊä³öµçÆ½·­×ª
+ *
+ * @param   pin     - PB0-PB23
+ */
+#define GPIOB_InverseBits(pin)    (R32_PB_OUT ^= pin)
+
+/**
+ * @brief   GPIOA¶Ë¿Ú32Î»Êý¾Ý·µ»Ø£¬µÍ16Î»ÓÐÐ§
+ *
+ * @return  GPIOA¶Ë¿Ú32Î»Êý¾Ý
+ */
+#define GPIOA_ReadPort()          (R32_PA_PIN)
+
+/**
+ * @brief   GPIOB¶Ë¿Ú32Î»Êý¾Ý·µ»Ø£¬µÍ24Î»ÓÐÐ§
+ *
+ * @return  GPIOB¶Ë¿Ú32Î»Êý¾Ý
+ */
+#define GPIOB_ReadPort()          (R32_PB_PIN)
+
+/**
+ * @brief   GPIOA¶Ë¿ÚÒý½Å×´Ì¬£¬0-Òý½ÅµÍµçÆ½£¬(!0)-Òý½Å¸ßµçÆ½
+ *
+ * @param   pin     - PA0-PA15
+ *
+ * @return  GPIOA¶Ë¿ÚÒý½Å×´Ì¬
+ */
+#define GPIOA_ReadPortPin(pin)    (R32_PA_PIN & (pin))
+
+/**
+ * @brief   GPIOB¶Ë¿ÚÒý½Å×´Ì¬£¬0-Òý½ÅµÍµçÆ½£¬(!0)-Òý½Å¸ßµçÆ½
+ *
+ * @param   pin     - PB0-PB23
+ *
+ * @return  GPIOB¶Ë¿ÚÒý½Å×´Ì¬
+ */
+#define GPIOB_ReadPortPin(pin)    (R32_PB_PIN & (pin))
+
+/**
+ * @brief   GPIOAÒý½ÅÖÐ¶ÏÄ£Ê½ÅäÖÃ
+ *
+ * @param   pin     - PA0-PA15
+ * @param   mode    - ´¥·¢ÀàÐÍ
+ */
+void GPIOA_ITModeCfg(uint32_t pin, GPIOITModeTpDef mode);
+
+/**
+ * @brief   GPIOBÒý½ÅÖÐ¶ÏÄ£Ê½ÅäÖÃ
+ *
+ * @param   pin     - PB0-PB23
+ * @param   mode    - ´¥·¢ÀàÐÍ
+ */
+void GPIOB_ITModeCfg(uint32_t pin, GPIOITModeTpDef mode);
+
+/**
+ * @brief   ¶ÁÈ¡GPIOA¶Ë¿ÚÖÐ¶Ï±êÖ¾×´Ì¬
+ *
+ * @return  GPIOA¶Ë¿ÚÖÐ¶Ï±êÖ¾×´Ì¬
+ */
+#define GPIOA_ReadITFlagPort()       (R16_PA_INT_IF)
+
+/**
+ * @brief   ¶ÁÈ¡GPIOB¶Ë¿ÚÖÐ¶Ï±êÖ¾×´Ì¬
+ *
+ * @return  GPIOB¶Ë¿ÚÖÐ¶Ï±êÖ¾×´Ì¬
+ */
+#define GPIOB_ReadITFlagPort()       ((R16_PB_INT_IF & (~((GPIO_Pin_22 | GPIO_Pin_23) >> 14))) | ((R16_PB_INT_IF << 14) & (GPIO_Pin_22 | GPIO_Pin_23)))
+
+/**
+ * @brief   ¶ÁÈ¡GPIOA¶Ë¿ÚÒý½ÅÖÐ¶Ï±êÖ¾×´Ì¬
+ *
+ * @param   pin     - PA0-PA15
+ *
+ * @return  GPIOA¶Ë¿ÚÒý½ÅÖÐ¶Ï±êÖ¾×´Ì¬
+ */
+#define GPIOA_ReadITFlagBit(pin)     (R16_PA_INT_IF & (pin))
+
+/**
+ * @brief   ¶ÁÈ¡GPIOB¶Ë¿ÚÒý½ÅÖÐ¶Ï±êÖ¾×´Ì¬
+ *
+ * @param   pin     - PB0-PB23
+ *
+ * @return  GPIOB¶Ë¿ÚÒý½ÅÖÐ¶Ï±êÖ¾×´Ì¬
+ */
+#define GPIOB_ReadITFlagBit(pin)     (R16_PB_INT_IF & ((pin) | (((pin) & (GPIO_Pin_22 | GPIO_Pin_23)) >> 14)))
+
+/**
+ * @brief   Çå³ýGPIOA¶Ë¿ÚÒý½ÅÖÐ¶Ï±êÖ¾×´Ì¬
+ *
+ * @param   pin     - PA0-PA15
+ */
+#define GPIOA_ClearITFlagBit(pin)    (R16_PA_INT_IF = pin)
+
+/**
+ * @brief   Çå³ýGPIOB¶Ë¿ÚÒý½ÅÖÐ¶Ï±êÖ¾×´Ì¬
+ *
+ * @param   pin     - PB0-PB23
+ */
+#define GPIOB_ClearITFlagBit(pin)    (R16_PB_INT_IF = ((pin) | (((pin) & (GPIO_Pin_22 | GPIO_Pin_23)) >> 14)))
+
+/**
+ * @brief   ÍâÉè¹¦ÄÜÒý½ÅÓ³Éä
+ *
+ * @param   s       - ÊÇ·ñÊ¹ÄÜÓ³Éä
+ * @param   perph   - RB_PIN_SPI0   -  SPI0:  PA12/PA13/PA14/PA15 -> PB12/PB13/PB14/PB15
+ *                    RB_PIN_UART1  -  UART1: PA8/PA9 ->  PB12/PB13
+ *                    RB_PIN_UART0  -  UART0: PB4/PB7 ->  PA15/PA14
+ *                    RB_PIN_TMR2   -  TMR2:  PA11 ->  PB11
+ *                    RB_PIN_TMR1   -  TMR1:  PA10 ->  PB10
+ *                    RB_PIN_TMR0   -  TMR0:  PA9 ->  PB23
+ */
+void GPIOPinRemap(FunctionalState s, uint16_t perph);
+
+/**
+ * @brief   Ä£ÄâÍâÉèGPIOÒý½Å¹¦ÄÜ¿ØÖÆ
+ *
+ * @param   s       - ÊÇ·ñÆôÓÃÄ£ÄâÍâÉè¹¦ÄÜ
+ * @param   perph   - RB_PIN_ADC0_1_IE      -  ADC0-1Í¨µÀ
+ *                    RB_PIN_ADC2_3_IE      -  ADC2-3Í¨µÀ
+ *                    RB_PIN_ADC4_5_IE      -  ADC4-5Í¨µÀ
+ *                    RB_PIN_ADC6_7_IE      -  ADC6-7Í¨µÀ
+ *                    RB_PIN_ADC8_9_IE      -  ADC8-9Í¨µÀ
+ *                    RB_PIN_ADC10_11_IE    -  ADC10-11Í¨µÀ
+ *                    RB_PIN_ADC12_13_IE    -  ADC12-13Í¨µÀ
+ *                    RB_PIN_XT32K_IE       -  Íâ²¿32KÒý½Å
+ *                    RB_PIN_USB_IE         -  USB¹¦ÄÜÐÅºÅÒý½Å
+ *                    RB_PIN_ETH_IE         -  ÒÔÌ«Íø¹¦ÄÜÐÅºÅÒý½Å
+ *                    RB_PIN_SEG0_3_IE      -  LCD¿ØÖÆÆ÷SEG0-3Çý¶¯Òý½Å
+ *                    RB_PIN_SEG4_7_IE      -  LCD¿ØÖÆÆ÷SEG4-7Çý¶¯Òý½Å
+ *                    RB_PIN_SEG8_11_IE     -  LCD¿ØÖÆÆ÷SEG8-11Çý¶¯Òý½Å
+ *                    RB_PIN_SEG12_15_IE    -  LCD¿ØÖÆÆ÷SEG12-15Çý¶¯Òý½Å
+ *                    RB_PIN_SEG16_19_IE    -  LCD¿ØÖÆÆ÷SEG16-19Çý¶¯Òý½Å
+ *                    RB_PIN_SEG20_23_IE    -  LCD¿ØÖÆÆ÷SEG20-23Çý¶¯Òý½Å
+ */
+void GPIOAGPPCfg(FunctionalState s, uint16_t perph);
+
 #ifdef __cplusplus
 }
 #endif

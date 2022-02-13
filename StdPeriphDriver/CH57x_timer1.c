@@ -1,105 +1,106 @@
 /********************************** (C) COPYRIGHT *******************************
-* File Name          : CH57x_timer1.c
-* Author             : WCH
-* Version            : V1.0
-* Date               : 2018/12/15
-* Description 
-*******************************************************************************/
+ * File Name          : CH57x_timer1.c
+ * Author             : WCH
+ * Version            : V1.2
+ * Date               : 2021/11/17
+ * Description
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * SPDX-License-Identifier: Apache-2.0
+ *******************************************************************************/
 
 #include "CH57x_common.h"
 
-
-/*******************************************************************************
-* Function Name  : TMR1_TimerInit
-* Description    : å®šæ—¶åŠŸèƒ½åˆå§‹åŒ–
-* Input          : t: å®šæ—¶æ—¶é—´ï¼ŒåŸºäºå½“å‰ç³»ç»Ÿæ—¶é’ŸTsys, æœ€é•¿å®šæ—¶å‘¨æœŸ 67108864
-					
-* Return         : None
-*******************************************************************************/
-void TMR1_TimerInit( UINT32 t )
-{	
+/*********************************************************************
+ * @fn      TMR1_TimerInit
+ *
+ * @brief   ¶¨Ê±¹¦ÄÜ³õÊ¼»¯
+ *
+ * @param   t       - ¶¨Ê±Ê±¼ä£¬»ùÓÚµ±Ç°ÏµÍ³Ê±ÖÓTsys, ×î³¤¶¨Ê±ÖÜÆÚ 67108864
+ *
+ * @return  none
+ */
+void TMR1_TimerInit(uint32_t t)
+{
     R32_TMR1_CNT_END = t;
-    R8_TMR1_CTRL_MOD = RB_TMR_ALL_CLEAR;	
+    R8_TMR1_CTRL_MOD = RB_TMR_ALL_CLEAR;
     R8_TMR1_CTRL_MOD = RB_TMR_COUNT_EN;
 }
 
-/*******************************************************************************
-* Function Name  : TMR1_EXTSingleCounterInit
-* Description    : è¾¹æ²¿è®¡æ•°åŠŸèƒ½åˆå§‹åŒ–
-* Input          : cap: é‡‡é›†è®¡æ•°ç±»å‹
-                    CAP_NULL - ä¸è®¡æ•°
-                    Edge_To_Edge - è®¡æ•°ä»»æ„è¾¹æ²¿
-                    FallEdge_To_FallEdge - è®¡æ•°ä¸‹é™æ²¿
-					RiseEdge_To_RiseEdge - è®¡æ•°ä¸Šå‡æ²¿
-* Return         : None
-*******************************************************************************/
-void TMR1_EXTSingleCounterInit( CapModeTypeDef cap )
+/*********************************************************************
+ * @fn      TMR1_EXTSingleCounterInit
+ *
+ * @brief   ±ßÑØ¼ÆÊı¹¦ÄÜ³õÊ¼»¯
+ *
+ * @param   cap     - ²É¼¯¼ÆÊıÀàĞÍ
+ *
+ * @return  none
+ */
+void TMR1_EXTSingleCounterInit(CapModeTypeDef cap)
 {
     R8_TMR1_CTRL_MOD = RB_TMR_ALL_CLEAR;
-    R8_TMR1_CTRL_MOD = RB_TMR_COUNT_EN      \
-                      |RB_TMR_CAP_COUNT     \
-                      |RB_TMR_MODE_IN       \
-                      |(cap<<6);    
+    R8_TMR1_CTRL_MOD = RB_TMR_COUNT_EN | RB_TMR_CAP_COUNT | RB_TMR_MODE_IN | (cap << 6);
 }
 
-/*******************************************************************************
-* Function Name  : TMR1_PWMInit
-* Description    : PWM è¾“å‡ºåˆå§‹åŒ–
-* Input          : pr:  select wave polar 	
-					refer to PWMX_PolarTypeDef	
-				   ts:	set pwm repeat times
-					refer to PWM_RepeatTsTypeDef					
-* Return         : None
-*******************************************************************************/
-void TMR1_PWMInit( PWMX_PolarTypeDef pr, PWM_RepeatTsTypeDef ts )
+/*********************************************************************
+ * @fn      TMR1_PWMInit
+ *
+ * @brief   PWM Êä³ö³õÊ¼»¯
+ *
+ * @param   pr      - select wave polar, refer to PWMX_PolarTypeDef
+ * @param   ts      - set pwm repeat times, refer to PWM_RepeatTsTypeDef
+ *
+ * @return  none
+ */
+void TMR1_PWMInit(PWMX_PolarTypeDef pr, PWM_RepeatTsTypeDef ts)
 {
-//    R8_TMR1_CTRL_MOD = RB_TMR_ALL_CLEAR;
-    R8_TMR1_CTRL_MOD = RB_TMR_COUNT_EN      \
-                        |RB_TMR_OUT_EN      \
-                        |(pr<<4)            \
-                        |(ts<<6);
+    //    R8_TMR1_CTRL_MOD = RB_TMR_ALL_CLEAR;
+    R8_TMR1_CTRL_MOD = RB_TMR_COUNT_EN | RB_TMR_OUT_EN | (pr << 4) | (ts << 6);
 }
 
-
-/*******************************************************************************
-* Function Name  : TMR1_CapInit
-* Description    : å¤–éƒ¨ä¿¡å·æ•æ‰åŠŸèƒ½åˆå§‹åŒ–
-* Input          : cap:  select capture mode 	
-					refer to CapModeTypeDef						
-* Return         : None
-*******************************************************************************/
-void TMR1_CapInit( CapModeTypeDef cap )
+/*********************************************************************
+ * @fn      TMR1_CapInit
+ *
+ * @brief   Íâ²¿ĞÅºÅ²¶×½¹¦ÄÜ³õÊ¼»¯
+ *
+ * @param   cap     - select capture mode, refer to CapModeTypeDef
+ *
+ * @return  none
+ */
+void TMR1_CapInit(CapModeTypeDef cap)
 {
-        R8_TMR1_CTRL_MOD = RB_TMR_ALL_CLEAR;
-        R8_TMR1_CTRL_MOD = RB_TMR_COUNT_EN      \
-                            |RB_TMR_MODE_IN     \
-                            |(cap<<6);	
+    R8_TMR1_CTRL_MOD = RB_TMR_ALL_CLEAR;
+    R8_TMR1_CTRL_MOD = RB_TMR_COUNT_EN | RB_TMR_MODE_IN | (cap << 6);
 }
 
-/*******************************************************************************
-* Function Name  : TMR1_DMACfg
-* Description    : é…ç½®DMAåŠŸèƒ½
-* Input          : s:  
-                    ENABLE  - æ‰“å¼€   
-                    DISABLE - å…³é—­	
-                   startAddrï¼š DMA èµ·å§‹åœ°å€
-                   endAddrï¼š DMAç»“æŸåœ°å€
-                   mï¼šé…ç½®DMAæ¨¡å¼
-* Return         : None
-*******************************************************************************/
-void TMR1_DMACfg( UINT8 s, UINT16 startAddr, UINT16 endAddr, DMAModeTypeDef m )
+/*********************************************************************
+ * @fn      TMR1_DMACfg
+ *
+ * @brief   ÅäÖÃDMA¹¦ÄÜ
+ *
+ * @param   s           - ÊÇ·ñ´ò¿ªDMA¹¦ÄÜ
+ * @param   startAddr   - DMA ÆğÊ¼µØÖ·
+ * @param   endAddr     - DMA ½áÊøµØÖ·
+ * @param   m           - ÅäÖÃDMAÄ£Ê½
+ *
+ * @return  none
+ */
+void TMR1_DMACfg(uint8_t s, uint16_t startAddr, uint16_t endAddr, DMAModeTypeDef m)
 {
-        if(s == DISABLE){
-            R8_TMR1_CTRL_DMA = 0;
+    if(s == DISABLE)
+    {
+        R8_TMR1_CTRL_DMA = 0;
+    }
+    else
+    {
+        R16_TMR1_DMA_BEG = startAddr;
+        R16_TMR1_DMA_END = endAddr;
+        if(m)
+        {
+            R8_TMR1_CTRL_DMA = RB_TMR_DMA_LOOP | RB_TMR_DMA_ENABLE;
         }
-        else{            
-            R16_TMR1_DMA_BEG = startAddr;
-            R16_TMR1_DMA_END = endAddr;
-            if(m)   R8_TMR1_CTRL_DMA = RB_TMR_DMA_LOOP|RB_TMR_DMA_ENABLE;
-            else    R8_TMR1_CTRL_DMA = RB_TMR_DMA_ENABLE;
+        else
+        {
+            R8_TMR1_CTRL_DMA = RB_TMR_DMA_ENABLE;
         }
+    }
 }
-
-
-
-

@@ -1,70 +1,169 @@
-
-
+/********************************** (C) COPYRIGHT *******************************
+ * File Name          : CH57x_SYS.h
+ * Author             : WCH
+ * Version            : V1.2
+ * Date               : 2021/11/17
+ * Description
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * SPDX-License-Identifier: Apache-2.0
+ *******************************************************************************/
 
 #ifndef __CH57x_SYS_H__
 #define __CH57x_SYS_H__
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
-	 
 /**
-  * @brief  rtc interrupt event define
-  */
+ * @brief  rtc interrupt event define
+ */
 typedef enum
 {
-	RST_STATUS_SW = 0,			// è½¯ä»¶å¤ä½
-	RST_STATUS_RPOR,			// ä¸Šç”µå¤ä½
-	RST_STATUS_WTR,				// çœ‹é—¨ç‹—è¶…æ—¶å¤ä½
-	RST_STATUS_MR,				// å¤–éƒ¨æ‰‹åŠ¨å¤ä½
-	RST_STATUS_LRM0,			// å”¤é†’å¤ä½-è½¯å¤ä½å¼•èµ·
-	RST_STATUS_GPWSM,			// ä¸‹ç”µæ¨¡å¼å”¤é†’å¤ä½
-	RST_STATUS_LRM1,			//	å”¤é†’å¤ä½-çœ‹é—¨ç‹—å¼•èµ·
-	RST_STATUS_LRM2,			//	å”¤é†’å¤ä½-æ‰‹åŠ¨å¤ä½å¼•èµ·
+    RST_STATUS_SW = 0, // Èí¼ş¸´Î»
+    RST_STATUS_RPOR,   // ÉÏµç¸´Î»
+    RST_STATUS_WTR,    // ¿´ÃÅ¹·³¬Ê±¸´Î»
+    RST_STATUS_MR,     // Íâ²¿ÊÖ¶¯¸´Î»
+    RST_STATUS_LRM0,   // »½ĞÑ¸´Î»-Èí¸´Î»ÒıÆğ
+    RST_STATUS_GPWSM,  // ÏÂµçÄ£Ê½»½ĞÑ¸´Î»
+    RST_STATUS_LRM1,   //	»½ĞÑ¸´Î»-¿´ÃÅ¹·ÒıÆğ
+    RST_STATUS_LRM2,   //	»½ĞÑ¸´Î»-ÊÖ¶¯¸´Î»ÒıÆğ
 
-}SYS_ResetStaTypeDef;
+} SYS_ResetStaTypeDef;
 
 /**
-  * @brief  rtc interrupt event define
-  */
+ * @brief  rtc interrupt event define
+ */
 typedef enum
 {
-	INFO_ROM_READ = 0,			// FlashROM ä»£ç å’Œæ•°æ®åŒº æ˜¯å¦å¯è¯»
-	INFO_RESET_EN = 2,			// RST#å¤–éƒ¨æ‰‹åŠ¨å¤ä½è¾“å…¥åŠŸèƒ½æ˜¯å¦å¼€å¯
-	INFO_BOOT_EN,				// ç³»ç»Ÿå¼•å¯¼ç¨‹åº BootLoader æ˜¯å¦å¼€å¯
-	INFO_DEBUG_EN,				// ç³»ç»Ÿä»¿çœŸè°ƒè¯•æ¥å£æ˜¯å¦å¼€å¯
-	INFO_LOADER,				// å½“å‰ç³»ç»Ÿæ˜¯å¦å¤„äºBootloader åŒº
-	STA_SAFEACC_ACT,			// å½“å‰ç³»ç»Ÿæ˜¯å¦å¤„äºå®‰å…¨è®¿é—®çŠ¶æ€ï¼Œå¦åˆ™RWAå±æ€§åŒºåŸŸä¸å¯è®¿é—®
+    INFO_ROM_READ = 0, // FlashROM ´úÂëºÍÊı¾İÇø ÊÇ·ñ¿É¶Á
+    INFO_RESET_EN = 2, // RST#Íâ²¿ÊÖ¶¯¸´Î»ÊäÈë¹¦ÄÜÊÇ·ñ¿ªÆô
+    INFO_BOOT_EN,      // ÏµÍ³Òıµ¼³ÌĞò BootLoader ÊÇ·ñ¿ªÆô
+    INFO_DEBUG_EN,     // ÏµÍ³·ÂÕæµ÷ÊÔ½Ó¿ÚÊÇ·ñ¿ªÆô
+    INFO_LOADER,       // µ±Ç°ÏµÍ³ÊÇ·ñ´¦ÓÚBootloader Çø
+    STA_SAFEACC_ACT,   // µ±Ç°ÏµÍ³ÊÇ·ñ´¦ÓÚ°²È«·ÃÎÊ×´Ì¬£¬·ñÔòRWAÊôĞÔÇøÓò²»¿É·ÃÎÊ
 
-}SYS_InfoStaTypeDef;
-	 
+} SYS_InfoStaTypeDef;
 
-#define SYS_GetChipID()				R8_CHIP_ID									/* è·å–èŠ¯ç‰‡IDç±»ï¼Œä¸€èˆ¬ä¸ºå›ºå®šå€¼ */
-#define SYS_GetAccessID()			R8_SAFE_ACCESS_ID							/* è·å–å®‰å…¨è®¿é—®IDï¼Œä¸€èˆ¬ä¸ºå›ºå®šå€¼ */
-void SetSysClock( SYS_CLKTypeDef sc);                         /* é…ç½®ç³»ç»Ÿè¿è¡Œæ—¶é’Ÿ */
-UINT32 GetSysClock( void );                                   /* è·å–å½“å‰ç³»ç»Ÿæ—¶é’Ÿ */
-UINT8 SYS_GetInfoSta( SYS_InfoStaTypeDef i );									/* è·å–å½“å‰ç³»ç»Ÿä¿¡æ¯çŠ¶æ€ */
-// refer to SYS_ResetStaTypeDef
-#define SYS_GetLastResetSta()		(R8_RESET_STATUS&RB_RESET_FLAG)				/* è·å–ç³»ç»Ÿä¸Šæ¬¡å¤ä½çŠ¶æ€ */
-void SYS_ResetExecute( void );													/* æ‰§è¡Œç³»ç»Ÿè½¯ä»¶å¤ä½ */
-#define SYS_ResetKeepBuf( d )		(R8_GLOB_RESET_KEEP = d)					/* ä¸å—æ‰‹åŠ¨å¤ä½ã€ è½¯ä»¶å¤ä½ã€ çœ‹é—¨ç‹—å¤ä½æˆ–è€…æ™®é€šå”¤é†’å¤ä½çš„å½±å“ */
+/**
+ * @brief  »ñÈ¡Ğ¾Æ¬IDÀà£¬Ò»°ãÎª¹Ì¶¨Öµ
+ */
+#define SYS_GetChipID()      R8_CHIP_ID
 
-void SYS_DisableAllIrq( PUINT32 pirqv);									        /* å…³é—­æ‰€æœ‰ä¸­æ–­ï¼Œå¹¶ä¿ç•™å½“å‰ä¸­æ–­å€¼ */
-void SYS_RecoverIrq( UINT32 irq_status );									    /* æ¢å¤ä¹‹å‰å…³é—­çš„ä¸­æ–­å€¼ */
-UINT32 SYS_GetSysTickCnt( void );												/* è·å–å½“å‰ç³»ç»Ÿ(SYSTICK)è®¡æ•°å€¼ */
+/**
+ * @brief  »ñÈ¡°²È«·ÃÎÊID£¬Ò»°ãÎª¹Ì¶¨Öµ
+ */
+#define SYS_GetAccessID()    R8_SAFE_ACCESS_ID
 
-#define  WWDG_SetCounter( c )		(R8_WDOG_COUNT = c)							/* åŠ è½½çœ‹é—¨ç‹—è®¡æ•°åˆå€¼ï¼Œé€’å¢å‹ */
-void  WWDG_ITCfg( FunctionalState s );							/* çœ‹é—¨ç‹—æº¢å‡ºä¸­æ–­ä½¿èƒ½ */
-void  WWDG_ResetCfg( FunctionalState s );							/* çœ‹é—¨ç‹—æº¢å‡ºå¤ä½ä½¿èƒ½ */
-#define  WWDG_GetFlowFlag()			(R8_RST_WDOG_CTRL&RB_WDOG_INT_FLAG)			/* è·å–å½“å‰çœ‹é—¨ç‹—å®šæ—¶å™¨æº¢å‡ºæ ‡å¿— */
-void WWDG_ClearFlag(void);														/* æ¸…é™¤çœ‹é—¨ç‹—ä¸­æ–­æ ‡å¿—ï¼Œé‡æ–°åŠ è½½è®¡æ•°å€¼ä¹Ÿå¯æ¸…é™¤ */
+/**
+ * @brief   ÅäÖÃÏµÍ³ÔËĞĞÊ±ÖÓ
+ *
+ * @param   sc      - ÏµÍ³Ê±ÖÓÔ´Ñ¡Ôñ refer to SYS_CLKTypeDef
+ */
+void SetSysClock(SYS_CLKTypeDef sc);
 
+/**
+ * @brief   »ñÈ¡µ±Ç°ÏµÍ³Ê±ÖÓ
+ *
+ * @return  Hz
+ */
+uint32_t GetSysClock(void);
 
-void mDelayuS( UINT16 t );		/* uS å»¶æ—¶ */
-void mDelaymS( UINT16 t );		/* mS å»¶æ—¶ */
+/**
+ * @brief   »ñÈ¡µ±Ç°ÏµÍ³ĞÅÏ¢×´Ì¬
+ *
+ * @param   i       - refer to SYS_InfoStaTypeDef
+ *
+ * @return  ÊÇ·ñ¿ªÆô
+ */
+uint8_t SYS_GetInfoSta(SYS_InfoStaTypeDef i);
 
+/**
+ * @brief   »ñÈ¡ÏµÍ³ÉÏ´Î¸´Î»×´Ì¬
+ *
+ * @return  refer to SYS_ResetStaTypeDef
+ */
+#define SYS_GetLastResetSta()    (R8_RESET_STATUS & RB_RESET_FLAG)
 
+/**
+ * @brief   Ö´ĞĞÏµÍ³Èí¼ş¸´Î»
+ */
+void SYS_ResetExecute(void);
+
+/**
+ * @brief   ÉèÖÃ¸´Î»±£´æ¼Ä´æÆ÷µÄÖµ£¬²»ÊÜÊÖ¶¯¸´Î»¡¢ Èí¼ş¸´Î»¡¢ ¿´ÃÅ¹·¸´Î»»òÕßÆÕÍ¨»½ĞÑ¸´Î»µÄÓ°Ïì
+ *
+ * @param   i       - refer to SYS_InfoStaTypeDef
+ */
+#define SYS_ResetKeepBuf(d)    (R8_GLOB_RESET_KEEP = d)
+
+/**
+ * @brief   ¹Ø±ÕËùÓĞÖĞ¶Ï£¬²¢±£Áôµ±Ç°ÖĞ¶ÏÖµ
+ *
+ * @param   pirqv   - µ±Ç°±£ÁôÖĞ¶ÏÖµ
+ */
+void SYS_DisableAllIrq(uint32_t *pirqv);
+
+/**
+ * @brief   »Ö¸´Ö®Ç°¹Ø±ÕµÄÖĞ¶ÏÖµ
+ *
+ * @param   irq_status  - µ±Ç°±£ÁôÖĞ¶ÏÖµ
+ */
+void SYS_RecoverIrq(uint32_t irq_status);
+
+/**
+ * @brief   »ñÈ¡µ±Ç°ÏµÍ³(SYSTICK)¼ÆÊıÖµ
+ *
+ * @return  µ±Ç°¼ÆÊıÖµ
+ */
+uint32_t SYS_GetSysTickCnt(void);
+
+/**
+ * @brief   ¼ÓÔØ¿´ÃÅ¹·¼ÆÊı³õÖµ£¬µİÔöĞÍ
+ *
+ * @param   c       - ¿´ÃÅ¹·¼ÆÊı³õÖµ
+ */
+#define WWDG_SetCounter(c)    (R8_WDOG_COUNT = c)
+
+/**
+ * @brief   ¿´ÃÅ¹·¶¨Ê±Æ÷Òç³öÖĞ¶ÏÊ¹ÄÜ
+ *
+ * @param   s       - Òç³öÊÇ·ñÖĞ¶Ï
+ */
+void WWDG_ITCfg(FunctionalState s);
+
+/**
+ * @brief   ¿´ÃÅ¹·¶¨Ê±Æ÷¸´Î»¹¦ÄÜ
+ *
+ * @param   s       - Òç³öÊÇ·ñ¸´Î»
+ */
+void WWDG_ResetCfg(FunctionalState s);
+
+/**
+ * @brief   »ñÈ¡µ±Ç°¿´ÃÅ¹·¶¨Ê±Æ÷Òç³ö±êÖ¾
+ *
+ * @return  ¿´ÃÅ¹·¶¨Ê±Æ÷Òç³ö±êÖ¾
+ */
+#define WWDG_GetFlowFlag()    (R8_RST_WDOG_CTRL & RB_WDOG_INT_FLAG)
+
+/**
+ * @brief   Çå³ı¿´ÃÅ¹·ÖĞ¶Ï±êÖ¾£¬ÖØĞÂ¼ÓÔØ¼ÆÊıÖµÒ²¿ÉÇå³ı
+ */
+void WWDG_ClearFlag(void);
+
+/**
+ * @brief   uS ÑÓÊ±
+ *
+ * @param   t       - Ê±¼ä²ÎÊı
+ */
+void mDelayuS(uint16_t t);
+
+/**
+ * @brief   mS ÑÓÊ±
+ *
+ * @param   t       - Ê±¼ä²ÎÊı
+ */
+void mDelaymS(uint16_t t);
 
 #ifdef __cplusplus
 }

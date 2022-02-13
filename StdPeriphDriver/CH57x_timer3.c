@@ -1,83 +1,73 @@
 /********************************** (C) COPYRIGHT *******************************
-* File Name          : CH57x_timer3.c
-* Author             : WCH
-* Version            : V1.0
-* Date               : 2018/12/15
-* Description 
-*******************************************************************************/
+ * File Name          : CH57x_timer3.c
+ * Author             : WCH
+ * Version            : V1.2
+ * Date               : 2021/11/17
+ * Description
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * SPDX-License-Identifier: Apache-2.0
+ *******************************************************************************/
 
 #include "CH57x_common.h"
 
-
-/*******************************************************************************
-* Function Name  : TMR3_TimerInit
-* Description    : å®šæ—¶åŠŸèƒ½åˆå§‹åŒ–
-* Input          : t: å®šæ—¶æ—¶é—´ï¼ŒåŸºäºå½“å‰ç³»ç»Ÿæ—¶é’ŸTsys, æœ€é•¿å®šæ—¶å‘¨æœŸ 67108864
-					
-* Return         : None
-*******************************************************************************/
-void TMR3_TimerInit( UINT32 t )
-{	
+/*********************************************************************
+ * @fn      TMR3_TimerInit
+ *
+ * @brief   ¶¨Ê±¹¦ÄÜ³õÊ¼»¯
+ *
+ * @param   t       - ¶¨Ê±Ê±¼ä£¬»ùÓÚµ±Ç°ÏµÍ³Ê±ÖÓTsys, ×î³¤¶¨Ê±ÖÜÆÚ 67108864
+ *
+ * @return  none
+ */
+void TMR3_TimerInit(uint32_t t)
+{
     R32_TMR3_CNT_END = t;
-    R8_TMR3_CTRL_MOD = RB_TMR_ALL_CLEAR;	
+    R8_TMR3_CTRL_MOD = RB_TMR_ALL_CLEAR;
     R8_TMR3_CTRL_MOD = RB_TMR_COUNT_EN;
 }
 
-/*******************************************************************************
-* Function Name  : TMR3_EXTSingleCounterInit
-* Description    : è¾¹æ²¿è®¡æ•°åŠŸèƒ½åˆå§‹åŒ–
-* Input          : cap: é‡‡é›†è®¡æ•°ç±»å‹
-                    CAP_NULL - ä¸è®¡æ•°
-                    Edge_To_Edge - è®¡æ•°ä»»æ„è¾¹æ²¿
-                    FallEdge_To_FallEdge - è®¡æ•°ä¸‹é™æ²¿
-					RiseEdge_To_RiseEdge - è®¡æ•°ä¸Šå‡æ²¿
-* Return         : None
-*******************************************************************************/
-void TMR3_EXTSingleCounterInit( CapModeTypeDef cap )
+/*********************************************************************
+ * @fn      TMR3_EXTSingleCounterInit
+ *
+ * @brief   ±ßÑØ¼ÆÊı¹¦ÄÜ³õÊ¼»¯
+ *
+ * @param   cap     - ²É¼¯¼ÆÊıÀàĞÍ
+ *
+ * @return  none
+ */
+void TMR3_EXTSingleCounterInit(CapModeTypeDef cap)
 {
     R8_TMR3_CTRL_MOD = RB_TMR_ALL_CLEAR;
-    R8_TMR3_CTRL_MOD = RB_TMR_COUNT_EN      \
-                      |RB_TMR_CAP_COUNT     \
-                      |RB_TMR_MODE_IN       \
-                      |(cap<<6);    
+    R8_TMR3_CTRL_MOD = RB_TMR_COUNT_EN | RB_TMR_CAP_COUNT | RB_TMR_MODE_IN | (cap << 6);
 }
 
-/*******************************************************************************
-* Function Name  : TMR3_PWMInit
-* Description    : PWM è¾“å‡ºåˆå§‹åŒ–
-* Input          : pr:  select wave polar 	
-					refer to PWMX_PolarTypeDef	
-				   ts:	set pwm repeat times
-					refer to PWM_RepeatTsTypeDef					
-* Return         : None
-*******************************************************************************/
-void TMR3_PWMInit( PWMX_PolarTypeDef pr, PWM_RepeatTsTypeDef ts )
+/*********************************************************************
+ * @fn      TMR3_PWMInit
+ *
+ * @brief   PWM Êä³ö³õÊ¼»¯
+ *
+ * @param   pr      - select wave polar, refer to PWMX_PolarTypeDef
+ * @param   ts      - set pwm repeat times, refer to PWM_RepeatTsTypeDef
+ *
+ * @return  none
+ */
+void TMR3_PWMInit(PWMX_PolarTypeDef pr, PWM_RepeatTsTypeDef ts)
 {
-//    R8_TMR3_CTRL_MOD = RB_TMR_ALL_CLEAR;
-    R8_TMR3_CTRL_MOD = RB_TMR_COUNT_EN      \
-                        |RB_TMR_OUT_EN      \
-                        |(pr<<4)            \
-                        |(ts<<6);
+    //    R8_TMR3_CTRL_MOD = RB_TMR_ALL_CLEAR;
+    R8_TMR3_CTRL_MOD = RB_TMR_COUNT_EN | RB_TMR_OUT_EN | (pr << 4) | (ts << 6);
 }
 
-
-/*******************************************************************************
-* Function Name  : TMR3_CapInit
-* Description    : å¤–éƒ¨ä¿¡å·æ•æ‰åŠŸèƒ½åˆå§‹åŒ–
-* Input          : cap:  select capture mode 	
-					refer to CapModeTypeDef						
-* Return         : None
-*******************************************************************************/
-void TMR3_CapInit( CapModeTypeDef cap )
+/*********************************************************************
+ * @fn      TMR3_CapInit
+ *
+ * @brief   Íâ²¿ĞÅºÅ²¶×½¹¦ÄÜ³õÊ¼»¯
+ *
+ * @param   cap     - select capture mode, refer to CapModeTypeDef
+ *
+ * @return  none
+ */
+void TMR3_CapInit(CapModeTypeDef cap)
 {
-        R8_TMR3_CTRL_MOD = RB_TMR_ALL_CLEAR;
-        R8_TMR3_CTRL_MOD = RB_TMR_COUNT_EN      \
-                            |RB_TMR_MODE_IN     \
-                            |(cap<<6);	
+    R8_TMR3_CTRL_MOD = RB_TMR_ALL_CLEAR;
+    R8_TMR3_CTRL_MOD = RB_TMR_COUNT_EN | RB_TMR_MODE_IN | (cap << 6);
 }
-
-
-
-
-
-

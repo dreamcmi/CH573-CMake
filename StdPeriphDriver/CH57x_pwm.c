@@ -1,24 +1,27 @@
 /********************************** (C) COPYRIGHT *******************************
-* File Name          : CH57x_pwm.c
-* Author             : WCH
-* Version            : V1.0
-* Date               : 2018/12/15
-* Description 
-*******************************************************************************/
+ * File Name          : CH57x_pwm.c
+ * Author             : WCH
+ * Version            : V1.2
+ * Date               : 2021/11/17
+ * Description
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * SPDX-License-Identifier: Apache-2.0
+ *******************************************************************************/
 
 #include "CH57x_common.h"
 
-
-/*******************************************************************************
-* Function Name  : PWMX_CycleCfg
-* Description    : PWM4-PWM11åŸºå‡†æ—¶é’Ÿé…ç½®
-* Input          : cyc:
-					refer to PWMX_CycleTypeDef
-* Return         : None
-*******************************************************************************/
-void PWMX_CycleCfg( PWMX_CycleTypeDef cyc )
-{	
-    switch( cyc )
+/*********************************************************************
+ * @fn      PWMX_CycleCfg
+ *
+ * @brief   PWM4-PWM11»ù×¼Ê±ÖÓÅäÖÃ
+ *
+ * @param   cyc     - refer to PWMX_CycleTypeDef
+ *
+ * @return  none
+ */
+void PWMX_CycleCfg(PWMX_CycleTypeDef cyc)
+{
+    switch(cyc)
     {
         case PWMX_Cycle_256:
             R8_PWM_CONFIG = R8_PWM_CONFIG & 0xf0;
@@ -29,78 +32,90 @@ void PWMX_CycleCfg( PWMX_CycleTypeDef cyc )
             break;
 
         case PWMX_Cycle_128:
-            R8_PWM_CONFIG = (R8_PWM_CONFIG & 0xf0) | (1<<2);
+            R8_PWM_CONFIG = (R8_PWM_CONFIG & 0xf0) | (1 << 2);
             break;
 
         case PWMX_Cycle_127:
-            R8_PWM_CONFIG = (R8_PWM_CONFIG & 0xf0) | (1<<2) | 0x01;
+            R8_PWM_CONFIG = (R8_PWM_CONFIG & 0xf0) | (1 << 2) | 0x01;
             break;
 
         case PWMX_Cycle_64:
-            R8_PWM_CONFIG = (R8_PWM_CONFIG & 0xf0) | (2<<2);
+            R8_PWM_CONFIG = (R8_PWM_CONFIG & 0xf0) | (2 << 2);
             break;
 
         case PWMX_Cycle_63:
-            R8_PWM_CONFIG = (R8_PWM_CONFIG & 0xf0) | (2<<2) | 0x01;
+            R8_PWM_CONFIG = (R8_PWM_CONFIG & 0xf0) | (2 << 2) | 0x01;
             break;
 
         case PWMX_Cycle_32:
-            R8_PWM_CONFIG = (R8_PWM_CONFIG & 0xf0) | (3<<2);
+            R8_PWM_CONFIG = (R8_PWM_CONFIG & 0xf0) | (3 << 2);
             break;
 
         case PWMX_Cycle_31:
-            R8_PWM_CONFIG = (R8_PWM_CONFIG & 0xf0) | (3<<2) | 0x01;
+            R8_PWM_CONFIG = (R8_PWM_CONFIG & 0xf0) | (3 << 2) | 0x01;
             break;
 
-        default :
+        default:
             break;
     }
 }
 
-/*******************************************************************************
-* Function Name  : PWMX_ACTOUT
-* Description    : PWM4-PWM11é€šé“è¾“å‡ºæ³¢å½¢é…ç½®
-* Input          : ch:	select channel of pwm 
-					refer to channel of PWM define
-				   da:	effective pulse width
-				   pr:  select wave polar 	
-					refer to PWMX_PolarTypeDef
-				   s :  control pwmx function
-					ENABLE  - è¾“å‡ºPWM
-					DISABLE - å…³é—­PWM 
-* Return         : None
-*******************************************************************************/
-void PWMX_ACTOUT( UINT8 ch, UINT8 da, PWMX_PolarTypeDef pr, FunctionalState s)
+/*********************************************************************
+ * @fn      PWMX_ACTOUT
+ *
+ * @brief   PWM4-PWM11Í¨µÀÊä³ö²¨ĞÎÅäÖÃ
+ *
+ * @param   ch      - select channel of pwm, refer to channel of PWM define
+ * @param   da      - effective pulse width
+ * @param   pr      - select wave polar, refer to PWMX_PolarTypeDef
+ * @param   s       - control pwmx function, ENABLE or DISABLE
+ *
+ * @return  none
+ */
+void PWMX_ACTOUT(uint8_t ch, uint8_t da, PWMX_PolarTypeDef pr, FunctionalState s)
 {
-    UINT8 i;
+    uint8_t i;
 
-    if(s == DISABLE)	R8_PWM_OUT_EN &= ~(ch);
+    if(s == DISABLE)
+    {
+        R8_PWM_OUT_EN &= ~(ch);
+    }
     else
     {
-        (pr)?(R8_PWM_POLAR|=(ch)):(R8_PWM_POLAR&=~(ch));
-        for(i=0; i<8; i++)
+        (pr) ? (R8_PWM_POLAR |= (ch)) : (R8_PWM_POLAR &= ~(ch));
+        for(i = 0; i < 8; i++)
         {
-            if((ch>>i)&1)		*((PUINT8V)((&R8_PWM4_DATA)+i)) = da;
+            if((ch >> i) & 1)
+            {
+                *((volatile uint8_t *)((&R8_PWM4_DATA) + i)) = da;
+            }
         }
         R8_PWM_OUT_EN |= (ch);
     }
 }
 
-/*******************************************************************************
-* Function Name  : PWMX_AlterOutCfg
-* Description    : PWM äº¤æ›¿è¾“å‡ºæ¨¡å¼é…ç½®
-* Input          : ch:	select group of PWM alternate output
-					RB_PWM4_5_STAG_EN	-  PWM4 å’Œ PWM5 é€šé“äº¤æ›¿è¾“å‡º
-					RB_PWM6_7_STAG_EN	-  PWM6 å’Œ PWM7 é€šé“äº¤æ›¿è¾“å‡º
-					RB_PWM8_9_STAG_EN	-  PWM8 å’Œ PWM9 é€šé“äº¤æ›¿è¾“å‡º
-					RB_PWM10_11_STAG_EN	-  PWM10 å’Œ PWM11 é€šé“äº¤æ›¿è¾“å‡º
-				   s :  control pwmx function
-					ENABLE  - æ‰“å¼€äº¤æ›¿è¾“å‡ºåŠŸèƒ½
-					DISABLE - å…³é—­äº¤æ›¿è¾“å‡ºåŠŸèƒ½
-* Return         : None
-*******************************************************************************/
-void PWMX_AlterOutCfg( UINT8 ch, FunctionalState s)
+/*********************************************************************
+ * @fn      PWMX_AlterOutCfg
+ *
+ * @brief   PWM ½»ÌæÊä³öÄ£Ê½ÅäÖÃ
+ *
+ * @param   ch      - select group of PWM alternate output
+ *                    RB_PWM4_5_STAG_EN     -  PWM4 ºÍ PWM5 Í¨µÀ½»ÌæÊä³ö
+ *                    RB_PWM6_7_STAG_EN     -  PWM6 ºÍ PWM7 Í¨µÀ½»ÌæÊä³ö
+ *                    RB_PWM8_9_STAG_EN     -  PWM8 ºÍ PWM9 Í¨µÀ½»ÌæÊä³ö
+ *                    RB_PWM10_11_STAG_EN   -  PWM10 ºÍ PWM11 Í¨µÀ½»ÌæÊä³ö
+ * @param   s       - control pwmx function, ENABLE or DISABLE
+ *
+ * @return  none
+ */
+void PWMX_AlterOutCfg(uint8_t ch, FunctionalState s)
 {
-    if(s == DISABLE)        R8_PWM_CONFIG &= ~(ch);
-    else                    R8_PWM_CONFIG |= (ch);
+    if(s == DISABLE)
+    {
+        R8_PWM_CONFIG &= ~(ch);
+    }
+    else
+    {
+        R8_PWM_CONFIG |= (ch);
+    }
 }
