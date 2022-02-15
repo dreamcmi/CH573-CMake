@@ -47,7 +47,7 @@ include_directories(BLE_LIB
                     APP/inc)
 
 # 宏定义
-# add_definitions(-DDEBUG=1 -DHAL_KEY=0)
+add_definitions(-DDEBUG=1)
 
 # 源码文件
 file(GLOB_RECURSE SOURCES 

@@ -1,6 +1,6 @@
 #include "CH57x_common.h"
 #include "CH57xBLE_LIB.h"
-#include "printf.h"
+
 
 void DebugInit(void)
 {
@@ -23,14 +23,3 @@ int main()
     ; // 必须加while卡住主程序
   return 0;
 }
-
-
-/*=====实现printf接口 默认uart1=====*/
-void _putchar(char character)
-{
-  uint8_t buff = (uint8_t)character;
-  while (R8_UART1_TFC == UART_FIFO_SIZE)
-    ;
-  R8_UART1_THR = buff;
-}
-/*=================================*/
