@@ -1,11 +1,12 @@
 /********************************** (C) COPYRIGHT ******************************
-* File Name         : CH57xBLE_LIB.H
-* Author            : WCH
-* Version           : V1.60
-* Date              : 2021/11/23
-* Description       : head file
-*******************************************************************************/
+ * File Name         : CH57xBLE_LIB.H
+ * Author            : WCH
+ * Version           : V1.70
+ * Date              : 2022/03/22
+ * Description       : head file
 
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ *******************************************************************************/
 
 
 /******************************************************************************/
@@ -16,88 +17,72 @@
 extern "C"
 {
 #endif
+#include  "stdint.h"
 
-#ifndef BOOL
-typedef unsigned char                   BOOL;
-#endif
-#ifndef s8
-typedef signed char                     s8;
-#endif
-#ifndef s16
-typedef signed short                    s16;
-#endif
-#ifndef s32
-typedef signed long                     s32;
-#endif
-#ifndef u8
-typedef unsigned char                   u8;
-#endif
-#ifndef u16
-typedef unsigned short                  u16;
-#endif
-#ifndef u32
-typedef unsigned long                   u32;
-#endif
-#ifndef u64
-typedef unsigned long long              u64;
-#endif
-#ifndef u8C
-typedef const unsigned char             u8C;
-#endif
-#ifndef u32V
-typedef unsigned long volatile          u32V;
-#endif
 #ifndef int8
-typedef signed char                     int8;
+typedef signed char             int8;
 #endif
 #ifndef int16
-typedef short                           int16;
+typedef short                   int16;
 #endif
-#ifndef int32
-typedef signed long                     int32;
+#ifndef BOOL
+typedef unsigned char           BOOL;
 #endif
-#ifndef uint8
-typedef unsigned char                   uint8;
+#ifndef s8
+typedef signed char             s8;
 #endif
-#ifndef uint16
-typedef unsigned short                  uint16;
+#ifndef s16
+typedef signed short            s16;
 #endif
-#ifndef uint32
-typedef unsigned long                   uint32;
+#ifndef s32
+typedef signed long             s32;
 #endif
-#ifndef int8_t
-typedef signed char                     int8_t;
+#ifndef u8
+typedef unsigned char           u8;
 #endif
-#ifndef int16_t
-typedef short                           int16_t;
+#ifndef u16
+typedef unsigned short          u16;
 #endif
-#ifndef int32_t
-typedef signed long                     int32_t;
+#ifndef u32
+typedef unsigned long           u32;
 #endif
-#ifndef uint8_t
-typedef unsigned char                   uint8_t;
+#ifndef u64
+typedef unsigned long long      u64;
 #endif
-#ifndef uint16_t
-typedef unsigned short                  uint16_t;
-#endif
-#ifndef uint32_t
-typedef unsigned long                   uint32_t;
+#ifndef u8C
+typedef const unsigned char     u8C;
 #endif
 
+#ifndef u8V
+typedef unsigned char volatile  u8V;
+#endif
+#ifndef u32V
+typedef unsigned long volatile  u32V;
+#endif
+
+#ifndef uint8
+typedef unsigned char           uint8;
+#endif
+#ifndef uint16
+typedef unsigned short          uint16;
+#endif
+#ifndef uint32
+typedef unsigned long           uint32;
+#endif
 #ifndef TRUE
-  #define TRUE                          1
+  #define TRUE                  1
 #endif
 #ifndef FALSE
-  #define FALSE                         0
+  #define FALSE                 0
+#endif
+#ifndef SUCCESS
+#define  SUCCESS                0x00
 #endif
 #ifndef NULL
-  #define NULL                          0
+  #define NULL                  0
 #endif
-#ifndef VOID
-  #define VOID                          void
-#endif
-#ifndef  CONST
-  #define CONST                         const
+#ifndef CONST
+#define CONST                   const
 #endif
 #ifndef  bStatus_t
 typedef unsigned char                   bStatus_t;
@@ -119,8 +104,8 @@ typedef uint32_t (*pfnSleepCB)( uint32_t );
 typedef void (*pfnLSECalibrationCB)( void );
 // Define function type that get temperature callback
 typedef uint16_t (*pfnTempSampleCB)( void );
-// Define function type that connect event complete callback. timeUs - the time relative to next connect event ( only effect in single connection).
-typedef void (*pfnConnectEventCB)( uint32_t timeUs ); // Call LL_ConnectEventRegister to init
+// Define function type that connect/advertise event complete callback.
+typedef void (*pfnEventCB)( uint32_t timeUs );
 // Define function type that library status callback.
 typedef void (*pfnLibStatusErrorCB)( uint8_t code, uint32_t status );
 // Define function type that process event
@@ -187,7 +172,7 @@ typedef struct
 /*********************************************************************
  * GLOBAL MACROS
  */
-#define  VER_FILE            "CH57x_BLE_LIB_V1.6"
+#define  VER_FILE            "CH57x_BLE_LIB_V1.7"
 extern const uint8_t VER_LIB[];  // LIB version
 #define SYSTEM_TIME_MICROSEN            625   // unit of process event timer is 625us
 #define MS1_TO_SYSTEM_TIME(x)  ((x)*1000/SYSTEM_TIME_MICROSEN)   // transform unit in ms to unit in 625us ( attentional bias )
@@ -696,6 +681,7 @@ extern const uint8_t VER_LIB[];  // LIB version
 #define GATT_CCC_TBL( pValue )          ( (gattCharCfg_t *)(*((PTR_TYPE)(&pValue))))
 
 /************************************ GAP *************************************/
+#define GAP_MSG_EVENT_DEFINES                        //!< GAP type of command
 #define GAP_DEVICE_INIT_DONE_EVENT              0x00 //!< Sent when the Device Initialization is complete.  This event is sent as an tmos message defined as gapDeviceInitDoneEvent_t.
 #define GAP_DEVICE_DISCOVERY_EVENT              0x01 //!< Sent when the Device Discovery Process is complete. This event is sent as an tmos message defined as gapDevDiscEvent_t.
 #define GAP_ADV_DATA_UPDATE_DONE_EVENT          0x02 //!< Sent when the Advertising Data or SCAN_RSP Data has been updated. This event is sent as an tmos message defined as gapAdvDataUpdateEvent_t.
@@ -781,15 +767,15 @@ extern const uint8_t VER_LIB[];  // LIB version
 #define TGAP_CONN_EST_MAX_CE_LEN                16  //!< Local informational parameter about maximum length of connection needed.Default 0. (n * 0.625 mSec)
 
 // Proprietary
-#define TGAP_PRIVATE_ADDR_INT                   17  //!< Minimum Time Interval between private (resolvable) address changes.Default 15. (n * 1 minute)
+#define TGAP_PRIVATE_ADDR_INT                   17  //!< Minimum Time Interval between private (resolvable) address changes.Default 900. (n * 1 seconds)
 #define TGAP_SM_TIMEOUT                         18  //!< SM Message Timeout (milliseconds). Default 30 seconds.
 #define TGAP_SM_MIN_KEY_LEN                     19  //!< SM Minimum Key Length supported. Default 7.
 #define TGAP_SM_MAX_KEY_LEN                     20  //!< SM Maximum Key Length supported. Default 16.
 #define TGAP_FILTER_ADV_REPORTS                 21  //!< Filter duplicate advertising reports. Default TRUE.
-#define TGAP_SCAN_RSP_RSSI_MIN                  22  //!< Minimum RSSI required for scan responses to be reported to the app. Default -127.
+#define TGAP_SCAN_RSSI_MIN                      22  //!< Minimum RSSI required for scan advertising to be reported to the app. Default -127.
 #define TGAP_REJECT_CONN_PARAMS                 23  //!< Whether or not to reject Connection Parameter Update Request received on Central device. Default FALSE.
 #define TGAP_AUTH_TASK_ID                       24  //!< Task ID override for Task Authentication control (for stack internal use only)
-#define TGAP_PARAMID_MAX              25  //!< ID MAX-valid Parameter ID
+#define TGAP_PARAMID_MAX                        25  //!< ID MAX-valid Parameter ID
 
 // GAP_DEVDISC_MODE_DEFINES GAP Device Discovery Modes
 #define DEVDISC_MODE_NONDISCOVERABLE            0x00  //!< No discoverable setting
@@ -810,7 +796,8 @@ extern const uint8_t VER_LIB[];  // LIB version
 #define GAP_ADTYPE_ADV_NONCONN_IND              0x03  //!< Non-Connectable undirected event type
 #define GAP_ADTYPE_ADV_LDC_DIRECT_IND           0x04  //!< Connectable low duty cycle directed event type
 
-// GAP_ADVERTISEMENT_REPORT_TYPE_DEFINES GAP Advertising Report Event Types
+// GAP Advertising Report Event Types
+#define GAP_ADVERTISEMENT_REPORT_TYPE_DEFINES
 #define GAP_ADRPT_ADV_IND                       0x00  //!< Connectable undirected advertisement
 #define GAP_ADRPT_ADV_DIRECT_IND                0x01  //!< Connectable directed advertisement
 #define GAP_ADRPT_ADV_SCAN_IND                  0x02  //!< Scannable undirected advertisement
@@ -1824,6 +1811,7 @@ typedef struct
     uint8_t uiInputs;               //!< Pairing User Interface Inputs - Ask user to input passcode
     uint8_t uiOutputs;              //!< Pairing User Interface Outputs - Display passcode
 } gapPasskeyNeededEvent_t;
+
 /**
  * Passcode Callback Function
  */
@@ -1959,7 +1947,7 @@ typedef void (*pfnHciDataLenChangeEvCB_t)( uint16_t connHandle, uint16_t maxTxOc
  */
 typedef struct
 {
-    gapRolesRssiRead_t rssiCB;          //!< RSSI callback.
+    gapRolesRssiRead_t rssiCB;  //!< RSSI callback.
     pfnGapCentralRoleEventCB_t eventCB;  //!< Event callback.
     pfnHciDataLenChangeEvCB_t ChangCB;  //!< Length Change Event Callback .
 } gapCentralRoleCB_t; // gapCentralRoleCB_t
@@ -2020,10 +2008,10 @@ typedef struct tag_rf_config
                                      //!< bit positioned as per the data channel index,The LSB represents data channel index 0
     uint8_t Resv;
     uint8_t HeartPeriod;             //!< The heart package interval shall be an integer multiple of 100ms
-    uint8_t HopPeriod;               //!< hop period( T=32n*RTC clock ),default is 8
+    uint8_t HopPeriod;               //!< hop period( T=n*32 RTC clock ),default is 8
     uint8_t HopIndex;                //!< indicate the hopIncrement used in the data channel selection algorithm,default is 17
-    uint8_t RxMaxlen;                //!< Maximum data length received in rf-mode(default 255)
-    uint8_t TxMaxlen;                //!< Maximum data length transmit in rf-mode(default 255)
+    uint8_t RxMaxlen;                //!< Maximum data length received in rf-mode(default 251)
+    uint8_t TxMaxlen;                //!< Maximum data length transmit in rf-mode(default 251)
 } rfConfig_t;
 
 /* end define@RF-PHY */
@@ -2196,6 +2184,8 @@ extern uint8_t tmos_snv_read( uint8_t id, uint8_t len, void *pBuf );
 /**
  * @brief   tmos system timer initialization
  *
+ * @note    must initialization before call tmos task
+ *
  * @param   fnGetClock - 0:system clock select RTC timer
  *                   valid:system clock select extend input
  *
@@ -2304,11 +2294,20 @@ extern uint32_t LL_GetNumberOfUnAckPacket( uint16_t handle );
  * @brief   Register a callback function will be called after each connect event.
  *          Only effect in single connection
  *
- * @param   connectEventCB - callback function
+ * @param   connEventCB - callback function
  *
  * @return  None.
  */
-extern void LL_ConnectEventRegister( pfnConnectEventCB connectEventCB );
+extern void LL_ConnectEventRegister( pfnEventCB connEventCB );
+
+/**
+ * @brief   Register a callback function will be called after each advertise event.
+ *
+ * @param   advEventCB - callback function
+ *
+ * @return  None.
+ */
+extern void LL_AdvertiseEventRegister( pfnEventCB advEventCB );
 
 /**
  * @brief   set tx power level
@@ -2831,6 +2830,7 @@ extern bStatus_t GATT_ReadCharValue( uint16_t connHandle, attReadReq_t *pReq, ui
  *          bleTimeout: Previous transaction timed out.<BR>
  */
 extern bStatus_t GATT_ReadUsingCharUUID( uint16_t connHandle, attReadByTypeReq_t *pReq, uint8_t taskId );
+
 /**
  * @brief   This sub-procedure is used to read a Characteristic Value from
  *          a server when the client knows the Characteristic Value Handle
@@ -3085,6 +3085,7 @@ extern bStatus_t GATT_WriteLongCharValue( uint16_t connHandle, attPrepareWriteRe
  */
 extern bStatus_t GATT_ReliableWrites( uint16_t connHandle, attPrepareWriteReq_t *pReqs, uint8_t numReqs,
     uint8_t flags, uint8_t taskId );
+
 /**
  * @brief   This sub-procedure is used to read a characteristic descriptor
  *          from a server when the client knows the characteristic descriptor
@@ -3594,32 +3595,30 @@ extern bStatus_t GAPRole_UpdateLink( uint16_t connHandle, uint16_t connIntervalM
  * FUNCTIONS - BROADCASTER_PROFILE_API Broadcaster Profile API
  */
 /**
- * @internal
  *
- * @brief       Initialization function for the GAP Role Task.
+ * @brief   Initialization function for the GAP Role Task.
  *
- * @param       the ID assigned by tmos.  This ID should be
- *                    used to send messages and set timers.
+ * @param   the ID assigned by tmos.This ID should be used to send messages and set timers.
  *
- * @return      SUCCESS,bleInvalidRange
+ * @return  SUCCESS,bleInvalidRange
  */
 extern bStatus_t GAPRole_BroadcasterInit( void );
 
 /**
- * @brief       Does the device initialization.  Only call this function once.
+ * @brief   Does the device initialization.  Only call this function once.
  *
- * @param       pAppCallbacks - pointer to application callbacks.
+ * @param   pAppCallbacks - pointer to application callbacks.
  *
- * @return      SUCCESS or bleAlreadyInRequestedMode
+ * @return  SUCCESS or bleAlreadyInRequestedMode
  */
 extern bStatus_t GAPRole_BroadcasterStartDevice( gapRolesBroadcasterCBs_t *pAppCallbacks );
 
 /**
- * @brief       Does the Broadcaster receive scan request call initialization.
+ * @brief   Does the Broadcaster receive scan request call initialization.
  *
- * @param       pAppCallbacks - pointer to application callbacks.
+ * @param   pAppCallbacks - pointer to application callbacks.
  *
- * @return      None
+ * @return  None
  */
 extern void GAPRole_BroadcasterSetCB( gapRolesBroadcasterCBs_t *pAppCallbacks );
 
@@ -3676,39 +3675,38 @@ extern bStatus_t GAPRole_ObserverCancelDiscovery( void );
 /**
  * @internal
  *
- * @brief       Initialization function for the GAP Role Task.
+ * @brief   Initialization function for the GAP Role Task.
  *          This is called during initialization and should contain
  *          any application specific initialization (ie. hardware
  *          initialization/setup, table initialization, power up
  *          notificaiton ... ).
  *
- * @param       the ID assigned by tmos.  This ID should be
- *                    used to send messages and set timers.
+ * @param   the ID assigned by tmos.This ID should be used to send messages and set timers.
  *
- * @return      SUCCESS,bleInvalidRange
+ * @return  SUCCESS,bleInvalidRange
  */
 extern bStatus_t GAPRole_PeripheralInit( void );
 
 /**
- * @brief       Does the device initialization.  Only call this function once.
+ * @brief   Does the device initialization.  Only call this function once.
  *
- * @param       pAppCallbacks - pointer to application callbacks.
+ * @param   pAppCallbacks - pointer to application callbacks.
  *
- * @return      SUCCESS or bleAlreadyInRequestedMode  
+ * @return  SUCCESS or bleAlreadyInRequestedMode
  */
 extern bStatus_t GAPRole_PeripheralStartDevice( uint8_t taskid, gapBondCBs_t *pCB, gapRolesCBs_t *pAppCallbacks );
 
 /**
- * @brief       Update the parameters of an existing connection
+ * @brief   Update the parameters of an existing connection
  *
- * @param       connHandle - the connection Handle
- * @param       connIntervalMin - minimum connection interval in 1.25ms units
- * @param       connIntervalMax - maximum connection interval in 1.25ms units
- * @param       latency - the new slave latency
- * @param       connTimeout - the new timeout value
- * @param       taskId - taskID will recv L2CAP_SIGNAL_EVENT message
+ * @param   connHandle - the connection Handle
+ * @param   connIntervalMin - minimum connection interval in 1.25ms units
+ * @param   connIntervalMax - maximum connection interval in 1.25ms units
+ * @param   latency - the new slave latency
+ * @param   connTimeout - the new timeout value
+ * @param   taskId - taskID will recv L2CAP_SIGNAL_EVENT message
  *
- * @return      SUCCESS, bleNotConnected or bleInvalidRange
+ * @return  SUCCESS, bleNotConnected or bleInvalidRange
  */
 extern bStatus_t GAPRole_PeripheralConnParamUpdateReq( uint16_t connHandle, uint16_t connIntervalMin,
     uint16_t connIntervalMax, uint16_t latency, uint16_t connTimeout, uint8_t taskId );
