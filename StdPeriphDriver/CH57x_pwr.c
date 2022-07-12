@@ -13,9 +13,9 @@
 /*********************************************************************
  * @fn      PWR_DCDCCfg
  *
- * @brief   �����ڲ�DC/DC��Դ�����ڽ�Լϵͳ����
+ * @brief   启用内部DC/DC电源，用于节约系统功耗
  *
- * @param   s       - �Ƿ��DCDC��Դ
+ * @param   s       - 是否打开DCDC电源
  *
  * @return  none
  */
@@ -25,7 +25,7 @@ void PWR_DCDCCfg(FunctionalState s)
     {
         R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
         R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-        R16_POWER_PLAN &= ~(RB_PWR_DCDC_EN | RB_PWR_DCDC_PRE); // ��· DC/DC
+        R16_POWER_PLAN &= ~(RB_PWR_DCDC_EN | RB_PWR_DCDC_PRE); // 旁路 DC/DC
         R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG0;
     }
     else
@@ -47,23 +47,23 @@ void PWR_DCDCCfg(FunctionalState s)
 /*********************************************************************
  * @fn      PWR_UnitModCfg
  *
- * @brief   �ɿص�Ԫģ��ĵ�Դ����
+ * @brief   可控单元模块的电源控制
  *
- * @param   s       - �Ƿ�򿪵�Դ
+ * @param   s       - 是否打开电源
  * @param   unit    - please refer to unit of controllable power supply
  *
  * @return  none
  */
 void PWR_UnitModCfg(FunctionalState s, uint8_t unit)
 {
-    if(s == DISABLE) //�ر�
+    if(s == DISABLE) //关闭
     {
         R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
         R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
         R8_HFCK_PWR_CTRL &= ~(unit & 0x1c);
         R8_CK32K_CONFIG &= ~(unit & 0x03);
     }
-    else //��
+    else //打开
     {
         R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
         R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
@@ -76,9 +76,9 @@ void PWR_UnitModCfg(FunctionalState s, uint8_t unit)
 /*********************************************************************
  * @fn      PWR_PeriphClkCfg
  *
- * @brief   ����ʱ�ӿ���λ
+ * @brief   外设时钟控制位
  *
- * @param   s       - �Ƿ�򿪶�Ӧ����ʱ��
+ * @param   s       - 是否打开对应外设时钟
  * @param   perph   - please refer to Peripher CLK control bit define
  *
  * @return  none
@@ -103,14 +103,14 @@ void PWR_PeriphClkCfg(FunctionalState s, uint16_t perph)
 /*********************************************************************
  * @fn      PWR_PeriphWakeUpCfg
  *
- * @brief   ˯�߻���Դ����
+ * @brief   睡眠唤醒源配置
  *
- * @param   s       - �Ƿ�򿪴�����˯�߻��ѹ���
- * @param   perph   - ��Ҫ���õĻ���Դ
- *                    RB_SLP_USB_WAKE   -  USB Ϊ����Դ
- *                    RB_SLP_RTC_WAKE   -  RTC Ϊ����Դ
- *                    RB_SLP_GPIO_WAKE  -  GPIO Ϊ����Դ
- *                    RB_SLP_BAT_WAKE   -  BAT Ϊ����Դ
+ * @param   s       - 是否打开此外设睡眠唤醒功能
+ * @param   perph   - 需要设置的唤醒源
+ *                    RB_SLP_USB_WAKE   -  USB 为唤醒源
+ *                    RB_SLP_RTC_WAKE   -  RTC 为唤醒源
+ *                    RB_SLP_GPIO_WAKE  -  GPIO 为唤醒源
+ *                    RB_SLP_BAT_WAKE   -  BAT 为唤醒源
  * @param   mode    - refer to WakeUP_ModeypeDef
  *
  * @return  none
@@ -156,9 +156,9 @@ void PWR_PeriphWakeUpCfg(FunctionalState s, uint8_t perph, WakeUP_ModeypeDef mod
 /*********************************************************************
  * @fn      PowerMonitor
  *
- * @brief   ��Դ���
+ * @brief   电源监控
  *
- * @param   s       - �Ƿ�򿪴˹���
+ * @param   s       - 是否打开此功能
  * @param   vl      - refer to VolM_LevelypeDef
  *
  * @return  none
@@ -198,7 +198,7 @@ void PowerMonitor(FunctionalState s, VolM_LevelypeDef vl)
 /*********************************************************************
  * @fn      LowPower_Idle
  *
- * @brief   �͹���-Idleģʽ
+ * @brief   低功耗-Idle模式
  *
  * @param   none
  *
@@ -208,7 +208,7 @@ __attribute__((section(".highcode")))
 void LowPower_Idle(void)
 {
     FLASH_ROM_SW_RESET();
-    R8_FLASH_CTRL = 0x04; //flash�ر�
+    R8_FLASH_CTRL = 0x04; //flash关闭
 
     PFIC->SCTLR &= ~(1 << 2); // sleep
     __WFI();
@@ -219,7 +219,7 @@ void LowPower_Idle(void)
 /*********************************************************************
  * @fn      LowPower_Halt
  *
- * @brief   �͹���-Haltģʽ���˵͹����е�HSI/5ʱ�����У����Ѻ���Ҫ�û��Լ�����ѡ��ϵͳʱ��Դ
+ * @brief   低功耗-Halt模式，此低功耗切到HSI/5时钟运行，唤醒后需要用户自己重新选择系统时钟源
  *
  * @param   none
  *
@@ -231,18 +231,18 @@ void LowPower_Halt(void)
     uint8_t x32Kpw, x32Mpw;
 
     FLASH_ROM_SW_RESET();
-    R8_FLASH_CTRL = 0x04; //flash�ر�
+    R8_FLASH_CTRL = 0x04; //flash关闭
     x32Kpw = R8_XT32K_TUNE;
     x32Mpw = R8_XT32M_TUNE;
-    x32Mpw = (x32Mpw & 0xfc) | 0x03; // 150%�����
+    x32Mpw = (x32Mpw & 0xfc) | 0x03; // 150%额定电流
     if(R16_RTC_CNT_32K > 0x3fff)
-    {                                    // ����500ms
-        x32Kpw = (x32Kpw & 0xfc) | 0x01; // LSE�����������͵������
+    {                                    // 超过500ms
+        x32Kpw = (x32Kpw & 0xfc) | 0x01; // LSE驱动电流降低到额定电流
     }
 
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-    R8_BAT_DET_CTRL = 0; // �رյ�ѹ���
+    R8_BAT_DET_CTRL = 0; // 关闭电压监控
     R8_XT32K_TUNE = x32Kpw;
     R8_XT32M_TUNE = x32Mpw;
     R8_PLL_CONFIG |= (1 << 5);
@@ -261,15 +261,15 @@ void LowPower_Halt(void)
 /*********************************************************************
  * @fn      LowPower_Sleep
  *
- * @brief   �͹���-Sleepģʽ���˵͹����е�HSI/5ʱ�����У����Ѻ���Ҫ�û��Լ�����ѡ��ϵͳʱ��Դ
- *          @note ע����ô˺�����DCDC����ǿ�ƹرգ����Ѻ�����ֶ��ٴδ�
+ * @brief   低功耗-Sleep模式，此低功耗切到HSI/5时钟运行，唤醒后需要用户自己重新选择系统时钟源
+ *          @note 注意调用此函数，DCDC功能强制关闭，唤醒后可以手动再次打开
  *
- * @param   rm      - ����ģ��ѡ��
- *                    RB_PWR_RAM2K  -   2K retention SRAM ����
- *                    RB_PWR_RAM16K -   16K main SRAM ����
- *                    RB_PWR_EXTEND -   USB �� BLE ��Ԫ�������򹩵�
- *                    RB_PWR_XROM   -   FlashROM ����
- *                    NULL          -   ���ϵ�Ԫ���ϵ�
+ * @param   rm      - 供电模块选择
+ *                    RB_PWR_RAM2K  -   2K retention SRAM 供电
+ *                    RB_PWR_RAM16K -   16K main SRAM 供电
+ *                    RB_PWR_EXTEND -   USB 和 BLE 单元保留区域供电
+ *                    RB_PWR_XROM   -   FlashROM 供电
+ *                    NULL          -   以上单元都断电
  *
  * @return  none
  */
@@ -279,18 +279,18 @@ void LowPower_Sleep(uint8_t rm)
     uint8_t x32Kpw, x32Mpw;
 
     FLASH_ROM_SW_RESET();
-    R8_FLASH_CTRL = 0x04; //flash�ر�
+    R8_FLASH_CTRL = 0x04; //flash关闭
     x32Kpw = R8_XT32K_TUNE;
     x32Mpw = R8_XT32M_TUNE;
-    x32Mpw = (x32Mpw & 0xfc) | 0x03; // 150%�����
+    x32Mpw = (x32Mpw & 0xfc) | 0x03; // 150%额定电流
     if(R16_RTC_CNT_32K > 0x3fff)
-    {                                    // ����500ms
-        x32Kpw = (x32Kpw & 0xfc) | 0x01; // LSE�����������͵������
+    {                                    // 超过500ms
+        x32Kpw = (x32Kpw & 0xfc) | 0x01; // LSE驱动电流降低到额定电流
     }
 
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-    R8_BAT_DET_CTRL = 0; // �رյ�ѹ���
+    R8_BAT_DET_CTRL = 0; // 关闭电压监控
     R8_XT32K_TUNE = x32Kpw;
     R8_XT32M_TUNE = x32Mpw;
     R8_SAFE_ACCESS_SIG = 0;
@@ -315,13 +315,13 @@ void LowPower_Sleep(uint8_t rm)
 /*********************************************************************
  * @fn      LowPower_Shutdown
  *
- * @brief   �͹���-Shutdownģʽ���˵͹����е�HSI/5ʱ�����У����Ѻ���Ҫ�û��Լ�����ѡ��ϵͳʱ��Դ
- *          @note ע����ô˺�����DCDC����ǿ�ƹرգ����Ѻ�����ֶ��ٴδ�
+ * @brief   低功耗-Shutdown模式，此低功耗切到HSI/5时钟运行，唤醒后需要用户自己重新选择系统时钟源
+ *          @note 注意调用此函数，DCDC功能强制关闭，唤醒后可以手动再次打开
  *
- * @param   rm      - ����ģ��ѡ��
- *                    RB_PWR_RAM2K  -   2K retention SRAM ����
- *                    RB_PWR_RAM16K -   16K main SRAM ����
- *                    NULL          -   ���ϵ�Ԫ���ϵ�
+ * @param   rm      - 供电模块选择
+ *                    RB_PWR_RAM2K  -   2K retention SRAM 供电
+ *                    RB_PWR_RAM16K -   16K main SRAM 供电
+ *                    NULL          -   以上单元都断电
  *
  * @return  none
  */
@@ -331,18 +331,18 @@ void LowPower_Shutdown(uint8_t rm)
     uint8_t x32Kpw, x32Mpw;
 
     FLASH_ROM_SW_RESET();
-    R8_FLASH_CTRL = 0x04; //flash�ر�
+    R8_FLASH_CTRL = 0x04; //flash关闭
     x32Kpw = R8_XT32K_TUNE;
     x32Mpw = R8_XT32M_TUNE;
-    x32Mpw = (x32Mpw & 0xfc) | 0x03; // 150%�����
+    x32Mpw = (x32Mpw & 0xfc) | 0x03; // 150%额定电流
     if(R16_RTC_CNT_32K > 0x3fff)
-    {                                    // ����500ms
-        x32Kpw = (x32Kpw & 0xfc) | 0x01; // LSE�����������͵������
+    {                                    // 超过500ms
+        x32Kpw = (x32Kpw & 0xfc) | 0x01; // LSE驱动电流降低到额定电流
     }
 
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
-    R8_BAT_DET_CTRL = 0; // �رյ�ѹ���
+    R8_BAT_DET_CTRL = 0; // 关闭电压监控
     R8_XT32K_TUNE = x32Kpw;
     R8_XT32M_TUNE = x32Mpw;
     R8_SAFE_ACCESS_SIG = 0;

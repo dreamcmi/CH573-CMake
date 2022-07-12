@@ -13,9 +13,9 @@
 /*********************************************************************
  * @fn      SetSysClock
  *
- * @brief   ÅäÖÃÏµÍ³ÔËĞĞÊ±ÖÓ
+ * @brief   é…ç½®ç³»ç»Ÿè¿è¡Œæ—¶é’Ÿ
  *
- * @param   sc      - ÏµÍ³Ê±ÖÓÔ´Ñ¡Ôñ refer to SYS_CLKTypeDef
+ * @param   sc      - ç³»ç»Ÿæ—¶é’Ÿæºé€‰æ‹© refer to SYS_CLKTypeDef
  *
  * @return  none
  */
@@ -86,7 +86,7 @@ void SetSysClock(SYS_CLKTypeDef sc)
 /*********************************************************************
  * @fn      GetSysClock
  *
- * @brief   »ñÈ¡µ±Ç°ÏµÍ³Ê±ÖÓ
+ * @brief   è·å–å½“å‰ç³»ç»Ÿæ—¶é’Ÿ
  *
  * @param   none
  *
@@ -98,15 +98,15 @@ uint32_t GetSysClock(void)
 
     rev = R16_CLK_SYS_CFG & 0xff;
     if((rev & 0x40) == (0 << 6))
-    { // 32M½øĞĞ·ÖÆµ
+    { // 32Mè¿›è¡Œåˆ†é¢‘
         return (32000000 / (rev & 0x1f));
     }
     else if((rev & RB_CLK_SYS_MOD) == (1 << 6))
-    { // PLL½øĞĞ·ÖÆµ
+    { // PLLè¿›è¡Œåˆ†é¢‘
         return (480000000 / (rev & 0x1f));
     }
     else
-    { // 32K×öÖ÷Æµ
+    { // 32Kåšä¸»é¢‘
         return (32000);
     }
 }
@@ -114,11 +114,11 @@ uint32_t GetSysClock(void)
 /*********************************************************************
  * @fn      SYS_GetInfoSta
  *
- * @brief   »ñÈ¡µ±Ç°ÏµÍ³ĞÅÏ¢×´Ì¬
+ * @brief   è·å–å½“å‰ç³»ç»Ÿä¿¡æ¯çŠ¶æ€
  *
  * @param   i       - refer to SYS_InfoStaTypeDef
  *
- * @return  ÊÇ·ñ¿ªÆô
+ * @return  æ˜¯å¦å¼€å¯
  */
 uint8_t SYS_GetInfoSta(SYS_InfoStaTypeDef i)
 {
@@ -135,7 +135,7 @@ uint8_t SYS_GetInfoSta(SYS_InfoStaTypeDef i)
 /*********************************************************************
  * @fn      SYS_ResetExecute
  *
- * @brief   Ö´ĞĞÏµÍ³Èí¼ş¸´Î»
+ * @brief   æ‰§è¡Œç³»ç»Ÿè½¯ä»¶å¤ä½
  *
  * @param   none
  *
@@ -154,9 +154,9 @@ void SYS_ResetExecute(void)
 /*********************************************************************
  * @fn      SYS_DisableAllIrq
  *
- * @brief   ¹Ø±ÕËùÓĞÖĞ¶Ï£¬²¢±£Áôµ±Ç°ÖĞ¶ÏÖµ
+ * @brief   å…³é—­æ‰€æœ‰ä¸­æ–­ï¼Œå¹¶ä¿ç•™å½“å‰ä¸­æ–­å€¼
  *
- * @param   pirqv   - µ±Ç°±£ÁôÖĞ¶ÏÖµ
+ * @param   pirqv   - å½“å‰ä¿ç•™ä¸­æ–­å€¼
  *
  * @return  none
  */
@@ -170,9 +170,9 @@ void SYS_DisableAllIrq(uint32_t *pirqv)
 /*********************************************************************
  * @fn      SYS_RecoverIrq
  *
- * @brief   »Ö¸´Ö®Ç°¹Ø±ÕµÄÖĞ¶ÏÖµ
+ * @brief   æ¢å¤ä¹‹å‰å…³é—­çš„ä¸­æ–­å€¼
  *
- * @param   irq_status  - µ±Ç°±£ÁôÖĞ¶ÏÖµ
+ * @param   irq_status  - å½“å‰ä¿ç•™ä¸­æ–­å€¼
  *
  * @return  none
  */
@@ -185,11 +185,11 @@ void SYS_RecoverIrq(uint32_t irq_status)
 /*********************************************************************
  * @fn      SYS_GetSysTickCnt
  *
- * @brief   »ñÈ¡µ±Ç°ÏµÍ³(SYSTICK)¼ÆÊıÖµ
+ * @brief   è·å–å½“å‰ç³»ç»Ÿ(SYSTICK)è®¡æ•°å€¼
  *
  * @param   none
  *
- * @return  µ±Ç°¼ÆÊıÖµ
+ * @return  å½“å‰è®¡æ•°å€¼
  */
 uint32_t SYS_GetSysTickCnt(void)
 {
@@ -202,9 +202,9 @@ uint32_t SYS_GetSysTickCnt(void)
 /*********************************************************************
  * @fn      WWDG_ITCfg
  *
- * @brief   ¿´ÃÅ¹·¶¨Ê±Æ÷Òç³öÖĞ¶ÏÊ¹ÄÜ
+ * @brief   çœ‹é—¨ç‹—å®šæ—¶å™¨æº¢å‡ºä¸­æ–­ä½¿èƒ½
  *
- * @param   s       - Òç³öÊÇ·ñÖĞ¶Ï
+ * @param   s       - æº¢å‡ºæ˜¯å¦ä¸­æ–­
  *
  * @return  none
  */
@@ -226,9 +226,9 @@ void WWDG_ITCfg(FunctionalState s)
 /*********************************************************************
  * @fn      WWDG_ResetCfg
  *
- * @brief   ¿´ÃÅ¹·¶¨Ê±Æ÷¸´Î»¹¦ÄÜ
+ * @brief   çœ‹é—¨ç‹—å®šæ—¶å™¨å¤ä½åŠŸèƒ½
  *
- * @param   s       - Òç³öÊÇ·ñ¸´Î»
+ * @param   s       - æº¢å‡ºæ˜¯å¦å¤ä½
  *
  * @return  none
  */
@@ -250,7 +250,7 @@ void WWDG_ResetCfg(FunctionalState s)
 /*********************************************************************
  * @fn      WWDG_ClearFlag
  *
- * @brief   Çå³ı¿´ÃÅ¹·ÖĞ¶Ï±êÖ¾£¬ÖØĞÂ¼ÓÔØ¼ÆÊıÖµÒ²¿ÉÇå³ı
+ * @brief   æ¸…é™¤çœ‹é—¨ç‹—ä¸­æ–­æ ‡å¿—ï¼Œé‡æ–°åŠ è½½è®¡æ•°å€¼ä¹Ÿå¯æ¸…é™¤
  *
  * @param   none
  *
@@ -267,7 +267,7 @@ void WWDG_ClearFlag(void)
 /*********************************************************************
  * @fn      HardFault_Handler
  *
- * @brief   Ó²¼ş´íÎóÖĞ¶Ï£¬½øÈëºóÖ´ĞĞ¸´Î»£¬¸´Î»ÀàĞÍÎªÉÏµç¸´Î»
+ * @brief   ç¡¬ä»¶é”™è¯¯ä¸­æ–­ï¼Œè¿›å…¥åæ‰§è¡Œå¤ä½ï¼Œå¤ä½ç±»å‹ä¸ºä¸Šç”µå¤ä½
  *
  * @param   none
  *
@@ -275,6 +275,7 @@ void WWDG_ClearFlag(void)
  */
 __attribute__((interrupt("WCH-Interrupt-fast")))
 __attribute__((section(".highcode")))
+__attribute__((weak))
 void HardFault_Handler(void)
 {
     FLASH_ROM_SW_RESET();
@@ -289,9 +290,9 @@ void HardFault_Handler(void)
 /*********************************************************************
  * @fn      mDelayuS
  *
- * @brief   uS ÑÓÊ±
+ * @brief   uS å»¶æ—¶
  *
- * @param   t       - Ê±¼ä²ÎÊı
+ * @param   t       - æ—¶é—´å‚æ•°
  *
  * @return  none
  */
@@ -329,9 +330,9 @@ void mDelayuS(uint16_t t)
 /*********************************************************************
  * @fn      mDelaymS
  *
- * @brief   mS ÑÓÊ±
+ * @brief   mS å»¶æ—¶
  *
- * @param   t       - Ê±¼ä²ÎÊı
+ * @param   t       - æ—¶é—´å‚æ•°
  *
  * @return  none
  */
@@ -350,17 +351,17 @@ void mDelaymS(uint16_t t)
 void _putchar(char character)
 {
 #if DEBUG == Debug_UART0
-        while(R8_UART0_TFC == UART_FIFO_SIZE);                  /* µÈ´ıÊı¾İ·¢ËÍ */
-        R8_UART0_THR = (uint8_t)character; /* ·¢ËÍÊı¾İ */
+        while(R8_UART0_TFC == UART_FIFO_SIZE);                  /* ç­‰å¾…æ•°æ®å‘é€ */
+        R8_UART0_THR = (uint8_t)character; /* å‘é€æ•°æ® */
 #elif DEBUG == Debug_UART1
-        while(R8_UART1_TFC == UART_FIFO_SIZE);                  /* µÈ´ıÊı¾İ·¢ËÍ */
-        R8_UART1_THR = (uint8_t)character; /* ·¢ËÍÊı¾İ */
+        while(R8_UART1_TFC == UART_FIFO_SIZE);                  /* ç­‰å¾…æ•°æ®å‘é€ */
+        R8_UART1_THR = (uint8_t)character; /* å‘é€æ•°æ® */
 #elif DEBUG == Debug_UART2
-        while(R8_UART2_TFC == UART_FIFO_SIZE);                  /* µÈ´ıÊı¾İ·¢ËÍ */
-        R8_UART2_THR = (uint8_t)character; /* ·¢ËÍÊı¾İ */
+        while(R8_UART2_TFC == UART_FIFO_SIZE);                  /* ç­‰å¾…æ•°æ®å‘é€ */
+        R8_UART2_THR = (uint8_t)character; /* å‘é€æ•°æ® */
 #elif DEBUG == Debug_UART3       
-        while(R8_UART3_TFC == UART_FIFO_SIZE);                  /* µÈ´ıÊı¾İ·¢ËÍ */
-        R8_UART3_THR = (uint8_t)character; /* ·¢ËÍÊı¾İ */
+        while(R8_UART3_TFC == UART_FIFO_SIZE);                  /* ç­‰å¾…æ•°æ®å‘é€ */
+        R8_UART3_THR = (uint8_t)character; /* å‘é€æ•°æ® */
 #endif
 }
 

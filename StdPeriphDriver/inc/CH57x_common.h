@@ -66,7 +66,6 @@ extern "C" {
 #include "CH57x_usbdev.h"
 #include "CH57x_usbhost.h"
 #include "ISP573.h"
-#include "printf.h"
 
 #define DelayMs(x)    mDelaymS(x)
 #define DelayUs(x)    mDelayuS(x)
