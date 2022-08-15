@@ -16,9 +16,9 @@ uint16_t Int32K_Tune_RAM = 0;
 /*********************************************************************
  * @fn      LClk32K_Select
  *
- * @brief   32K ä½é¢‘æ—¶é’Ÿæ¥æº
+ * @brief   32K µÍÆµÊ±ÖÓÀ´Ô´
  *
- * @param   hc  - é€‰æ‹©32Kä½¿ç”¨å†…éƒ¨è¿˜æ˜¯å¤–éƒ¨
+ * @param   hc  - Ñ¡Ôñ32KÊ¹ÓÃÄÚ²¿»¹ÊÇÍâ²¿
  *
  * @return  none
  */
@@ -40,7 +40,7 @@ void LClk32K_Select(LClk32KTypeDef hc)
 /*********************************************************************
  * @fn      HSECFG_Current
  *
- * @brief   HSEæ™¶ä½“ åç½®ç”µæµé…ç½®
+ * @brief   HSE¾§Ìå Æ«ÖÃµçÁ÷ÅäÖÃ
  *
  * @param   c   - 75%,100%,125%,150%
  *
@@ -62,7 +62,7 @@ void HSECFG_Current(HSECurrentTypeDef c)
 /*********************************************************************
  * @fn      HSECFG_Capacitance
  *
- * @brief   HSEæ™¶ä½“ è´Ÿè½½ç”µå®¹é…ç½®
+ * @brief   HSE¾§Ìå ¸ºÔØµçÈİÅäÖÃ
  *
  * @param   c   - refer to HSECapTypeDef
  *
@@ -84,7 +84,7 @@ void HSECFG_Capacitance(HSECapTypeDef c)
 /*********************************************************************
  * @fn      LSECFG_Current
  *
- * @brief   LSEæ™¶ä½“ åç½®ç”µæµé…ç½®
+ * @brief   LSE¾§Ìå Æ«ÖÃµçÁ÷ÅäÖÃ
  *
  * @param   c   - 70%,100%,140%,200%
  *
@@ -106,7 +106,7 @@ void LSECFG_Current(LSECurrentTypeDef c)
 /*********************************************************************
  * @fn      LSECFG_Capacitance
  *
- * @brief   LSEæ™¶ä½“ è´Ÿè½½ç”µå®¹é…ç½®
+ * @brief   LSE¾§Ìå ¸ºÔØµçÈİÅäÖÃ
  *
  * @param   c   - refer to LSECapTypeDef
  *
@@ -128,11 +128,11 @@ void LSECFG_Capacitance(LSECapTypeDef c)
 /*********************************************************************
  * @fn      Calibration_LSI_FLASH
  *
- * @brief   æ ¡å‡†åœ¨FLASHä¸­è¿è¡Œæ—¶çš„å†…éƒ¨32Kæ—¶é’Ÿ
+ * @brief   Ğ£×¼ÔÚFLASHÖĞÔËĞĞÊ±µÄÄÚ²¿32KÊ±ÖÓ
  *
  * @param   none
  *
- * @return  è¯¯å·®ï¼šä¸‡åˆ†ä¹‹ï¼ˆå•ä½ï¼‰
+ * @return  Îó²î£ºÍò·ÖÖ®£¨µ¥Î»£©
  */
 uint16_t Calibration_LSI_FLASH(void)
 {
@@ -144,29 +144,29 @@ uint16_t Calibration_LSI_FLASH(void)
     signed short diff_1, diff_2, diffc;
     uint8_t      k = 0;
 
-    /* æ ¹æ®å½“å‰æ—¶é’Ÿè·å–æ ‡ç§°å€¼å’Œæ–œç‡ï¼ˆT-stepï¼‰ */
+    /* ¸ù¾İµ±Ç°Ê±ÖÓ»ñÈ¡±ê³ÆÖµºÍĞ±ÂÊ£¨T-step£© */
     rev = R16_CLK_SYS_CFG & 0xff;
     if((rev & RB_CLK_SYS_MOD) == (2 << 6))
-    { // 32Måšä¸»é¢‘
+    { // 32M×öÖ÷Æµ
         calv = ((5 * 32000000 + (CAB_LSIFQ >> 1)) / CAB_LSIFQ);
         CNT_STEP_K = -1.6;
     }
     else if((rev & RB_CLK_SYS_MOD) == (1 << 6))
-    { // PLLè¿›è¡Œåˆ†é¢‘
+    { // PLL½øĞĞ·ÖÆµ
         calv = (((uint32_t)5 * 480000000 / (rev & 0x1f) + (CAB_LSIFQ >> 1)) / CAB_LSIFQ);
         CNT_STEP_K = -0.1 * (rev & 0x1f);
     }
     else if((rev & RB_CLK_SYS_MOD) == (0 << 6))
-    { // 32Mè¿›è¡Œåˆ†é¢‘
+    { // 32M½øĞĞ·ÖÆµ
         calv = ((5 * 32000000 / (rev & 0x1f) + (CAB_LSIFQ >> 1)) / CAB_LSIFQ);
         CNT_STEP_K = -1.6 * (rev & 0x1f);
     }
     else
-    { // 32Kåšä¸»é¢‘
+    { // 32K×öÖ÷Æµ
         calv = (5);
         CNT_STEP_K = 0;
     }
-    basev = calv; // è·å–æ ¡å‡†æ ‡ç§°å€¼
+    basev = calv; // »ñÈ¡Ğ£×¼±ê³ÆÖµ
 
     if(Int32K_Tune_FLASH)
     {
@@ -177,7 +177,7 @@ uint16_t Calibration_LSI_FLASH(void)
         loc = 2048;
     }
     //  if (loc == 2048)
-    //    loc = 1837; //10040.625-1.640625*5000;  //ç»éªŒæ›²çº¿
+    //    loc = 1837; //10040.625-1.640625*5000;  //¾­ÑéÇúÏß
 
     diff_2 = 0;
     diffc = 0;
@@ -192,25 +192,25 @@ uint16_t Calibration_LSI_FLASH(void)
         R16_INT32K_TUNE = loc;
         R8_SAFE_ACCESS_SIG = 0;
 
-        /* è¯»å–å½“å‰å€¼ */
+        /* ¶ÁÈ¡µ±Ç°Öµ */
         while(!(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT));
-        i = R16_OSC_CAL_CNT; // ç”¨äºä¸¢å¼ƒ
+        i = R16_OSC_CAL_CNT; // ÓÃÓÚ¶ªÆú
         while(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT);
         while(!(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT));
-        i = R16_OSC_CAL_CNT; // å®æ—¶æ ¡å‡†åé‡‡æ ·å€¼
+        i = R16_OSC_CAL_CNT; // ÊµÊ±Ğ£×¼ºó²ÉÑùÖµ
         k++;
         diff_1 = i - basev;
 
         Int32K_Tune_FLASH = loc;
         if(diff_1 == 0)
         {
-            return 0; // æ ¡å‡†æ­£å¥½
+            return 0; // Ğ£×¼ÕıºÃ
         }
         else if((diff_1 * diff_2) < 0)
-        { // å¤„äºä¸¤ç‚¹ä¹‹é—´
+        { // ´¦ÓÚÁ½µãÖ®¼ä
             if((diffc == 1) || (diffc == -1) || (diffc == 0))
             {
-                // éƒ½å˜æˆæ­£æ•°
+                // ¶¼±ä³ÉÕıÊı
                 if(diff_2 < 0)
                 {
                     diff_2 = ~(diff_2 - 1);
@@ -227,7 +227,7 @@ uint16_t Calibration_LSI_FLASH(void)
                     R16_INT32K_TUNE = loc_t;
                     R8_SAFE_ACCESS_SIG = 0;
 
-                    return (diff_2 * 10000 / basev); // è¿”å›è¯¯å·®å€¼ï¼Œä¸‡åˆ†ä¹‹
+                    return (diff_2 * 10000 / basev); // ·µ»ØÎó²îÖµ£¬Íò·ÖÖ®
                 }
                 else
                 {
@@ -240,7 +240,7 @@ uint16_t Calibration_LSI_FLASH(void)
         {
             return ((i > basev ? (i - basev) : (basev - i)) * 10000 / basev);
         }
-        // ä¿å­˜ä¸Šä¸€æ¬¡å€¼
+        // ±£´æÉÏÒ»´ÎÖµ
         diff_2 = diff_1;
         loc_t = loc;
         diffc = diff_1 * CNT_STEP_K;
@@ -249,11 +249,11 @@ uint16_t Calibration_LSI_FLASH(void)
         {
             if(diff_1 > 0)
             {
-                loc = loc + 1; // å½“å‰é¢‘ç‡åå°
+                loc = loc + 1; // µ±Ç°ÆµÂÊÆ«Ğ¡
             }
             else
             {
-                loc = loc - 1; // å½“å‰é¢‘ç‡åå¤§
+                loc = loc - 1; // µ±Ç°ÆµÂÊÆ«´ó
             }
         }
     } while(k < 20);
@@ -265,11 +265,11 @@ uint16_t Calibration_LSI_FLASH(void)
 /*********************************************************************
  * @fn      Get_Calibration_Cnt_RAM
  *
- * @brief   è·å–åœ¨RAMä¸­è®¡æ•°çš„æ ¡å‡†è®¡æ•°å€¼
+ * @brief   »ñÈ¡ÔÚRAMÖĞ¼ÆÊıµÄĞ£×¼¼ÆÊıÖµ
  *
- * @param   loc - TUNEå€¼
+ * @param   loc - TUNEÖµ
  *
- * @return  è®¡æ•°å€¼
+ * @return  ¼ÆÊıÖµ
  */
 __attribute__((section(".highcode")))
 uint16_t Get_Calibration_Cnt_RAM(uint16_t loc)
@@ -280,9 +280,9 @@ uint16_t Get_Calibration_Cnt_RAM(uint16_t loc)
     R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
     R16_INT32K_TUNE = loc;
     R8_SAFE_ACCESS_SIG = 0;
-    /* è¯»å–å½“å‰å€¼ */
+    /* ¶ÁÈ¡µ±Ç°Öµ */
     while(!(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT));
-    i = R16_OSC_CAL_CNT; // ç”¨äºä¸¢å¼ƒ
+    i = R16_OSC_CAL_CNT; // ÓÃÓÚ¶ªÆú
     while(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT);
     while(!(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT));
     i = R16_OSC_CAL_CNT;
@@ -292,11 +292,11 @@ uint16_t Get_Calibration_Cnt_RAM(uint16_t loc)
 /*********************************************************************
  * @fn      Calibration_LSI_RAM
  *
- * @brief   æ ¡å‡†åœ¨RAMä¸­è¿è¡Œæ—¶çš„å†…éƒ¨32Kæ—¶é’Ÿ
+ * @brief   Ğ£×¼ÔÚRAMÖĞÔËĞĞÊ±µÄÄÚ²¿32KÊ±ÖÓ
  *
  * @param   none
  *
- * @return  è¯¯å·®ï¼šä¸‡åˆ†ä¹‹ï¼ˆå•ä½ï¼‰
+ * @return  Îó²î£ºÍò·ÖÖ®£¨µ¥Î»£©
  */
 uint16_t Calibration_LSI_RAM(void)
 {
@@ -308,29 +308,29 @@ uint16_t Calibration_LSI_RAM(void)
     signed short diff_1, diff_2, diffc;
     uint8_t      k = 0;
 
-    /* æ ¹æ®å½“å‰æ—¶é’Ÿè·å–æ ‡ç§°å€¼å’Œæ–œç‡ï¼ˆT-stepï¼‰ */
+    /* ¸ù¾İµ±Ç°Ê±ÖÓ»ñÈ¡±ê³ÆÖµºÍĞ±ÂÊ£¨T-step£© */
     rev = R16_CLK_SYS_CFG & 0xff;
     if((rev & RB_CLK_SYS_MOD) == (2 << 6))
-    { // 32Måšä¸»é¢‘
+    { // 32M×öÖ÷Æµ
         calv = ((5 * 32000000 + (CAB_LSIFQ >> 1)) / CAB_LSIFQ);
         CNT_STEP_K = -1.6;
     }
     else if((rev & RB_CLK_SYS_MOD) == (1 << 6))
-    { // PLLè¿›è¡Œåˆ†é¢‘
+    { // PLL½øĞĞ·ÖÆµ
         calv = (((uint32_t)5 * 480000000 / (rev & 0x1f) + (CAB_LSIFQ >> 1)) / CAB_LSIFQ);
         CNT_STEP_K = -0.1 * (rev & 0x1f);
     }
     else if((rev & RB_CLK_SYS_MOD) == (0 << 6))
-    { // 32Mè¿›è¡Œåˆ†é¢‘
+    { // 32M½øĞĞ·ÖÆµ
         calv = ((5 * 32000000 / (rev & 0x1f) + (CAB_LSIFQ >> 1)) / CAB_LSIFQ);
         CNT_STEP_K = -1.6 * (rev & 0x1f);
     }
     else
-    { // 32Kåšä¸»é¢‘
+    { // 32K×öÖ÷Æµ
         calv = (5);
         CNT_STEP_K = 0;
     }
-    basev = calv; // è·å–æ ¡å‡†æ ‡ç§°å€¼
+    basev = calv; // »ñÈ¡Ğ£×¼±ê³ÆÖµ
 
     if(Int32K_Tune_RAM)
     {
@@ -341,7 +341,7 @@ uint16_t Calibration_LSI_RAM(void)
         loc = 2048;
     }
     //  if (loc == 2048)
-    //    loc = 1837; //10040.625-1.640625*5000;  //ç»éªŒæ›²çº¿
+    //    loc = 1837; //10040.625-1.640625*5000;  //¾­ÑéÇúÏß
 
     diff_2 = 0;
     diffc = 0;
@@ -351,20 +351,20 @@ uint16_t Calibration_LSI_RAM(void)
     R8_OSC_CAL_CTRL = RB_OSC_CNT_EN;
     do
     {
-        i = Get_Calibration_Cnt_RAM(loc); // å®æ—¶æ ¡å‡†åé‡‡æ ·å€¼
+        i = Get_Calibration_Cnt_RAM(loc); // ÊµÊ±Ğ£×¼ºó²ÉÑùÖµ
         k++;
         diff_1 = i - basev;
 
         Int32K_Tune_RAM = loc;
         if(diff_1 == 0)
         {
-            return 0; // æ ¡å‡†æ­£å¥½
+            return 0; // Ğ£×¼ÕıºÃ
         }
         else if((diff_1 * diff_2) < 0)
-        { // å¤„äºä¸¤ç‚¹ä¹‹é—´
+        { // ´¦ÓÚÁ½µãÖ®¼ä
             if((diffc == 1) || (diffc == -1) || (diffc == 0))
             {
-                // éƒ½å˜æˆæ­£æ•°
+                // ¶¼±ä³ÉÕıÊı
                 if(diff_2 < 0)
                 {
                     diff_2 = ~(diff_2 - 1);
@@ -381,7 +381,7 @@ uint16_t Calibration_LSI_RAM(void)
                     R16_INT32K_TUNE = loc_t;
                     R8_SAFE_ACCESS_SIG = 0;
 
-                    return (diff_2 * 10000 / basev); // è¿”å›è¯¯å·®å€¼ï¼Œä¸‡åˆ†ä¹‹
+                    return (diff_2 * 10000 / basev); // ·µ»ØÎó²îÖµ£¬Íò·ÖÖ®
                 }
                 else
                 {
@@ -394,7 +394,7 @@ uint16_t Calibration_LSI_RAM(void)
         {
             return ((i > basev ? (i - basev) : (basev - i)) * 10000 / basev);
         }
-        // ä¿å­˜ä¸Šä¸€æ¬¡å€¼
+        // ±£´æÉÏÒ»´ÎÖµ
         diff_2 = diff_1;
         loc_t = loc;
         diffc = diff_1 * CNT_STEP_K;
@@ -403,11 +403,11 @@ uint16_t Calibration_LSI_RAM(void)
         {
             if(diff_1 > 0)
             {
-                loc = loc + 1; // å½“å‰é¢‘ç‡åå°
+                loc = loc + 1; // µ±Ç°ÆµÂÊÆ«Ğ¡
             }
             else
             {
-                loc = loc - 1; // å½“å‰é¢‘ç‡åå¤§
+                loc = loc - 1; // µ±Ç°ÆµÂÊÆ«´ó
             }
         }
     } while(k < 20);
@@ -419,7 +419,7 @@ uint16_t Calibration_LSI_RAM(void)
 /*********************************************************************
  * @fn      LSI_SetTune_FLASH
  *
- * @brief   è®¾ç½®åœ¨FLASHä¸­è¿è¡Œæ—¶çš„å†…éƒ¨32kæ ¡å‡†å€¼
+ * @brief   ÉèÖÃÔÚFLASHÖĞÔËĞĞÊ±µÄÄÚ²¿32kĞ£×¼Öµ
  *
  * @param   none
  *
@@ -436,7 +436,7 @@ void LSI_SetTune_FLASH(void)
 /*********************************************************************
  * @fn      LSI_SetTune_RAM
  *
- * @brief   è®¾ç½®åœ¨RAMä¸­è¿è¡Œæ—¶çš„å†…éƒ¨32kæ ¡å‡†å€¼
+ * @brief   ÉèÖÃÔÚRAMÖĞÔËĞĞÊ±µÄÄÚ²¿32kĞ£×¼Öµ
  *
  * @param   none
  *
@@ -453,14 +453,14 @@ void LSI_SetTune_RAM(void)
 /*********************************************************************
  * @fn      RTCInitTime
  *
- * @brief   RTCæ—¶é’Ÿåˆå§‹åŒ–å½“å‰æ—¶é—´
+ * @brief   RTCÊ±ÖÓ³õÊ¼»¯µ±Ç°Ê±¼ä
  *
- * @param   y       - é…ç½®å¹´ï¼ŒMAX_Y = BEGYEAR + 44
- * @param   mon     - é…ç½®æœˆï¼ŒMAX_MON = 12
- * @param   d       - é…ç½®æ—¥ï¼ŒMAX_D = 31
- * @param   h       - é…ç½®å°æ—¶ï¼ŒMAX_H = 23
- * @param   m       - é…ç½®åˆ†é’Ÿï¼ŒMAX_M = 59
- * @param   s       - é…ç½®ç§’ï¼ŒMAX_S = 59
+ * @param   y       - ÅäÖÃÄê£¬MAX_Y = BEGYEAR + 44
+ * @param   mon     - ÅäÖÃÔÂ£¬MAX_MON = 12
+ * @param   d       - ÅäÖÃÈÕ£¬MAX_D = 31
+ * @param   h       - ÅäÖÃĞ¡Ê±£¬MAX_H = 23
+ * @param   m       - ÅäÖÃ·ÖÖÓ£¬MAX_M = 59
+ * @param   s       - ÅäÖÃÃë£¬MAX_S = 59
  *
  * @return  none
  */
@@ -507,14 +507,14 @@ void RTC_InitTime(uint16_t y, uint16_t mon, uint16_t d, uint16_t h, uint16_t m, 
 /*********************************************************************
  * @fn      RTC_GetTime
  *
- * @brief   è·å–å½“å‰æ—¶é—´
+ * @brief   »ñÈ¡µ±Ç°Ê±¼ä
  *
- * @param   py      - è·å–åˆ°çš„å¹´ï¼ŒMAX_Y = BEGYEAR + 44
- * @param   pmon    - è·å–åˆ°çš„æœˆï¼ŒMAX_MON = 12
- * @param   pd      - è·å–åˆ°çš„æ—¥ï¼ŒMAX_D = 31
- * @param   ph      - è·å–åˆ°çš„å°æ—¶ï¼ŒMAX_H = 23
- * @param   pm      - è·å–åˆ°çš„åˆ†é’Ÿï¼ŒMAX_M = 59
- * @param   ps      - è·å–åˆ°çš„ç§’ï¼ŒMAX_S = 59
+ * @param   py      - »ñÈ¡µ½µÄÄê£¬MAX_Y = BEGYEAR + 44
+ * @param   pmon    - »ñÈ¡µ½µÄÔÂ£¬MAX_MON = 12
+ * @param   pd      - »ñÈ¡µ½µÄÈÕ£¬MAX_D = 31
+ * @param   ph      - »ñÈ¡µ½µÄĞ¡Ê±£¬MAX_H = 23
+ * @param   pm      - »ñÈ¡µ½µÄ·ÖÖÓ£¬MAX_M = 59
+ * @param   ps      - »ñÈ¡µ½µÄÃë£¬MAX_S = 59
  *
  * @return  none
  */
@@ -552,9 +552,9 @@ void RTC_GetTime(uint16_t *py, uint16_t *pmon, uint16_t *pd, uint16_t *ph, uint1
 /*********************************************************************
  * @fn      RTC_SetCycle32k
  *
- * @brief   åŸºäºLSE/LSIæ—¶é’Ÿï¼Œé…ç½®å½“å‰RTC å‘¨æœŸæ•°
+ * @brief   »ùÓÚLSE/LSIÊ±ÖÓ£¬ÅäÖÃµ±Ç°RTC ÖÜÆÚÊı
  *
- * @param   cyc     - é…ç½®å‘¨æœŸè®¡æ•°åˆå€¼ï¼ŒMAX_CYC = 0xA8BFFFFF = 2831155199
+ * @param   cyc     - ÅäÖÃÖÜÆÚ¼ÆÊı³õÖµ£¬MAX_CYC = 0xA8BFFFFF = 2831155199
  *
  * @return  none
  */
@@ -577,11 +577,11 @@ void RTC_SetCycle32k(uint32_t cyc)
 /*********************************************************************
  * @fn      RTC_GetCycle32k
  *
- * @brief   åŸºäºLSE/LSIæ—¶é’Ÿï¼Œè·å–å½“å‰RTC å‘¨æœŸæ•°
+ * @brief   »ùÓÚLSE/LSIÊ±ÖÓ£¬»ñÈ¡µ±Ç°RTC ÖÜÆÚÊı
  *
  * @param   none
  *
- * @return  å½“å‰å‘¨æœŸæ•°ï¼ŒMAX_CYC = 0xA8BFFFFF = 2831155199
+ * @return  µ±Ç°ÖÜÆÚÊı£¬MAX_CYC = 0xA8BFFFFF = 2831155199
  */
 uint32_t RTC_GetCycle32k(void)
 {
@@ -598,7 +598,7 @@ uint32_t RTC_GetCycle32k(void)
 /*********************************************************************
  * @fn      RTC_TMRFunCfg
  *
- * @brief   RTCå®šæ—¶æ¨¡å¼é…ç½®ï¼ˆæ³¨æ„å®šæ—¶åŸºå‡†å›ºå®šä¸º32768Hzï¼‰
+ * @brief   RTC¶¨Ê±Ä£Ê½ÅäÖÃ£¨×¢Òâ¶¨Ê±»ù×¼¹Ì¶¨Îª32768Hz£©
  *
  * @param   t   - refer to RTC_TMRCycTypeDef
  *
@@ -616,9 +616,9 @@ void RTC_TMRFunCfg(RTC_TMRCycTypeDef t)
 /*********************************************************************
  * @fn      RTC_TRIGFunCfg
  *
- * @brief   RTCæ—¶é—´è§¦å‘æ¨¡å¼é…ç½®
+ * @brief   RTCÊ±¼ä´¥·¢Ä£Ê½ÅäÖÃ
  *
- * @param   cyc - ç›¸å¯¹å½“å‰æ—¶é—´çš„è§¦å‘é—´éš”æ—¶é—´ï¼ŒåŸºäºLSE/LSIæ—¶é’Ÿå‘¨æœŸæ•°
+ * @param   cyc - Ïà¶Ôµ±Ç°Ê±¼äµÄ´¥·¢¼ä¸ôÊ±¼ä£¬»ùÓÚLSE/LSIÊ±ÖÓÖÜÆÚÊı
  *
  * @return  none
  */
@@ -638,9 +638,9 @@ void RTC_TRIGFunCfg(uint32_t cyc)
 /*********************************************************************
  * @fn      RTC_ModeFunDisable
  *
- * @brief   RTC æ¨¡å¼åŠŸèƒ½å…³é—­
+ * @brief   RTC Ä£Ê½¹¦ÄÜ¹Ø±Õ
  *
- * @param   m   - éœ€è¦å…³é—­çš„å½“å‰æ¨¡å¼
+ * @param   m   - ĞèÒª¹Ø±ÕµÄµ±Ç°Ä£Ê½
  *
  * @return  none
  */
@@ -666,11 +666,11 @@ void RTC_ModeFunDisable(RTC_MODETypeDef m)
 /*********************************************************************
  * @fn      RTC_GetITFlag
  *
- * @brief   è·å–RTCä¸­æ–­æ ‡å¿—
+ * @brief   »ñÈ¡RTCÖĞ¶Ï±êÖ¾
  *
  * @param   f   - refer to RTC_EVENTTypeDef
  *
- * @return  ä¸­æ–­æ ‡å¿—çŠ¶æ€
+ * @return  ÖĞ¶Ï±êÖ¾×´Ì¬
  */
 uint8_t RTC_GetITFlag(RTC_EVENTTypeDef f)
 {
@@ -687,7 +687,7 @@ uint8_t RTC_GetITFlag(RTC_EVENTTypeDef f)
 /*********************************************************************
  * @fn      RTC_ClearITFlag
  *
- * @brief   æ¸…é™¤RTCä¸­æ–­æ ‡å¿—
+ * @brief   Çå³ıRTCÖĞ¶Ï±êÖ¾
  *
  * @param   f   - refer to RTC_EVENTTypeDef
  *

@@ -30,14 +30,14 @@ extern "C" {
 #endif
 
 /**
- * @brief  ç³»ç»Ÿä¸»é¢‘æ—¶é’Ÿï¼ˆHzï¼‰
+ * @brief  ÏµÍ³Ö÷ÆµÊ±ÖÓ£¨Hz£©
  */
 #ifndef FREQ_SYS
   #define FREQ_SYS    60000000
 #endif
 
 /**
- * @brief  32Kæ—¶é’Ÿï¼ˆHzï¼‰
+ * @brief  32KÊ±ÖÓ£¨Hz£©
  */
 #ifdef CLK_OSC32K
 #if ( CLK_OSC32K == 1 )
