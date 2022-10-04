@@ -16,31 +16,34 @@ uint16_t Int32K_Tune_RAM = 0;
 /*********************************************************************
  * @fn      LClk32K_Select
  *
- * @brief   32K µÍÆµÊ±ÖÓÀ´Ô´
+ * @brief   32K ä½é¢‘æ—¶é’Ÿæ¥æº
  *
- * @param   hc  - Ñ¡Ôñ32KÊ¹ÓÃÄÚ²¿»¹ÊÇÍâ²¿
+ * @param   hc  - é€‰æ‹©32Kä½¿ç”¨å†…éƒ¨è¿˜æ˜¯å¤–éƒ¨
  *
  * @return  none
  */
 void LClk32K_Select(LClk32KTypeDef hc)
 {
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    uint8_t cfg = R8_CK32K_CONFIG;
+
     if(hc == Clk32K_LSI)
     {
-        R8_CK32K_CONFIG &= ~RB_CLK_OSC32K_XT;
+        cfg &= ~RB_CLK_OSC32K_XT;
     }
     else
     {
-        R8_CK32K_CONFIG |= RB_CLK_OSC32K_XT;
+        cfg |= RB_CLK_OSC32K_XT;
     }
-    R8_SAFE_ACCESS_SIG = 0;
+
+    sys_safe_access_enable();
+    R8_CK32K_CONFIG = cfg;
+    sys_safe_access_disable();
 }
 
 /*********************************************************************
  * @fn      HSECFG_Current
  *
- * @brief   HSE¾§Ìå Æ«ÖÃµçÁ÷ÅäÖÃ
+ * @brief   HSEæ™¶ä½“ åç½®ç”µæµé…ç½®
  *
  * @param   c   - 75%,100%,125%,150%
  *
@@ -53,16 +56,15 @@ void HSECFG_Current(HSECurrentTypeDef c)
     x32M_c = R8_XT32M_TUNE;
     x32M_c = (x32M_c & 0xfc) | (c & 0x03);
 
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    sys_safe_access_enable();
     R8_XT32M_TUNE = x32M_c;
-    R8_SAFE_ACCESS_SIG = 0;
+    sys_safe_access_disable();
 }
 
 /*********************************************************************
  * @fn      HSECFG_Capacitance
  *
- * @brief   HSE¾§Ìå ¸ºÔØµçÈİÅäÖÃ
+ * @brief   HSEæ™¶ä½“ è´Ÿè½½ç”µå®¹é…ç½®
  *
  * @param   c   - refer to HSECapTypeDef
  *
@@ -75,16 +77,15 @@ void HSECFG_Capacitance(HSECapTypeDef c)
     x32M_c = R8_XT32M_TUNE;
     x32M_c = (x32M_c & 0x8f) | (c << 4);
 
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    sys_safe_access_enable();
     R8_XT32M_TUNE = x32M_c;
-    R8_SAFE_ACCESS_SIG = 0;
+    sys_safe_access_disable();
 }
 
 /*********************************************************************
  * @fn      LSECFG_Current
  *
- * @brief   LSE¾§Ìå Æ«ÖÃµçÁ÷ÅäÖÃ
+ * @brief   LSEæ™¶ä½“ åç½®ç”µæµé…ç½®
  *
  * @param   c   - 70%,100%,140%,200%
  *
@@ -97,16 +98,15 @@ void LSECFG_Current(LSECurrentTypeDef c)
     x32K_c = R8_XT32K_TUNE;
     x32K_c = (x32K_c & 0xfc) | (c & 0x03);
 
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    sys_safe_access_enable();
     R8_XT32K_TUNE = x32K_c;
-    R8_SAFE_ACCESS_SIG = 0;
+    sys_safe_access_disable();
 }
 
 /*********************************************************************
  * @fn      LSECFG_Capacitance
  *
- * @brief   LSE¾§Ìå ¸ºÔØµçÈİÅäÖÃ
+ * @brief   LSEæ™¶ä½“ è´Ÿè½½ç”µå®¹é…ç½®
  *
  * @param   c   - refer to LSECapTypeDef
  *
@@ -119,20 +119,19 @@ void LSECFG_Capacitance(LSECapTypeDef c)
     x32K_c = R8_XT32K_TUNE;
     x32K_c = (x32K_c & 0x0f) | (c << 4);
 
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    sys_safe_access_enable();
     R8_XT32K_TUNE = x32K_c;
-    R8_SAFE_ACCESS_SIG = 0;
+    sys_safe_access_disable();
 }
 
 /*********************************************************************
  * @fn      Calibration_LSI_FLASH
  *
- * @brief   Ğ£×¼ÔÚFLASHÖĞÔËĞĞÊ±µÄÄÚ²¿32KÊ±ÖÓ
+ * @brief   æ ¡å‡†åœ¨FLASHä¸­è¿è¡Œæ—¶çš„å†…éƒ¨32Kæ—¶é’Ÿ
  *
  * @param   none
  *
- * @return  Îó²î£ºÍò·ÖÖ®£¨µ¥Î»£©
+ * @return  è¯¯å·®ï¼šä¸‡åˆ†ä¹‹ï¼ˆå•ä½ï¼‰
  */
 uint16_t Calibration_LSI_FLASH(void)
 {
@@ -144,29 +143,29 @@ uint16_t Calibration_LSI_FLASH(void)
     signed short diff_1, diff_2, diffc;
     uint8_t      k = 0;
 
-    /* ¸ù¾İµ±Ç°Ê±ÖÓ»ñÈ¡±ê³ÆÖµºÍĞ±ÂÊ£¨T-step£© */
+    /* æ ¹æ®å½“å‰æ—¶é’Ÿè·å–æ ‡ç§°å€¼å’Œæ–œç‡ï¼ˆT-stepï¼‰ */
     rev = R16_CLK_SYS_CFG & 0xff;
     if((rev & RB_CLK_SYS_MOD) == (2 << 6))
-    { // 32M×öÖ÷Æµ
+    { // 32Måšä¸»é¢‘
         calv = ((5 * 32000000 + (CAB_LSIFQ >> 1)) / CAB_LSIFQ);
         CNT_STEP_K = -1.6;
     }
     else if((rev & RB_CLK_SYS_MOD) == (1 << 6))
-    { // PLL½øĞĞ·ÖÆµ
+    { // PLLè¿›è¡Œåˆ†é¢‘
         calv = (((uint32_t)5 * 480000000 / (rev & 0x1f) + (CAB_LSIFQ >> 1)) / CAB_LSIFQ);
         CNT_STEP_K = -0.1 * (rev & 0x1f);
     }
     else if((rev & RB_CLK_SYS_MOD) == (0 << 6))
-    { // 32M½øĞĞ·ÖÆµ
+    { // 32Mè¿›è¡Œåˆ†é¢‘
         calv = ((5 * 32000000 / (rev & 0x1f) + (CAB_LSIFQ >> 1)) / CAB_LSIFQ);
         CNT_STEP_K = -1.6 * (rev & 0x1f);
     }
     else
-    { // 32K×öÖ÷Æµ
+    { // 32Kåšä¸»é¢‘
         calv = (5);
         CNT_STEP_K = 0;
     }
-    basev = calv; // »ñÈ¡Ğ£×¼±ê³ÆÖµ
+    basev = calv; // è·å–æ ¡å‡†æ ‡ç§°å€¼
 
     if(Int32K_Tune_FLASH)
     {
@@ -177,40 +176,38 @@ uint16_t Calibration_LSI_FLASH(void)
         loc = 2048;
     }
     //  if (loc == 2048)
-    //    loc = 1837; //10040.625-1.640625*5000;  //¾­ÑéÇúÏß
+    //    loc = 1837; //10040.625-1.640625*5000;  //ç»éªŒæ›²çº¿
 
     diff_2 = 0;
     diffc = 0;
 
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    sys_safe_access_enable();
     R8_OSC_CAL_CTRL = RB_OSC_CNT_EN;
     do
     {
-        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-        R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+        sys_safe_access_enable();
         R16_INT32K_TUNE = loc;
-        R8_SAFE_ACCESS_SIG = 0;
+        sys_safe_access_disable();
 
-        /* ¶ÁÈ¡µ±Ç°Öµ */
+        /* è¯»å–å½“å‰å€¼ */
         while(!(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT));
-        i = R16_OSC_CAL_CNT; // ÓÃÓÚ¶ªÆú
+        i = R16_OSC_CAL_CNT; // ç”¨äºä¸¢å¼ƒ
         while(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT);
         while(!(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT));
-        i = R16_OSC_CAL_CNT; // ÊµÊ±Ğ£×¼ºó²ÉÑùÖµ
+        i = R16_OSC_CAL_CNT; // å®æ—¶æ ¡å‡†åé‡‡æ ·å€¼
         k++;
         diff_1 = i - basev;
 
         Int32K_Tune_FLASH = loc;
         if(diff_1 == 0)
         {
-            return 0; // Ğ£×¼ÕıºÃ
+            return 0; // æ ¡å‡†æ­£å¥½
         }
         else if((diff_1 * diff_2) < 0)
-        { // ´¦ÓÚÁ½µãÖ®¼ä
+        { // å¤„äºä¸¤ç‚¹ä¹‹é—´
             if((diffc == 1) || (diffc == -1) || (diffc == 0))
             {
-                // ¶¼±ä³ÉÕıÊı
+                // éƒ½å˜æˆæ­£æ•°
                 if(diff_2 < 0)
                 {
                     diff_2 = ~(diff_2 - 1);
@@ -222,12 +219,11 @@ uint16_t Calibration_LSI_FLASH(void)
 
                 if(diff_1 > diff_2)
                 {
-                    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-                    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+                    sys_safe_access_enable();
                     R16_INT32K_TUNE = loc_t;
-                    R8_SAFE_ACCESS_SIG = 0;
+                    sys_safe_access_disable();
 
-                    return (diff_2 * 10000 / basev); // ·µ»ØÎó²îÖµ£¬Íò·ÖÖ®
+                    return (diff_2 * 10000 / basev); // è¿”å›è¯¯å·®å€¼ï¼Œä¸‡åˆ†ä¹‹
                 }
                 else
                 {
@@ -240,7 +236,7 @@ uint16_t Calibration_LSI_FLASH(void)
         {
             return ((i > basev ? (i - basev) : (basev - i)) * 10000 / basev);
         }
-        // ±£´æÉÏÒ»´ÎÖµ
+        // ä¿å­˜ä¸Šä¸€æ¬¡å€¼
         diff_2 = diff_1;
         loc_t = loc;
         diffc = diff_1 * CNT_STEP_K;
@@ -249,11 +245,11 @@ uint16_t Calibration_LSI_FLASH(void)
         {
             if(diff_1 > 0)
             {
-                loc = loc + 1; // µ±Ç°ÆµÂÊÆ«Ğ¡
+                loc = loc + 1; // å½“å‰é¢‘ç‡åå°
             }
             else
             {
-                loc = loc - 1; // µ±Ç°ÆµÂÊÆ«´ó
+                loc = loc - 1; // å½“å‰é¢‘ç‡åå¤§
             }
         }
     } while(k < 20);
@@ -265,24 +261,23 @@ uint16_t Calibration_LSI_FLASH(void)
 /*********************************************************************
  * @fn      Get_Calibration_Cnt_RAM
  *
- * @brief   »ñÈ¡ÔÚRAMÖĞ¼ÆÊıµÄĞ£×¼¼ÆÊıÖµ
+ * @brief   è·å–åœ¨RAMä¸­è®¡æ•°çš„æ ¡å‡†è®¡æ•°å€¼
  *
- * @param   loc - TUNEÖµ
+ * @param   loc - TUNEå€¼
  *
- * @return  ¼ÆÊıÖµ
+ * @return  è®¡æ•°å€¼
  */
 __attribute__((section(".highcode")))
 uint16_t Get_Calibration_Cnt_RAM(uint16_t loc)
 {
     uint16_t i;
 
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    sys_safe_access_enable();
     R16_INT32K_TUNE = loc;
-    R8_SAFE_ACCESS_SIG = 0;
-    /* ¶ÁÈ¡µ±Ç°Öµ */
+    sys_safe_access_disable();
+    /* è¯»å–å½“å‰å€¼ */
     while(!(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT));
-    i = R16_OSC_CAL_CNT; // ÓÃÓÚ¶ªÆú
+    i = R16_OSC_CAL_CNT; // ç”¨äºä¸¢å¼ƒ
     while(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT);
     while(!(R8_OSC_CAL_CTRL & RB_OSC_CNT_HALT));
     i = R16_OSC_CAL_CNT;
@@ -292,11 +287,11 @@ uint16_t Get_Calibration_Cnt_RAM(uint16_t loc)
 /*********************************************************************
  * @fn      Calibration_LSI_RAM
  *
- * @brief   Ğ£×¼ÔÚRAMÖĞÔËĞĞÊ±µÄÄÚ²¿32KÊ±ÖÓ
+ * @brief   æ ¡å‡†åœ¨RAMä¸­è¿è¡Œæ—¶çš„å†…éƒ¨32Kæ—¶é’Ÿ
  *
  * @param   none
  *
- * @return  Îó²î£ºÍò·ÖÖ®£¨µ¥Î»£©
+ * @return  è¯¯å·®ï¼šä¸‡åˆ†ä¹‹ï¼ˆå•ä½ï¼‰
  */
 uint16_t Calibration_LSI_RAM(void)
 {
@@ -308,29 +303,29 @@ uint16_t Calibration_LSI_RAM(void)
     signed short diff_1, diff_2, diffc;
     uint8_t      k = 0;
 
-    /* ¸ù¾İµ±Ç°Ê±ÖÓ»ñÈ¡±ê³ÆÖµºÍĞ±ÂÊ£¨T-step£© */
+    /* æ ¹æ®å½“å‰æ—¶é’Ÿè·å–æ ‡ç§°å€¼å’Œæ–œç‡ï¼ˆT-stepï¼‰ */
     rev = R16_CLK_SYS_CFG & 0xff;
     if((rev & RB_CLK_SYS_MOD) == (2 << 6))
-    { // 32M×öÖ÷Æµ
+    { // 32Måšä¸»é¢‘
         calv = ((5 * 32000000 + (CAB_LSIFQ >> 1)) / CAB_LSIFQ);
         CNT_STEP_K = -1.6;
     }
     else if((rev & RB_CLK_SYS_MOD) == (1 << 6))
-    { // PLL½øĞĞ·ÖÆµ
+    { // PLLè¿›è¡Œåˆ†é¢‘
         calv = (((uint32_t)5 * 480000000 / (rev & 0x1f) + (CAB_LSIFQ >> 1)) / CAB_LSIFQ);
         CNT_STEP_K = -0.1 * (rev & 0x1f);
     }
     else if((rev & RB_CLK_SYS_MOD) == (0 << 6))
-    { // 32M½øĞĞ·ÖÆµ
+    { // 32Mè¿›è¡Œåˆ†é¢‘
         calv = ((5 * 32000000 / (rev & 0x1f) + (CAB_LSIFQ >> 1)) / CAB_LSIFQ);
         CNT_STEP_K = -1.6 * (rev & 0x1f);
     }
     else
-    { // 32K×öÖ÷Æµ
+    { // 32Kåšä¸»é¢‘
         calv = (5);
         CNT_STEP_K = 0;
     }
-    basev = calv; // »ñÈ¡Ğ£×¼±ê³ÆÖµ
+    basev = calv; // è·å–æ ¡å‡†æ ‡ç§°å€¼
 
     if(Int32K_Tune_RAM)
     {
@@ -341,30 +336,29 @@ uint16_t Calibration_LSI_RAM(void)
         loc = 2048;
     }
     //  if (loc == 2048)
-    //    loc = 1837; //10040.625-1.640625*5000;  //¾­ÑéÇúÏß
+    //    loc = 1837; //10040.625-1.640625*5000;  //ç»éªŒæ›²çº¿
 
     diff_2 = 0;
     diffc = 0;
 
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    sys_safe_access_enable();
     R8_OSC_CAL_CTRL = RB_OSC_CNT_EN;
     do
     {
-        i = Get_Calibration_Cnt_RAM(loc); // ÊµÊ±Ğ£×¼ºó²ÉÑùÖµ
+        i = Get_Calibration_Cnt_RAM(loc); // å®æ—¶æ ¡å‡†åé‡‡æ ·å€¼
         k++;
         diff_1 = i - basev;
 
         Int32K_Tune_RAM = loc;
         if(diff_1 == 0)
         {
-            return 0; // Ğ£×¼ÕıºÃ
+            return 0; // æ ¡å‡†æ­£å¥½
         }
         else if((diff_1 * diff_2) < 0)
-        { // ´¦ÓÚÁ½µãÖ®¼ä
+        { // å¤„äºä¸¤ç‚¹ä¹‹é—´
             if((diffc == 1) || (diffc == -1) || (diffc == 0))
             {
-                // ¶¼±ä³ÉÕıÊı
+                // éƒ½å˜æˆæ­£æ•°
                 if(diff_2 < 0)
                 {
                     diff_2 = ~(diff_2 - 1);
@@ -376,12 +370,11 @@ uint16_t Calibration_LSI_RAM(void)
 
                 if(diff_1 > diff_2)
                 {
-                    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-                    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+                    sys_safe_access_enable();
                     R16_INT32K_TUNE = loc_t;
-                    R8_SAFE_ACCESS_SIG = 0;
+                    sys_safe_access_disable();
 
-                    return (diff_2 * 10000 / basev); // ·µ»ØÎó²îÖµ£¬Íò·ÖÖ®
+                    return (diff_2 * 10000 / basev); // è¿”å›è¯¯å·®å€¼ï¼Œä¸‡åˆ†ä¹‹
                 }
                 else
                 {
@@ -394,7 +387,7 @@ uint16_t Calibration_LSI_RAM(void)
         {
             return ((i > basev ? (i - basev) : (basev - i)) * 10000 / basev);
         }
-        // ±£´æÉÏÒ»´ÎÖµ
+        // ä¿å­˜ä¸Šä¸€æ¬¡å€¼
         diff_2 = diff_1;
         loc_t = loc;
         diffc = diff_1 * CNT_STEP_K;
@@ -403,11 +396,11 @@ uint16_t Calibration_LSI_RAM(void)
         {
             if(diff_1 > 0)
             {
-                loc = loc + 1; // µ±Ç°ÆµÂÊÆ«Ğ¡
+                loc = loc + 1; // å½“å‰é¢‘ç‡åå°
             }
             else
             {
-                loc = loc - 1; // µ±Ç°ÆµÂÊÆ«´ó
+                loc = loc - 1; // å½“å‰é¢‘ç‡åå¤§
             }
         }
     } while(k < 20);
@@ -419,7 +412,7 @@ uint16_t Calibration_LSI_RAM(void)
 /*********************************************************************
  * @fn      LSI_SetTune_FLASH
  *
- * @brief   ÉèÖÃÔÚFLASHÖĞÔËĞĞÊ±µÄÄÚ²¿32kĞ£×¼Öµ
+ * @brief   è®¾ç½®åœ¨FLASHä¸­è¿è¡Œæ—¶çš„å†…éƒ¨32kæ ¡å‡†å€¼
  *
  * @param   none
  *
@@ -427,16 +420,15 @@ uint16_t Calibration_LSI_RAM(void)
  */
 void LSI_SetTune_FLASH(void)
 {
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    sys_safe_access_enable();
     R16_INT32K_TUNE = Int32K_Tune_FLASH;
-    R8_SAFE_ACCESS_SIG = 0;
+    sys_safe_access_disable();
 }
 
 /*********************************************************************
  * @fn      LSI_SetTune_RAM
  *
- * @brief   ÉèÖÃÔÚRAMÖĞÔËĞĞÊ±µÄÄÚ²¿32kĞ£×¼Öµ
+ * @brief   è®¾ç½®åœ¨RAMä¸­è¿è¡Œæ—¶çš„å†…éƒ¨32kæ ¡å‡†å€¼
  *
  * @param   none
  *
@@ -444,23 +436,22 @@ void LSI_SetTune_FLASH(void)
  */
 void LSI_SetTune_RAM(void)
 {
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    sys_safe_access_enable();
     R16_INT32K_TUNE = Int32K_Tune_RAM;
-    R8_SAFE_ACCESS_SIG = 0;
+    sys_safe_access_disable();
 }
 
 /*********************************************************************
  * @fn      RTCInitTime
  *
- * @brief   RTCÊ±ÖÓ³õÊ¼»¯µ±Ç°Ê±¼ä
+ * @brief   RTCæ—¶é’Ÿåˆå§‹åŒ–å½“å‰æ—¶é—´
  *
- * @param   y       - ÅäÖÃÄê£¬MAX_Y = BEGYEAR + 44
- * @param   mon     - ÅäÖÃÔÂ£¬MAX_MON = 12
- * @param   d       - ÅäÖÃÈÕ£¬MAX_D = 31
- * @param   h       - ÅäÖÃĞ¡Ê±£¬MAX_H = 23
- * @param   m       - ÅäÖÃ·ÖÖÓ£¬MAX_M = 59
- * @param   s       - ÅäÖÃÃë£¬MAX_S = 59
+ * @param   y       - é…ç½®å¹´ï¼ŒMAX_Y = BEGYEAR + 44
+ * @param   mon     - é…ç½®æœˆï¼ŒMAX_MON = 12
+ * @param   d       - é…ç½®æ—¥ï¼ŒMAX_D = 31
+ * @param   h       - é…ç½®å°æ—¶ï¼ŒMAX_H = 23
+ * @param   m       - é…ç½®åˆ†é’Ÿï¼ŒMAX_M = 59
+ * @param   s       - é…ç½®ç§’ï¼ŒMAX_S = 59
  *
  * @return  none
  */
@@ -495,26 +486,25 @@ void RTC_InitTime(uint16_t y, uint16_t mon, uint16_t d, uint16_t h, uint16_t m, 
         clk_pin = (R8_CK32K_CONFIG & RB_32K_CLK_PIN);
     } while((clk_pin != (R8_CK32K_CONFIG & RB_32K_CLK_PIN)) || (!clk_pin));
 
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    sys_safe_access_enable();
     R32_RTC_TRIG = day;
     R8_RTC_MODE_CTRL |= RB_RTC_LOAD_HI;
     R32_RTC_TRIG = t;
     R8_RTC_MODE_CTRL |= RB_RTC_LOAD_LO;
-    R8_SAFE_ACCESS_SIG = 0;
+    sys_safe_access_disable();
 }
 
 /*********************************************************************
  * @fn      RTC_GetTime
  *
- * @brief   »ñÈ¡µ±Ç°Ê±¼ä
+ * @brief   è·å–å½“å‰æ—¶é—´
  *
- * @param   py      - »ñÈ¡µ½µÄÄê£¬MAX_Y = BEGYEAR + 44
- * @param   pmon    - »ñÈ¡µ½µÄÔÂ£¬MAX_MON = 12
- * @param   pd      - »ñÈ¡µ½µÄÈÕ£¬MAX_D = 31
- * @param   ph      - »ñÈ¡µ½µÄĞ¡Ê±£¬MAX_H = 23
- * @param   pm      - »ñÈ¡µ½µÄ·ÖÖÓ£¬MAX_M = 59
- * @param   ps      - »ñÈ¡µ½µÄÃë£¬MAX_S = 59
+ * @param   py      - è·å–åˆ°çš„å¹´ï¼ŒMAX_Y = BEGYEAR + 44
+ * @param   pmon    - è·å–åˆ°çš„æœˆï¼ŒMAX_MON = 12
+ * @param   pd      - è·å–åˆ°çš„æ—¥ï¼ŒMAX_D = 31
+ * @param   ph      - è·å–åˆ°çš„å°æ—¶ï¼ŒMAX_H = 23
+ * @param   pm      - è·å–åˆ°çš„åˆ†é’Ÿï¼ŒMAX_M = 59
+ * @param   ps      - è·å–åˆ°çš„ç§’ï¼ŒMAX_S = 59
  *
  * @return  none
  */
@@ -552,9 +542,9 @@ void RTC_GetTime(uint16_t *py, uint16_t *pmon, uint16_t *pd, uint16_t *ph, uint1
 /*********************************************************************
  * @fn      RTC_SetCycle32k
  *
- * @brief   »ùÓÚLSE/LSIÊ±ÖÓ£¬ÅäÖÃµ±Ç°RTC ÖÜÆÚÊı
+ * @brief   åŸºäºLSE/LSIæ—¶é’Ÿï¼Œé…ç½®å½“å‰RTC å‘¨æœŸæ•°
  *
- * @param   cyc     - ÅäÖÃÖÜÆÚ¼ÆÊı³õÖµ£¬MAX_CYC = 0xA8BFFFFF = 2831155199
+ * @param   cyc     - é…ç½®å‘¨æœŸè®¡æ•°åˆå€¼ï¼ŒMAX_CYC = 0xA8BFFFFF = 2831155199
  *
  * @return  none
  */
@@ -567,21 +557,21 @@ void RTC_SetCycle32k(uint32_t cyc)
         clk_pin = (R8_CK32K_CONFIG & RB_32K_CLK_PIN);
     } while((clk_pin != (R8_CK32K_CONFIG & RB_32K_CLK_PIN)) || (!clk_pin));
 
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    sys_safe_access_enable();
     R32_RTC_TRIG = cyc;
+    sys_safe_access_enable();
     R8_RTC_MODE_CTRL |= RB_RTC_LOAD_LO;
-    R8_SAFE_ACCESS_SIG = 0;
+    sys_safe_access_disable();
 }
 
 /*********************************************************************
  * @fn      RTC_GetCycle32k
  *
- * @brief   »ùÓÚLSE/LSIÊ±ÖÓ£¬»ñÈ¡µ±Ç°RTC ÖÜÆÚÊı
+ * @brief   åŸºäºLSE/LSIæ—¶é’Ÿï¼Œè·å–å½“å‰RTC å‘¨æœŸæ•°
  *
  * @param   none
  *
- * @return  µ±Ç°ÖÜÆÚÊı£¬MAX_CYC = 0xA8BFFFFF = 2831155199
+ * @return  å½“å‰å‘¨æœŸæ•°ï¼ŒMAX_CYC = 0xA8BFFFFF = 2831155199
  */
 uint32_t RTC_GetCycle32k(void)
 {
@@ -598,7 +588,7 @@ uint32_t RTC_GetCycle32k(void)
 /*********************************************************************
  * @fn      RTC_TMRFunCfg
  *
- * @brief   RTC¶¨Ê±Ä£Ê½ÅäÖÃ£¨×¢Òâ¶¨Ê±»ù×¼¹Ì¶¨Îª32768Hz£©
+ * @brief   RTCå®šæ—¶æ¨¡å¼é…ç½®ï¼ˆæ³¨æ„å®šæ—¶åŸºå‡†å›ºå®šä¸º32768Hzï¼‰
  *
  * @param   t   - refer to RTC_TMRCycTypeDef
  *
@@ -606,19 +596,19 @@ uint32_t RTC_GetCycle32k(void)
  */
 void RTC_TMRFunCfg(RTC_TMRCycTypeDef t)
 {
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    sys_safe_access_enable();
     R8_RTC_MODE_CTRL &= ~(RB_RTC_TMR_EN | RB_RTC_TMR_MODE);
+    sys_safe_access_enable();
     R8_RTC_MODE_CTRL |= RB_RTC_TMR_EN | (t);
-    R8_SAFE_ACCESS_SIG = 0;
+    sys_safe_access_disable();
 }
 
 /*********************************************************************
  * @fn      RTC_TRIGFunCfg
  *
- * @brief   RTCÊ±¼ä´¥·¢Ä£Ê½ÅäÖÃ
+ * @brief   RTCæ—¶é—´è§¦å‘æ¨¡å¼é…ç½®
  *
- * @param   cyc - Ïà¶Ôµ±Ç°Ê±¼äµÄ´¥·¢¼ä¸ôÊ±¼ä£¬»ùÓÚLSE/LSIÊ±ÖÓÖÜÆÚÊı
+ * @param   cyc - ç›¸å¯¹å½“å‰æ—¶é—´çš„è§¦å‘é—´éš”æ—¶é—´ï¼ŒåŸºäºLSE/LSIæ—¶é’Ÿå‘¨æœŸæ•°
  *
  * @return  none
  */
@@ -628,19 +618,19 @@ void RTC_TRIGFunCfg(uint32_t cyc)
 
     t = RTC_GetCycle32k() + cyc;
 
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    sys_safe_access_enable();
     R32_RTC_TRIG = t;
+    sys_safe_access_enable();
     R8_RTC_MODE_CTRL |= RB_RTC_TRIG_EN;
-    R8_SAFE_ACCESS_SIG = 0;
+    sys_safe_access_disable();
 }
 
 /*********************************************************************
  * @fn      RTC_ModeFunDisable
  *
- * @brief   RTC Ä£Ê½¹¦ÄÜ¹Ø±Õ
+ * @brief   RTC æ¨¡å¼åŠŸèƒ½å…³é—­
  *
- * @param   m   - ĞèÒª¹Ø±ÕµÄµ±Ç°Ä£Ê½
+ * @param   m   - éœ€è¦å…³é—­çš„å½“å‰æ¨¡å¼
  *
  * @return  none
  */
@@ -657,20 +647,19 @@ void RTC_ModeFunDisable(RTC_MODETypeDef m)
         i |= RB_RTC_TMR_EN;
     }
 
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG1;
-    R8_SAFE_ACCESS_SIG = SAFE_ACCESS_SIG2;
+    sys_safe_access_enable();
     R8_RTC_MODE_CTRL &= ~(i);
-    R8_SAFE_ACCESS_SIG = 0;
+    sys_safe_access_disable();
 }
 
 /*********************************************************************
  * @fn      RTC_GetITFlag
  *
- * @brief   »ñÈ¡RTCÖĞ¶Ï±êÖ¾
+ * @brief   è·å–RTCä¸­æ–­æ ‡å¿—
  *
  * @param   f   - refer to RTC_EVENTTypeDef
  *
- * @return  ÖĞ¶Ï±êÖ¾×´Ì¬
+ * @return  ä¸­æ–­æ ‡å¿—çŠ¶æ€
  */
 uint8_t RTC_GetITFlag(RTC_EVENTTypeDef f)
 {
@@ -687,7 +676,7 @@ uint8_t RTC_GetITFlag(RTC_EVENTTypeDef f)
 /*********************************************************************
  * @fn      RTC_ClearITFlag
  *
- * @brief   Çå³ıRTCÖĞ¶Ï±êÖ¾
+ * @brief   æ¸…é™¤RTCä¸­æ–­æ ‡å¿—
  *
  * @param   f   - refer to RTC_EVENTTypeDef
  *

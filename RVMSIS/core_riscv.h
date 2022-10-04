@@ -81,7 +81,7 @@ typedef struct __attribute__((packed))
 #define PFIC_KEY3    ((uint32_t)0xBEEF0000)
 
 /* ##########################   define  #################################### */
-#define __nop()      asm volatile("nop")
+#define __nop()      __asm__ volatile("nop")
 
 /* ##########################   PFIC functions  #################################### */
 
@@ -272,7 +272,7 @@ __attribute__((always_inline)) RV_STATIC_INLINE void __SEV(void)
 __attribute__((always_inline)) RV_STATIC_INLINE void __WFI(void)
 {
     PFIC->SCTLR &= ~(1 << 3); // wfi
-    asm volatile("wfi");
+    __asm__ volatile("wfi");
 }
 
 /*******************************************************************************
@@ -283,9 +283,9 @@ __attribute__((always_inline)) RV_STATIC_INLINE void __WFI(void)
 __attribute__((always_inline)) RV_STATIC_INLINE void __WFE(void)
 {
     PFIC->SCTLR |= (1 << 3) | (1 << 5); // (wfi->wfe)+(__sev)
-    asm volatile("wfi");
+    __asm__ volatile("wfi");
     PFIC->SCTLR |= (1 << 3);
-    asm volatile("wfi");
+    __asm__ volatile("wfi");
 }
 
 /*******************************************************************************

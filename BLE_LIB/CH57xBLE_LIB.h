@@ -1,8 +1,8 @@
 /********************************** (C) COPYRIGHT ******************************
  * File Name         : CH57xBLE_LIB.H
  * Author            : WCH
- * Version           : V1.80
- * Date              : 2022/06/28
+ * Version           : V1.90
+ * Date              : 2022/08/08
  * Description       : head file
 
  * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
@@ -179,7 +179,7 @@ typedef struct
 /*********************************************************************
  * GLOBAL MACROS
  */
-#define  VER_FILE            "CH57x_BLE_LIB_V1.8"
+#define  VER_FILE            "CH57x_BLE_LIB_V1.9"
 extern const uint8_t VER_LIB[];  // LIB version
 #define SYSTEM_TIME_MICROSEN            625   // unit of process event timer is 625us
 #define MS1_TO_SYSTEM_TIME(x)  ((x)*1000/SYSTEM_TIME_MICROSEN)   // transform unit in ms to unit in 625us ( attentional bias )
@@ -219,7 +219,7 @@ extern const uint8_t VER_LIB[];  // LIB version
 #define ABS(n)     (((n) < 0) ? -(n) : (n))
 #endif
 
-/* TxPower define(Accuracy:±1dBm) */
+/* TxPower define(Accuracy:dBm) */
 #define LL_TX_POWEER_MINUS_20_DBM       0x01
 #define LL_TX_POWEER_MINUS_14_DBM       0x03
 #define LL_TX_POWEER_MINUS_8_DBM        0x07
@@ -659,8 +659,7 @@ extern const uint8_t VER_LIB[];  // LIB version
 #define gattCharacterType( t )          ( ATT_CompareUUID( characterUUID, ATT_BT_UUID_SIZE, (t).uuid, (t).len ) )
 #define gattIncludeType( t )            ( ATT_CompareUUID( includeUUID, ATT_BT_UUID_SIZE, (t).uuid, (t).len ) )
 #define gattServiceType( t )            ( gattPrimaryServiceType( (t) ) || gattSecondaryServiceType( (t) ) )
-#define GATT_CONNECT_NUM                (3)
-#define GATT_MAX_NUM_CONN               (GATT_CONNECT_NUM+1)
+#define GATT_MAX_NUM_CONN               (4)
 
 // GATT Client Characteristic Configuration Bit Fields
 #define GATT_CLIENT_CFG_NOTIFY          0x0001 //!< The Characteristic Value shall be notified
@@ -951,6 +950,7 @@ extern const uint8_t VER_LIB[];  // LIB version
 #define GAPBOND_ENABLE_ALLBONDS                 0x41D  //!< Ensable all of the bonded devices. Write Only. No Size.
 #define GAPBOND_ERASE_AUTO                      0x41E  //!< Auto erase all of the bonded devices when the maximum number is reached.Size is uint8_t. Default is 1(enabled).
 #define GAPBOND_AUTO_SYNC_RL                    0x41F  //!< Clears the Resolving List adds to it each unique address stored by bonds in NV. Read/Write. Size is uint8_t. Default is FALSE.
+#define GAPBOND_SET_ENC_PARAMS                  0x420  //!< Set bonding parameters.size is bondEncParams_t.
 
 // GAPBOND_PAIRING_MODE_DEFINES GAP Bond Manager Pairing Modes
 #define GAPBOND_PAIRING_MODE_NO_PAIRING         0x00  //!< Pairing is not allowed
@@ -1079,13 +1079,21 @@ typedef struct
 
 typedef struct
 {
+    uint8_t connRole;          // GAP Profile Roles @GAP_PROFILE_ROLE_DEFINES
+    uint8_t addrType;          // Address type of connected device
+    uint8_t addr[B_ADDR_LEN];  // Other Device's address
+    encParams_t encParams;
+} bondEncParams_t;
+
+typedef struct
+{
     uint8_t taskID;            // Application that controls the link
     uint16_t connectionHandle; // Controller connection handle
     uint8_t stateFlags;        // LINK_CONNECTED, LINK_AUTHENTICATED...
     uint8_t addrType;          // Address type of connected device
     uint8_t addr[B_ADDR_LEN];  // Other Device's address
-    uint8_t connRole;          // Connection formed as Master or Slave
-    uint16_t connInterval;     // The connection's interval (n * 1.23 ms)
+    uint8_t connRole;          // Connection formed as central or peripheral
+    uint16_t connInterval;     // The connection's interval (n * 1.25ms)
     uint16_t connLatency;
     uint16_t connTimeout;
     uint16_t MTU;              // The connection's MTU size
@@ -1095,6 +1103,7 @@ typedef struct
     void *pPairingParams;
     void *pAuthLink;
 } linkDBItem_t;
+
 // function pointer used to register for a status callback
 typedef void (*pfnLinkDBCB_t)( uint16_t connectionHandle, uint8_t changeType );
 // function pointer used to perform specialized link database searches
@@ -2250,7 +2259,7 @@ extern tmosTaskID TMOS_ProcessEventRegister( pTaskEventHandlerFn eventCb );
 extern void TMOS_Set32KTuneValue( uint16_t flash_val, uint16_t ram_val );
 
 /**
- * @brief   Add a device address into white list ( support 16 MAX )
+ * @brief   Add a device address into white list ( support SNVNum MAX )
  *
  * @param   addrType - Type of device address
  * @param   devAddr  - first address of device address
@@ -3089,7 +3098,7 @@ extern bStatus_t GATT_WriteLongCharValue( uint16_t connHandle, attPrepareWriteRe
  * @note    The 'pReqs' pointer will be freed when the sub-procedure is complete.
  *
  * @param   connHandle - connection to use
- * @param   pReqs - pointer to requests to be sent (must be allocated)
+ * @param   pReqs - pointer to requests to be sent
  * @param   numReqs - number of requests in pReq
  * @param   flags - execute write request flags
  * @param   taskId - task to be notified of response
@@ -3628,7 +3637,7 @@ extern bStatus_t GAPRole_UpdateLink( uint16_t connHandle, uint16_t connIntervalM
  *
  * @brief   Initialization function for the GAP Role Task.
  *
- * @param   the ID assigned by tmos.This ID should be used to send messages and set timers.
+ * @param   None.
  *
  * @return  SUCCESS,bleInvalidRange
  */
@@ -3660,7 +3669,7 @@ extern void GAPRole_BroadcasterSetCB( gapRolesBroadcasterCBs_t *pAppCallbacks );
  *
  * @brief   Observer Profile Task initialization function.
  *
- * @param   taskId - Task ID.
+ * @param   None.
  *
  * @return  SUCCESS,bleInvalidRange
  */
@@ -3711,7 +3720,7 @@ extern bStatus_t GAPRole_ObserverCancelDiscovery( void );
  *          initialization/setup, table initialization, power up
  *          notificaiton ... ).
  *
- * @param   the ID assigned by tmos.This ID should be used to send messages and set timers.
+ * @param   None.
  *
  * @return  SUCCESS,bleInvalidRange
  */
@@ -3749,7 +3758,7 @@ extern bStatus_t GAPRole_PeripheralConnParamUpdateReq( uint16_t connHandle, uint
  *
  * @brief   Central Profile Task initialization function.
  *
- * @param   taskId - Task ID.
+ * @param   None.
  *
  * @return  SUCCESS,bleInvalidRange
  */
